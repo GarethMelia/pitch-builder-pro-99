@@ -1,5 +1,6 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
 import { UseFormReturn } from "react-hook-form";
 import { ProposalFormData } from "@/types/proposal";
 
@@ -15,7 +16,7 @@ export function ProposalToneStep({
   form: UseFormReturn<ProposalFormData>;
 }) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
         <h2 className="text-lg font-semibold mb-2">Proposal Framing</h2>
         <p className="text-sm text-muted-foreground mb-4">
@@ -46,6 +47,33 @@ export function ProposalToneStep({
                 </SelectContent>
               </Select>
             </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="persuasion_level"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Level of persuasiveness</FormLabel>
+            <div className="space-y-4">
+              <FormControl>
+                <Slider
+                  min={0}
+                  max={100}
+                  step={1}
+                  value={[parseInt(field.value || "0")]}
+                  onValueChange={(value) => field.onChange(value[0].toString())}
+                  className="w-full"
+                />
+              </FormControl>
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>Not sales pushy at all</span>
+                <span>Very sales focused</span>
+              </div>
+            </div>
             <FormMessage />
           </FormItem>
         )}
