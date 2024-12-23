@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { CompanyInfoStep } from "@/components/ProposalSteps/CompanyInfoStep";
 import { ProjectScopeStep } from "@/components/ProposalSteps/ProjectScopeStep";
 import { MetricsStep } from "@/components/ProposalSteps/MetricsStep";
+import { ChallengesStrengthsStep } from "@/components/ProposalSteps/ChallengesStrengthsStep";
 import { ProposalFormData } from "@/types/proposal";
 
 const TOTAL_STEPS = 8;
@@ -64,6 +65,7 @@ const CreateProposal = () => {
         persuasion_level: data.persuasion_level,
         content: { text: data.content },
         user_id: user.id,
+        status: 'draft'
       });
 
       if (error) throw error;
@@ -92,6 +94,8 @@ const CreateProposal = () => {
         return <ProjectScopeStep form={form} />;
       case 3:
         return <MetricsStep form={form} />;
+      case 4:
+        return <ChallengesStrengthsStep form={form} />;
       default:
         return null;
     }
