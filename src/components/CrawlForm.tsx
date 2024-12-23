@@ -33,14 +33,13 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
     setCrawlResult(null);
     
     try {
-      // First, crawl the website
       toast({
         title: "Website Analysis Started",
         description: "We're analyzing the website content...",
         duration: 3000,
       });
       
-      // Simulate progress for now
+      // Simulate progress
       let currentProgress = 0;
       const interval = setInterval(() => {
         currentProgress += 10;
@@ -50,29 +49,10 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
         }
       }, 500);
 
-      // Mock crawl result for now
-      const mockCrawlResult = {
-        success: true,
-        status: "completed",
-        completed: 10,
-        total: 10,
-        creditsUsed: 1,
-        expiresAt: new Date().toISOString(),
-        data: [
-          {
-            url: url,
-            title: "Homepage",
-            content: "Sample content from website"
-          }
-        ]
-      };
-
-      setCrawlResult(mockCrawlResult);
-
       // Generate proposal using OpenAI
       const { data: proposalData, error } = await supabase.functions.invoke('generate-proposal', {
         body: {
-          websiteData: mockCrawlResult.data,
+          websiteUrl: url,
           formData: formData
         }
       });
@@ -92,7 +72,7 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
       console.error('Error analyzing website:', error);
       toast({
         title: "Error",
-        description: "Failed to analyze website",
+        description: "Failed to generate proposal",
         variant: "destructive",
         duration: 3000,
       });
@@ -124,27 +104,9 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
           disabled={isLoading}
           className="w-full"
         >
-          {isLoading ? "Analyzing..." : "Analyze Website & Generate Proposal"}
+          {isLoading ? "Generating Proposal..." : "Analyze Website & Generate Proposal"}
         </Button>
       </form>
-
-      {crawlResult && (
-        <Card className="mt-4 p-4">
-          <h3 className="text-lg font-semibold mb-2">Analysis Results</h3>
-          <div className="space-y-2 text-sm">
-            <p>Status: {crawlResult.status}</p>
-            <p>Pages Analyzed: {crawlResult.completed} / {crawlResult.total}</p>
-            {crawlResult.data && (
-              <div className="mt-4">
-                <p className="font-semibold mb-2">Website Insights:</p>
-                <pre className="bg-gray-100 p-2 rounded overflow-auto max-h-60">
-                  {JSON.stringify(crawlResult.data, null, 2)}
-                </pre>
-              </div>
-            )}
-          </div>
-        </Card>
-      )}
     </div>
   );
 };

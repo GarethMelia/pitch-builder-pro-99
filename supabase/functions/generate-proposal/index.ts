@@ -1,7 +1,9 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { FirecrawlApp } from "npm:@mendable/firecrawl-js";
 
 const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+const firecrawlApiKey = Deno.env.get('FIRECRAWL_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -14,7 +16,20 @@ serve(async (req) => {
   }
 
   try {
-    const { websiteData, formData } = await req.json();
+    const { websiteUrl, formData } = await req.json();
+
+    // Initialize Firecrawl
+    const firecrawl = new FirecrawlApp({ apiKey: firecrawlApiKey });
+    
+    // Crawl website
+    const crawlResult = await firecrawl.crawlUrl(websiteUrl, {
+      limit: 5,
+      scrapeOptions: {
+        formats: ['markdown']
+      }
+    });
+
+    const websiteContent = crawlResult.data?.map(page => page.markdown).join('\n\n');
 
     const prompt = `
       Create a professional business proposal using the following information:
@@ -22,28 +37,28 @@ serve(async (req) => {
       Company Information:
       - Company Name: ${formData.company_name}
       - Primary Goal: ${formData.primary_goal}
-      - Website: ${formData.website_url}
+      - Website: ${websiteUrl}
       
-      Website Analysis Data:
-      ${JSON.stringify(websiteData)}
+      Website Analysis:
+      ${websiteContent}
       
       Additional Context:
       - Target Audience: ${JSON.stringify(formData.target_audience)}
       - Challenges: ${formData.challenges?.join(', ')}
       - Strengths: ${formData.strengths?.join(', ')}
       
-      Format the proposal with clear sections including:
+      Proposal Structure:
       1. Executive Summary
       2. Company Overview
-      3. Problem Statement & Solutions
-      4. Proposed Services
-      5. Implementation Timeline
-      6. Expected Outcomes
-      7. Why Choose Us
-      8. Next Steps
-      
-      Use a ${formData.proposal_tone || 'professional'} tone.
-      Persuasion Level: ${formData.persuasion_level || 'moderate'}
+      3. Problem Statement
+      4. Proposed Solutions
+      5. Detailed Service Offerings
+      6. Implementation Strategy
+      7. Success Metrics
+      8. Why Choose Us
+      9. Next Steps
+
+      Use a professional and persuasive tone. Highlight the company's unique strengths and how they address the target audience's needs.
     `;
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -53,17 +68,18 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
-            content: 'You are an expert business proposal writer. Create well-structured, persuasive proposals that incorporate website analysis data and highlight key value propositions.'
+            content: 'You are an expert business proposal writer creating comprehensive, persuasive proposals.'
           },
           {
             role: 'user',
             content: prompt
           }
         ],
+        max_tokens: 2000
       }),
     });
 
