@@ -46,6 +46,12 @@ const CreateProposal = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
+      // Transform success_metrics to match the database Json type
+      const transformedMetrics = data.success_metrics.map(metric => ({
+        id: metric.id,
+        value: metric.value
+      }));
+
       const { error } = await supabase.from("proposals").insert({
         title: data.title,
         company_name: data.company_name,
@@ -54,7 +60,7 @@ const CreateProposal = () => {
         services: data.services,
         target_audience: data.target_audience,
         timeframe: data.timeframe,
-        success_metrics: data.success_metrics,
+        success_metrics: transformedMetrics,
         budget_range: data.budget_range,
         internal_resources: data.internal_resources,
         challenges: data.challenges,
