@@ -10,6 +10,7 @@ import { CompanyInfoStep } from "@/components/ProposalSteps/CompanyInfoStep";
 import { ProjectScopeStep } from "@/components/ProposalSteps/ProjectScopeStep";
 import { MetricsStep } from "@/components/ProposalSteps/MetricsStep";
 import { ChallengesStrengthsStep } from "@/components/ProposalSteps/ChallengesStrengthsStep";
+import { StrategiesStep } from "@/components/ProposalSteps/StrategiesStep";
 import { ProposalFormData } from "@/types/proposal";
 
 const TOTAL_STEPS = 8;
@@ -102,6 +103,8 @@ const CreateProposal = () => {
         return <MetricsStep form={form} />;
       case 4:
         return <ChallengesStrengthsStep form={form} />;
+      case 5:
+        return <StrategiesStep form={form} />;
       default:
         return null;
     }
