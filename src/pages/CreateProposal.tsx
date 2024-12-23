@@ -11,6 +11,7 @@ import { ProjectScopeStep } from "@/components/ProposalSteps/ProjectScopeStep";
 import { MetricsStep } from "@/components/ProposalSteps/MetricsStep";
 import { ChallengesStrengthsStep } from "@/components/ProposalSteps/ChallengesStrengthsStep";
 import { StrategiesStep } from "@/components/ProposalSteps/StrategiesStep";
+import { ProposalToneStep } from "@/components/ProposalSteps/ProposalToneStep";
 import { ProposalFormData } from "@/types/proposal";
 
 const TOTAL_STEPS = 8;
@@ -29,6 +30,7 @@ const CreateProposal = () => {
       challenges: [],
       strengths: [],
       recommended_strategies: [],
+      proposal_tone: "",
     }
   });
 
@@ -47,7 +49,6 @@ const CreateProposal = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Transform success_metrics to match the database Json type
       const transformedMetrics = data.success_metrics.map(metric => ({
         id: metric.id,
         value: metric.value
@@ -105,6 +106,8 @@ const CreateProposal = () => {
         return <ChallengesStrengthsStep form={form} />;
       case 5:
         return <StrategiesStep form={form} />;
+      case 6:
+        return <ProposalToneStep form={form} />;
       default:
         return null;
     }
