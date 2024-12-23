@@ -4,13 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Tables } from "@/integrations/supabase/types";
 
-interface Proposal {
-  id: string;
-  title: string;
-  content: { text: string };
-  created_at: string;
-  status: string;
+// Update the Proposal interface to match the Supabase table structure
+interface Proposal extends Tables<'proposals'> {
+  content: { text: string } | Json;
 }
 
 const Index = () => {
@@ -37,7 +35,18 @@ const Index = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setProposals(data || []);
+      
+      // Transform the content to ensure it matches the expected type
+      const transformedProposals = (data || []).map(proposal => ({
+        ...proposal,
+        content: typeof proposal.content === 'string' 
+          ? { text: proposal.content } 
+          : (proposal.content as { text?: string })?.text 
+            ? proposal.content 
+            : { text: JSON.stringify(proposal.content) }
+      }));
+
+      setProposals(transformedProposals);
     } catch (error) {
       console.error("Error fetching proposals:", error);
       toast.error("Failed to load proposals");
