@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,48 +7,41 @@ import { Tables, Json } from "@/integrations/supabase/types";
 
 // Update the Proposal interface to match the Supabase table structure
 interface Proposal extends Tables<'proposals'> {
-  content: { text: string } | Json;
+  content: Json | { text: string };
 }
 
 const Index = () => {
-  const navigate = useNavigate();
   const [proposals, setProposals] = useState<Proposal[]>([]);
 
   useEffect(() => {
-    const checkAuth = async () => {
+    // Check if user is authenticated
+    const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        navigate("/auth");
+        window.location.href = "/auth";
       } else {
         fetchProposals();
       }
     };
-    checkAuth();
-  }, [navigate]);
+    
+    checkUser();
+  }, []);
 
   const fetchProposals = async () => {
     try {
       const { data, error } = await supabase
-        .from("proposals")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .from('proposals')
+        .select('*')
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
       
-      // Transform the content to ensure it matches the expected type
-      const transformedProposals = (data || []).map(proposal => ({
-        ...proposal,
-        content: typeof proposal.content === 'string' 
-          ? { text: proposal.content } 
-          : (proposal.content as { text?: string })?.text 
-            ? proposal.content 
-            : { text: JSON.stringify(proposal.content) }
-      }));
-
-      setProposals(transformedProposals);
+      if (data) {
+        setProposals(data as Proposal[]);
+      }
     } catch (error) {
-      console.error("Error fetching proposals:", error);
-      toast.error("Failed to load proposals");
+      toast.error('Error fetching proposals');
+      console.error('Error:', error);
     }
   };
 
@@ -57,61 +49,47 @@ const Index = () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      navigate("/auth");
+      window.location.href = "/auth";
     } catch (error) {
-      console.error("Error signing out:", error);
-      toast.error("Failed to sign out");
+      toast.error('Error signing out');
+      console.error('Error:', error);
     }
   };
 
   return (
-    <div className="container py-10">
-      <div className="flex justify-between items-center mb-8">
+    <div className="container mx-auto p-4">
+      <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">My Proposals</h1>
-        <div className="flex gap-4">
-          <Button onClick={() => navigate("/create")}>Create New Proposal</Button>
+        <div className="space-x-4">
+          <Button onClick={() => window.location.href = "/create"}>
+            Create New Proposal
+          </Button>
           <Button variant="outline" onClick={handleSignOut}>
             Sign Out
           </Button>
         </div>
       </div>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created At</TableHead>
-              <TableHead>Actions</TableHead>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Title</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Created At</TableHead>
+            <TableHead>Updated At</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {proposals.map((proposal) => (
+            <TableRow key={proposal.id}>
+              <TableCell>{proposal.title}</TableCell>
+              <TableCell>{proposal.status}</TableCell>
+              <TableCell>{new Date(proposal.created_at).toLocaleDateString()}</TableCell>
+              <TableCell>{new Date(proposal.updated_at).toLocaleDateString()}</TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {proposals.map((proposal) => (
-              <TableRow key={proposal.id}>
-                <TableCell>{proposal.title}</TableCell>
-                <TableCell className="capitalize">{proposal.status}</TableCell>
-                <TableCell>{new Date(proposal.created_at).toLocaleDateString()}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="outline"
-                    onClick={() => navigate(`/proposals/${proposal.id}`)}
-                  >
-                    View
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-            {proposals.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
-                  No proposals found. Create your first proposal!
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 };
