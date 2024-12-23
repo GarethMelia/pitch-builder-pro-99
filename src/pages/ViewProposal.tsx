@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { ProposalPDF } from '@/components/ProposalPDF';
 import { ProposalFormData } from '@/types/proposal';
 import { toast } from 'sonner';
-import { Json } from '@/integrations/supabase/types';
+import { Button } from "@/components/ui/button";
+import { FileDown, FileEdit } from "lucide-react";
 
 const ViewProposal = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [proposal, setProposal] = useState<ProposalFormData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -92,6 +94,10 @@ const ViewProposal = () => {
     fetchProposal();
   }, [id]);
 
+  const handleEdit = () => {
+    navigate(`/edit/${id}`);
+  };
+
   if (loading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
@@ -101,8 +107,23 @@ const ViewProposal = () => {
   }
 
   return (
-    <div className="container py-8">
-      <ProposalPDF data={proposal} />
+    <div className="container mx-auto py-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">{proposal.title}</h1>
+        <div className="space-x-4">
+          <Button onClick={handleEdit} variant="outline">
+            <FileEdit className="w-4 h-4 mr-2" />
+            Edit Proposal
+          </Button>
+          <Button>
+            <FileDown className="w-4 h-4 mr-2" />
+            Download PDF
+          </Button>
+        </div>
+      </div>
+      <div className="bg-white rounded-lg shadow-lg">
+        <ProposalPDF data={proposal} />
+      </div>
     </div>
   );
 };
