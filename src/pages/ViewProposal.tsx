@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { ProposalPDF } from '@/components/ProposalPDF';
-import { ProposalFormData, MetricItem } from '@/types/proposal';
+import { ProposalFormData } from '@/types/proposal';
 import { toast } from 'sonner';
+import { Json } from '@/integrations/supabase/types';
 
 const ViewProposal = () => {
   const { id } = useParams();
@@ -23,11 +24,21 @@ const ViewProposal = () => {
 
         // Transform the data to match ProposalFormData type
         const transformedData: ProposalFormData = {
-          ...data,
-          success_metrics: Array.isArray(data.success_metrics) 
+          title: data.title || '',
+          company_name: data.company_name || '',
+          website_url: data.website_url || '',
+          primary_goal: data.primary_goal || '',
+          budget_range: data.budget_range || '',
+          proposal_tone: data.proposal_tone || '',
+          custom_message: data.custom_message || '',
+          persuasion_level: data.persuasion_level || '',
+          content: data.content || '',
+          reasons_to_work_with: data.reasons_to_work_with || '',
+          timeframe: data.timeframe || '',
+          success_metrics: Array.isArray(data.success_metrics)
             ? data.success_metrics.map((metric: any) => ({
-                id: metric.id,
-                value: metric.value
+                id: String(metric.id),
+                value: String(metric.value)
               }))
             : [],
           testimonials: Array.isArray(data.testimonials)
@@ -39,16 +50,29 @@ const ViewProposal = () => {
           services: Array.isArray(data.services) ? data.services.map(String) : [],
           challenges: Array.isArray(data.challenges) ? data.challenges.map(String) : [],
           strengths: Array.isArray(data.strengths) ? data.strengths.map(String) : [],
-          recommended_strategies: Array.isArray(data.recommended_strategies) ? data.recommended_strategies.map(String) : [],
-          awards_recognitions: Array.isArray(data.awards_recognitions) ? data.awards_recognitions.map(String) : [],
-          relevant_experience: Array.isArray(data.relevant_experience) ? data.relevant_experience.map(String) : [],
-          guarantees: Array.isArray(data.guarantees) ? data.guarantees.map(String) : [],
+          recommended_strategies: Array.isArray(data.recommended_strategies) 
+            ? data.recommended_strategies.map(String) 
+            : [],
+          awards_recognitions: Array.isArray(data.awards_recognitions) 
+            ? data.awards_recognitions.map(String) 
+            : [],
+          relevant_experience: Array.isArray(data.relevant_experience) 
+            ? data.relevant_experience.map(String) 
+            : [],
+          guarantees: Array.isArray(data.guarantees) 
+            ? data.guarantees.map(String) 
+            : [],
+          internal_resources: Array.isArray(data.internal_resources) 
+            ? data.internal_resources.map(String) 
+            : [],
           target_audience: {
             demographics: typeof data.target_audience === 'object' && data.target_audience !== null 
               ? String(data.target_audience.demographics || '')
               : '',
-            interests: Array.isArray(data.target_audience?.interests) 
-              ? data.target_audience.interests.map(String)
+            interests: typeof data.target_audience === 'object' && 
+                      data.target_audience !== null &&
+                      Array.isArray((data.target_audience as any).interests)
+              ? (data.target_audience as any).interests.map(String)
               : []
           }
         };
