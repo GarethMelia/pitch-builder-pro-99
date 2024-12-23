@@ -1,0 +1,22 @@
+export interface ProposalFormData {
+  title: string;
+  company_name: string;
+  website_url: string;
+  primary_goal: string;
+  services: string[];
+  target_audience: {
+    demographics?: string;
+    interests?: string[];
+  };
+  timeframe: string;
+  success_metrics: string[];
+  budget_range: string;
+  internal_resources: string[];
+  challenges: string[];
+  strengths: string[];
+  recommended_strategies: string[];
+  proposal_tone: string;
+  custom_message?: string;
+  persuasion_level: string;
+  content: string;
+}

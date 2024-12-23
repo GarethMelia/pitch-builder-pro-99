@@ -2,21 +2,32 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Progress } from "@/components/ui/progress";
+import { CompanyInfoStep } from "@/components/ProposalSteps/CompanyInfoStep";
+import { ProjectScopeStep } from "@/components/ProposalSteps/ProjectScopeStep";
+import { ProposalFormData } from "@/types/proposal";
 
-interface ProposalForm {
-  title: string;
-  content: string;
-}
+const TOTAL_STEPS = 8;
 
 const CreateProposal = () => {
   const navigate = useNavigate();
-  const form = useForm<ProposalForm>();
+  const [currentStep, setCurrentStep] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
+  
+  const form = useForm<ProposalFormData>({
+    defaultValues: {
+      services: [],
+      target_audience: {},
+      success_metrics: [],
+      internal_resources: [],
+      challenges: [],
+      strengths: [],
+      recommended_strategies: [],
+    }
+  });
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -28,13 +39,28 @@ const CreateProposal = () => {
     checkAuth();
   }, [navigate]);
 
-  const onSubmit = async (data: ProposalForm) => {
+  const onSubmit = async (data: ProposalFormData) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
       const { error } = await supabase.from("proposals").insert({
         title: data.title,
+        company_name: data.company_name,
+        website_url: data.website_url,
+        primary_goal: data.primary_goal,
+        services: data.services,
+        target_audience: data.target_audience,
+        timeframe: data.timeframe,
+        success_metrics: data.success_metrics,
+        budget_range: data.budget_range,
+        internal_resources: data.internal_resources,
+        challenges: data.challenges,
+        strengths: data.strengths,
+        recommended_strategies: data.recommended_strategies,
+        proposal_tone: data.proposal_tone,
+        custom_message: data.custom_message,
+        persuasion_level: data.persuasion_level,
         content: { text: data.content },
         user_id: user.id,
       });
@@ -49,93 +75,59 @@ const CreateProposal = () => {
     }
   };
 
-  const generateWithAI = async () => {
-    try {
-      setIsGenerating(true);
-      const topic = form.getValues("title");
-      
-      if (!topic) {
-        toast.error("Please enter a topic first");
-        return;
-      }
+  const nextStep = () => {
+    setCurrentStep((prev) => Math.min(prev + 1, TOTAL_STEPS));
+  };
 
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-proposal`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({ topic }),
-        }
-      );
+  const prevStep = () => {
+    setCurrentStep((prev) => Math.max(prev - 1, 1));
+  };
 
-      if (!response.ok) throw new Error("Failed to generate proposal");
-
-      const data = await response.json();
-      
-      form.setValue("title", data.title);
-      form.setValue("content", data.content);
-      toast.success("Proposal generated successfully!");
-    } catch (error) {
-      console.error("Error generating proposal:", error);
-      toast.error("Failed to generate proposal");
-    } finally {
-      setIsGenerating(false);
+  const renderStep = () => {
+    switch (currentStep) {
+      case 1:
+        return <CompanyInfoStep form={form} />;
+      case 2:
+        return <ProjectScopeStep form={form} />;
+      // Additional steps will be added here
+      default:
+        return null;
     }
   };
 
   return (
-    <div className="container max-w-2xl py-10">
-      <h1 className="text-2xl font-bold mb-8">Create New Proposal</h1>
+    <div className="container max-w-3xl py-10">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold mb-4">Create New Proposal</h1>
+        <Progress value={(currentStep / TOTAL_STEPS) * 100} className="h-2" />
+        <p className="text-sm text-muted-foreground mt-2">
+          Step {currentStep} of {TOTAL_STEPS}
+        </p>
+      </div>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Title or Topic</FormLabel>
-                <div className="flex gap-2">
-                  <FormControl>
-                    <Input placeholder="Enter proposal title or topic" {...field} />
-                  </FormControl>
-                  <Button 
-                    type="button" 
-                    variant="secondary"
-                    onClick={generateWithAI}
-                    disabled={isGenerating}
-                  >
-                    {isGenerating ? "Generating..." : "Generate with AI"}
-                  </Button>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="content"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Content</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    placeholder="Write your proposal content here..."
-                    className="min-h-[200px]"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={() => navigate("/")}>
-              Cancel
+          {renderStep()}
+          
+          <div className="flex justify-between pt-6">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={prevStep}
+              disabled={currentStep === 1}
+            >
+              Previous
             </Button>
-            <Button type="submit">Create Proposal</Button>
+            
+            {currentStep < TOTAL_STEPS ? (
+              <Button type="button" onClick={nextStep}>
+                Next
+              </Button>
+            ) : (
+              <Button type="submit" disabled={isGenerating}>
+                Create Proposal
+              </Button>
+            )}
           </div>
         </form>
       </Form>

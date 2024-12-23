@@ -32,31 +32,76 @@ export type Database = {
       }
       proposals: {
         Row: {
+          budget_range: string | null
+          challenges: Json | null
+          company_name: string | null
           content: Json
           created_at: string
+          custom_message: string | null
           id: string
+          internal_resources: Json | null
+          persuasion_level: string | null
+          primary_goal: string | null
+          proposal_tone: string | null
+          recommended_strategies: Json | null
+          services: Json | null
           status: string
+          strengths: Json | null
+          success_metrics: Json | null
+          target_audience: Json | null
+          timeframe: string | null
           title: string
           updated_at: string
           user_id: string
+          website_url: string | null
         }
         Insert: {
+          budget_range?: string | null
+          challenges?: Json | null
+          company_name?: string | null
           content?: Json
           created_at?: string
+          custom_message?: string | null
           id?: string
+          internal_resources?: Json | null
+          persuasion_level?: string | null
+          primary_goal?: string | null
+          proposal_tone?: string | null
+          recommended_strategies?: Json | null
+          services?: Json | null
           status?: string
+          strengths?: Json | null
+          success_metrics?: Json | null
+          target_audience?: Json | null
+          timeframe?: string | null
           title: string
           updated_at?: string
           user_id: string
+          website_url?: string | null
         }
         Update: {
+          budget_range?: string | null
+          challenges?: Json | null
+          company_name?: string | null
           content?: Json
           created_at?: string
+          custom_message?: string | null
           id?: string
+          internal_resources?: Json | null
+          persuasion_level?: string | null
+          primary_goal?: string | null
+          proposal_tone?: string | null
+          recommended_strategies?: Json | null
+          services?: Json | null
           status?: string
+          strengths?: Json | null
+          success_metrics?: Json | null
+          target_audience?: Json | null
+          timeframe?: string | null
           title?: string
           updated_at?: string
           user_id?: string
+          website_url?: string | null
         }
         Relationships: [
           {
