@@ -1,7 +1,8 @@
 project_id = "snhutzqpxhylymkzlhga"
 
 [functions]
-verify_jwt = false
+[functions.verify_jwt]
+verify = false
 
 [[functions.cors]]
 origin = "*"
