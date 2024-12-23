@@ -24,17 +24,17 @@ const ViewProposal = () => {
 
         // Transform the data to match ProposalFormData type
         const transformedData: ProposalFormData = {
-          title: data.title || '',
-          company_name: data.company_name || '',
-          website_url: data.website_url || '',
-          primary_goal: data.primary_goal || '',
-          budget_range: data.budget_range || '',
-          proposal_tone: data.proposal_tone || '',
-          custom_message: data.custom_message || '',
-          persuasion_level: data.persuasion_level || '',
-          content: data.content || '',
-          reasons_to_work_with: data.reasons_to_work_with || '',
-          timeframe: data.timeframe || '',
+          title: String(data.title || ''),
+          company_name: String(data.company_name || ''),
+          website_url: String(data.website_url || ''),
+          primary_goal: String(data.primary_goal || ''),
+          budget_range: String(data.budget_range || ''),
+          proposal_tone: String(data.proposal_tone || ''),
+          custom_message: String(data.custom_message || ''),
+          persuasion_level: String(data.persuasion_level || ''),
+          content: String(data.content || ''),
+          reasons_to_work_with: String(data.reasons_to_work_with || ''),
+          timeframe: String(data.timeframe || ''),
           success_metrics: Array.isArray(data.success_metrics)
             ? data.success_metrics.map((metric: any) => ({
                 id: String(metric.id),
@@ -66,13 +66,16 @@ const ViewProposal = () => {
             ? data.internal_resources.map(String) 
             : [],
           target_audience: {
-            demographics: typeof data.target_audience === 'object' && data.target_audience !== null 
-              ? String(data.target_audience.demographics || '')
+            demographics: typeof data.target_audience === 'object' && 
+                         data.target_audience !== null &&
+                         'demographics' in data.target_audience
+              ? String(data.target_audience.demographics)
               : '',
             interests: typeof data.target_audience === 'object' && 
                       data.target_audience !== null &&
-                      Array.isArray((data.target_audience as any).interests)
-              ? (data.target_audience as any).interests.map(String)
+                      'interests' in data.target_audience &&
+                      Array.isArray(data.target_audience.interests)
+              ? data.target_audience.interests.map(String)
               : []
           }
         };
