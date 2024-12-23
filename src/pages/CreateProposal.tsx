@@ -1,139 +1,96 @@
-import { useState } from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { CrawlForm } from "@/components/CrawlForm";
-import { Card } from "@/components/ui/card";
-import { ArrowLeft, Loader2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Textarea } from "@/components/ui/textarea";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+interface ProposalForm {
+  title: string;
+  content: string;
+}
 
 const CreateProposal = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    companyName: "",
-    pricingTier: "",
-    goal: "",
-    timeframe: "",
-  });
+  const form = useForm<ProposalForm>();
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/auth");
+      }
+    };
+    checkAuth();
+  }, [navigate]);
+
+  const onSubmit = async (data: ProposalForm) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { error } = await supabase.from("proposals").insert({
+        title: data.title,
+        content: { text: data.content },
+        user_id: user.id,
+      });
+
+      if (error) throw error;
+
+      toast.success("Proposal created successfully!");
+      navigate("/");
+    } catch (error) {
+      console.error("Error creating proposal:", error);
+      toast.error("Failed to create proposal");
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 py-12">
-      <div className="container max-w-4xl mx-auto px-4">
-        <Button
-          variant="ghost"
-          className="mb-8"
-          onClick={() => navigate("/")}
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Home
-        </Button>
-
-        <Card className="p-6 shadow-lg">
-          <h1 className="text-3xl font-bold text-primary mb-8">Create New Proposal</h1>
-
-          <div className="space-y-6">
-            <div>
-              <Label htmlFor="companyName">Company Name</Label>
-              <Input
-                id="companyName"
-                value={formData.companyName}
-                onChange={(e) => handleInputChange("companyName", e.target.value)}
-                className="mt-1"
-                placeholder="Enter client company name"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="pricingTier">Pricing Tier</Label>
-              <Select
-                value={formData.pricingTier}
-                onValueChange={(value) => handleInputChange("pricingTier", value)}
-              >
-                <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Select pricing tier" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="starter">Starter ($1,000/mo)</SelectItem>
-                  <SelectItem value="growth">Growth ($2,500/mo)</SelectItem>
-                  <SelectItem value="enterprise">Enterprise ($5,000+/mo)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="goal">Primary Goal</Label>
-              <Select
-                value={formData.goal}
-                onValueChange={(value) => handleInputChange("goal", value)}
-              >
-                <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Select primary goal" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="revenue">Revenue Growth</SelectItem>
-                  <SelectItem value="leads">Lead Generation</SelectItem>
-                  <SelectItem value="awareness">Brand Awareness</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="timeframe">Project Timeframe</Label>
-              <Select
-                value={formData.timeframe}
-                onValueChange={(value) => handleInputChange("timeframe", value)}
-              >
-                <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Select timeframe" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="3">3 Months</SelectItem>
-                  <SelectItem value="6">6 Months</SelectItem>
-                  <SelectItem value="12">12 Months</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="mt-8">
-              <h2 className="text-xl font-semibold mb-4">Website Analysis</h2>
-              <CrawlForm />
-            </div>
-
-            <Button
-              className="w-full mt-8"
-              size="lg"
-              disabled={isLoading}
-              onClick={() => {
-                // TODO: Implement proposal generation
-                setIsLoading(true);
-              }}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating Proposal...
-                </>
-              ) : (
-                "Generate Proposal"
-              )}
+    <div className="container max-w-2xl py-10">
+      <h1 className="text-2xl font-bold mb-8">Create New Proposal</h1>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Title</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter proposal title" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="content"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Content</FormLabel>
+                <FormControl>
+                  <Textarea 
+                    placeholder="Write your proposal content here..."
+                    className="min-h-[200px]"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div className="flex justify-end gap-4">
+            <Button type="button" variant="outline" onClick={() => navigate("/")}>
+              Cancel
             </Button>
+            <Button type="submit">Create Proposal</Button>
           </div>
-        </Card>
-      </div>
+        </form>
+      </Form>
     </div>
   );
 };
