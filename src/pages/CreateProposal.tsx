@@ -60,6 +60,12 @@ const CreateProposal = () => {
         value: metric.value
       }));
 
+      // Transform testimonials to a JSON-compatible format
+      const transformedTestimonials = data.testimonials?.map(testimonial => ({
+        text: testimonial.text,
+        client: testimonial.client
+      }));
+
       const { error } = await supabase.from("proposals").insert({
         title: data.title,
         company_name: data.company_name,
@@ -82,7 +88,7 @@ const CreateProposal = () => {
         awards_recognitions: data.awards_recognitions,
         relevant_experience: data.relevant_experience,
         guarantees: data.guarantees,
-        testimonials: data.testimonials,
+        testimonials: transformedTestimonials,
         user_id: user.id,
         status: 'draft'
       });
