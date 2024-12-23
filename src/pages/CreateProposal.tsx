@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ interface ProposalForm {
 const CreateProposal = () => {
   const navigate = useNavigate();
   const form = useForm<ProposalForm>();
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -48,6 +49,43 @@ const CreateProposal = () => {
     }
   };
 
+  const generateWithAI = async () => {
+    try {
+      setIsGenerating(true);
+      const topic = form.getValues("title");
+      
+      if (!topic) {
+        toast.error("Please enter a topic first");
+        return;
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-proposal`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({ topic }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to generate proposal");
+
+      const data = await response.json();
+      
+      form.setValue("title", data.title);
+      form.setValue("content", data.content);
+      toast.success("Proposal generated successfully!");
+    } catch (error) {
+      console.error("Error generating proposal:", error);
+      toast.error("Failed to generate proposal");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return (
     <div className="container max-w-2xl py-10">
       <h1 className="text-2xl font-bold mb-8">Create New Proposal</h1>
@@ -58,10 +96,20 @@ const CreateProposal = () => {
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter proposal title" {...field} />
-                </FormControl>
+                <FormLabel>Title or Topic</FormLabel>
+                <div className="flex gap-2">
+                  <FormControl>
+                    <Input placeholder="Enter proposal title or topic" {...field} />
+                  </FormControl>
+                  <Button 
+                    type="button" 
+                    variant="secondary"
+                    onClick={generateWithAI}
+                    disabled={isGenerating}
+                  >
+                    {isGenerating ? "Generating..." : "Generate with AI"}
+                  </Button>
+                </div>
                 <FormMessage />
               </FormItem>
             )}
