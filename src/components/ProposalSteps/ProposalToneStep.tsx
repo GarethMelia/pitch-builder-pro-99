@@ -64,7 +64,7 @@ export function ProposalToneStep({
                   min={0}
                   max={100}
                   step={1}
-                  value={[parseInt(field.value || "0")]}
+                  value={[field.value ? parseInt(field.value) : 0]}
                   onValueChange={(value) => field.onChange(value[0].toString())}
                   className="w-full"
                 />
