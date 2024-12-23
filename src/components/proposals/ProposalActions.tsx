@@ -13,9 +13,11 @@ import { useNavigate } from "react-router-dom";
 interface ProposalActionsProps {
   proposalId: string;
   onDelete: () => void;
+  onDuplicate: () => void;
+  onEdit: () => void;
 }
 
-export function ProposalActions({ proposalId, onDelete }: ProposalActionsProps) {
+export function ProposalActions({ proposalId, onDelete, onDuplicate, onEdit }: ProposalActionsProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const navigate = useNavigate();
 
@@ -29,7 +31,7 @@ export function ProposalActions({ proposalId, onDelete }: ProposalActionsProps) 
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => navigate(`/edit/${proposalId}`)}>
+          <DropdownMenuItem onClick={onEdit}>
             <FileEdit className="mr-2 h-4 w-4" />
             Edit
           </DropdownMenuItem>
@@ -37,9 +39,7 @@ export function ProposalActions({ proposalId, onDelete }: ProposalActionsProps) 
             <FileText className="mr-2 h-4 w-4" />
             View PDF
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => navigate(`/duplicate/${proposalId}`)}
-          >
+          <DropdownMenuItem onClick={onDuplicate}>
             <Copy className="mr-2 h-4 w-4" />
             Duplicate
           </DropdownMenuItem>

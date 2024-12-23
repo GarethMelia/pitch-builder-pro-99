@@ -32,18 +32,25 @@ const ViewProposal = () => {
             : [],
           testimonials: Array.isArray(data.testimonials)
             ? data.testimonials.map((testimonial: any) => ({
-                text: testimonial.text,
-                client: testimonial.client
+                text: String(testimonial.text),
+                client: String(testimonial.client)
               }))
             : [],
-          services: Array.isArray(data.services) ? data.services : [],
-          challenges: Array.isArray(data.challenges) ? data.challenges : [],
-          strengths: Array.isArray(data.strengths) ? data.strengths : [],
-          recommended_strategies: Array.isArray(data.recommended_strategies) ? data.recommended_strategies : [],
-          awards_recognitions: Array.isArray(data.awards_recognitions) ? data.awards_recognitions : [],
-          relevant_experience: Array.isArray(data.relevant_experience) ? data.relevant_experience : [],
-          guarantees: Array.isArray(data.guarantees) ? data.guarantees : [],
-          target_audience: typeof data.target_audience === 'object' ? data.target_audience : {},
+          services: Array.isArray(data.services) ? data.services.map(String) : [],
+          challenges: Array.isArray(data.challenges) ? data.challenges.map(String) : [],
+          strengths: Array.isArray(data.strengths) ? data.strengths.map(String) : [],
+          recommended_strategies: Array.isArray(data.recommended_strategies) ? data.recommended_strategies.map(String) : [],
+          awards_recognitions: Array.isArray(data.awards_recognitions) ? data.awards_recognitions.map(String) : [],
+          relevant_experience: Array.isArray(data.relevant_experience) ? data.relevant_experience.map(String) : [],
+          guarantees: Array.isArray(data.guarantees) ? data.guarantees.map(String) : [],
+          target_audience: {
+            demographics: typeof data.target_audience === 'object' && data.target_audience !== null 
+              ? String(data.target_audience.demographics || '')
+              : '',
+            interests: Array.isArray(data.target_audience?.interests) 
+              ? data.target_audience.interests.map(String)
+              : []
+          }
         };
 
         setProposal(transformedData);

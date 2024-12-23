@@ -36,7 +36,7 @@ export function ProposalTable({ proposals, onDelete, onDuplicate, onEdit }: Prop
               <TableCell>{new Date(proposal.updated_at).toLocaleDateString()}</TableCell>
               <TableCell>
                 <ProposalActions
-                  proposal={proposal}
+                  proposalId={proposal.id}
                   onDelete={() => onDelete(proposal.id)}
                   onDuplicate={() => onDuplicate(proposal)}
                   onEdit={() => onEdit(proposal.id)}
