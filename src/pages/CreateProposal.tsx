@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 import { CompanyInfoStep } from "@/components/ProposalSteps/CompanyInfoStep";
 import { ProjectScopeStep } from "@/components/ProposalSteps/ProjectScopeStep";
+import { MetricsStep } from "@/components/ProposalSteps/MetricsStep";
 import { ProposalFormData } from "@/types/proposal";
 
 const TOTAL_STEPS = 8;
@@ -89,7 +90,8 @@ const CreateProposal = () => {
         return <CompanyInfoStep form={form} />;
       case 2:
         return <ProjectScopeStep form={form} />;
-      // Additional steps will be added here
+      case 3:
+        return <MetricsStep form={form} />;
       default:
         return null;
     }
