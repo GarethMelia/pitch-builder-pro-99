@@ -22,66 +22,7 @@ serve(async (req) => {
       throw new Error('OpenAI API key is not configured');
     }
 
-    const prompt = `
-      You are tasked with writing a compelling and professionally formatted proposal that persuades the client to move forward with the project. Use the inputs provided in the questionnaire and insights derived from the company's website to tailor the proposal.
-
-      COMPANY INFORMATION:
-      Company Name: ${formData.company_name}
-      Primary Goal: ${formData.primary_goal}
-      Website: ${websiteUrl}
-      Target Audience: ${JSON.stringify(formData.target_audience)}
-      Services: ${formData.services?.join('\n')}
-      Challenges: ${formData.challenges?.join('\n')}
-      Company Strengths: ${formData.strengths?.join('\n')}
-      Success Metrics: ${JSON.stringify(formData.success_metrics)}
-      Proposal Tone: ${formData.proposal_tone || 'Professional and confident'}
-      Persuasion Level: ${formData.persuasion_level || 'Moderate'}
-      Awards & Recognition: ${formData.awards_recognitions?.join('\n')}
-      Testimonials: ${JSON.stringify(formData.testimonials)}
-      Reasons to Work With Us: ${formData.reasons_to_work_with}
-
-      Key Components to Include:
-
-      1. EXECUTIVE SUMMARY
-      - Provide a concise overview of the proposal's purpose
-      - Highlight the client's primary goals and how this proposal will meet them
-      - End with a strong value statement
-
-      2. UNDERSTANDING THE CLIENT
-      - Summarize insights about their business, goals, and challenges
-      - Demonstrate understanding of their industry and audience
-      - Address specific pain points identified
-
-      3. PROPOSED SOLUTION
-      - Outline specific services, strategies, or tactics
-      - Use results-oriented language with concrete metrics
-      - Include key deliverables and methodologies
-
-      4. WHY CHOOSE US
-      - Highlight unique strengths, awards, and experience
-      - Feature client testimonials
-      - Emphasize guarantees or special commitments
-
-      5. TIMELINE AND MILESTONES
-      - Present clear project phases
-      - Include specific timeframes
-      - Show key deliverables
-
-      6. SUCCESS METRICS AND REPORTING
-      - Detail how success will be measured
-      - Outline specific KPIs and targets
-      - Explain monitoring process
-
-      7. NEXT STEPS
-      - Provide clear call to action
-      - Outline immediate next steps
-      - Include contact information
-
-      Format the response in clear sections with proper headings and professional business language.
-      Make it persuasive and tailored to the client's specific needs.
-    `;
-
-    console.log('Sending request to OpenAI with prompt');
+    console.log('Sending request to OpenAI');
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -98,7 +39,62 @@ serve(async (req) => {
           },
           {
             role: 'user',
-            content: prompt
+            content: `
+              Create a professional business proposal using the following information:
+              
+              COMPANY INFORMATION:
+              Company Name: ${formData.company_name}
+              Primary Goal: ${formData.primary_goal}
+              Website: ${websiteUrl}
+              Target Audience: ${JSON.stringify(formData.target_audience)}
+              Services: ${formData.services?.join('\n')}
+              Challenges: ${formData.challenges?.join('\n')}
+              Company Strengths: ${formData.strengths?.join('\n')}
+              Success Metrics: ${JSON.stringify(formData.success_metrics)}
+              Proposal Tone: ${formData.proposal_tone || 'Professional and confident'}
+              Persuasion Level: ${formData.persuasion_level || 'Moderate'}
+              Awards & Recognition: ${formData.awards_recognitions?.join('\n')}
+              Testimonials: ${JSON.stringify(formData.testimonials)}
+              Reasons to Work With Us: ${formData.reasons_to_work_with}
+
+              Format the proposal with the following sections:
+
+              1. EXECUTIVE SUMMARY
+              - Brief overview
+              - Client's goals
+              - Value proposition
+
+              2. UNDERSTANDING THE CLIENT
+              - Business insights
+              - Industry context
+              - Pain points
+
+              3. PROPOSED SOLUTION
+              - Services and strategies
+              - Expected outcomes
+              - Key deliverables
+
+              4. WHY CHOOSE US
+              - Unique value proposition
+              - Experience and expertise
+              - Client testimonials
+
+              5. TIMELINE AND MILESTONES
+              - Project phases
+              - Key dates
+              - Deliverables schedule
+
+              6. SUCCESS METRICS
+              - KPIs
+              - Measurement approach
+              - Expected outcomes
+
+              7. NEXT STEPS
+              - Clear call to action
+              - Contact information
+              - How to proceed
+
+              Use professional language and format the content clearly with proper headings and subheadings.`
           }
         ],
         temperature: 0.7,
@@ -113,7 +109,7 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    console.log('Received response from OpenAI:', data);
+    console.log('Received response from OpenAI');
 
     if (!data.choices?.[0]?.message?.content) {
       throw new Error('No content received from OpenAI');
