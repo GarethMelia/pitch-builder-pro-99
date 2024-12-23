@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Card } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
 
 interface CrawlResult {
   success: boolean;
@@ -15,9 +16,12 @@ interface CrawlResult {
   data?: any[];
 }
 
-export const CrawlForm = () => {
+export const CrawlForm = ({ formData, onProposalGenerated }: { 
+  formData: any;
+  onProposalGenerated: (proposal: string) => void;
+}) => {
   const { toast } = useToast();
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState(formData.website_url || '');
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [crawlResult, setCrawlResult] = useState<CrawlResult | null>(null);
@@ -29,7 +33,7 @@ export const CrawlForm = () => {
     setCrawlResult(null);
     
     try {
-      // TODO: Implement Firecrawl integration
+      // First, crawl the website
       toast({
         title: "Website Analysis Started",
         description: "We're analyzing the website content...",
@@ -43,18 +47,46 @@ export const CrawlForm = () => {
         setProgress(currentProgress);
         if (currentProgress >= 100) {
           clearInterval(interval);
-          setIsLoading(false);
-          setCrawlResult({
-            success: true,
-            status: "completed",
-            completed: 10,
-            total: 10,
-            creditsUsed: 1,
-            expiresAt: new Date().toISOString(),
-            data: []
-          });
         }
       }, 500);
+
+      // Mock crawl result for now
+      const mockCrawlResult = {
+        success: true,
+        status: "completed",
+        completed: 10,
+        total: 10,
+        creditsUsed: 1,
+        expiresAt: new Date().toISOString(),
+        data: [
+          {
+            url: url,
+            title: "Homepage",
+            content: "Sample content from website"
+          }
+        ]
+      };
+
+      setCrawlResult(mockCrawlResult);
+
+      // Generate proposal using OpenAI
+      const { data: proposalData, error } = await supabase.functions.invoke('generate-proposal', {
+        body: {
+          websiteData: mockCrawlResult.data,
+          formData: formData
+        }
+      });
+
+      if (error) throw error;
+
+      if (proposalData.formattedProposal) {
+        onProposalGenerated(proposalData.formattedProposal);
+        toast({
+          title: "Success",
+          description: "Proposal generated successfully!",
+          duration: 3000,
+        });
+      }
 
     } catch (error) {
       console.error('Error analyzing website:', error);
@@ -64,6 +96,7 @@ export const CrawlForm = () => {
         variant: "destructive",
         duration: 3000,
       });
+    } finally {
       setIsLoading(false);
     }
   };
@@ -91,7 +124,7 @@ export const CrawlForm = () => {
           disabled={isLoading}
           className="w-full"
         >
-          {isLoading ? "Analyzing..." : "Analyze Website"}
+          {isLoading ? "Analyzing..." : "Analyze Website & Generate Proposal"}
         </Button>
       </form>
 
