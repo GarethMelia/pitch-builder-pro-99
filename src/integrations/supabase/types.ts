@@ -32,23 +32,28 @@ export type Database = {
       }
       proposals: {
         Row: {
+          awards_recognitions: string[] | null
           budget_range: string | null
           challenges: Json | null
           company_name: string | null
           content: Json
           created_at: string
           custom_message: string | null
+          guarantees: string[] | null
           id: string
           internal_resources: Json | null
           persuasion_level: string | null
           primary_goal: string | null
           proposal_tone: string | null
+          reasons_to_work_with: string | null
           recommended_strategies: Json | null
+          relevant_experience: string[] | null
           services: Json | null
           status: string
           strengths: Json | null
           success_metrics: Json | null
           target_audience: Json | null
+          testimonials: Json | null
           timeframe: string | null
           title: string
           updated_at: string
@@ -56,23 +61,28 @@ export type Database = {
           website_url: string | null
         }
         Insert: {
+          awards_recognitions?: string[] | null
           budget_range?: string | null
           challenges?: Json | null
           company_name?: string | null
           content?: Json
           created_at?: string
           custom_message?: string | null
+          guarantees?: string[] | null
           id?: string
           internal_resources?: Json | null
           persuasion_level?: string | null
           primary_goal?: string | null
           proposal_tone?: string | null
+          reasons_to_work_with?: string | null
           recommended_strategies?: Json | null
+          relevant_experience?: string[] | null
           services?: Json | null
           status?: string
           strengths?: Json | null
           success_metrics?: Json | null
           target_audience?: Json | null
+          testimonials?: Json | null
           timeframe?: string | null
           title: string
           updated_at?: string
@@ -80,23 +90,28 @@ export type Database = {
           website_url?: string | null
         }
         Update: {
+          awards_recognitions?: string[] | null
           budget_range?: string | null
           challenges?: Json | null
           company_name?: string | null
           content?: Json
           created_at?: string
           custom_message?: string | null
+          guarantees?: string[] | null
           id?: string
           internal_resources?: Json | null
           persuasion_level?: string | null
           primary_goal?: string | null
           proposal_tone?: string | null
+          reasons_to_work_with?: string | null
           recommended_strategies?: Json | null
+          relevant_experience?: string[] | null
           services?: Json | null
           status?: string
           strengths?: Json | null
           success_metrics?: Json | null
           target_audience?: Json | null
+          testimonials?: Json | null
           timeframe?: string | null
           title?: string
           updated_at?: string

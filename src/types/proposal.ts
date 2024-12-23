@@ -3,6 +3,11 @@ export interface MetricItem {
   value: string;
 }
 
+export interface TestimonialItem {
+  text: string;
+  client: string;
+}
+
 export interface ProposalFormData {
   title: string;
   company_name: string;
@@ -24,4 +29,9 @@ export interface ProposalFormData {
   custom_message?: string;
   persuasion_level: string;
   content: string;
+  reasons_to_work_with?: string;
+  awards_recognitions?: string[];
+  relevant_experience?: string[];
+  guarantees?: string[];
+  testimonials?: TestimonialItem[];
 }

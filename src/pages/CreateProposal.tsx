@@ -12,9 +12,10 @@ import { MetricsStep } from "@/components/ProposalSteps/MetricsStep";
 import { ChallengesStrengthsStep } from "@/components/ProposalSteps/ChallengesStrengthsStep";
 import { StrategiesStep } from "@/components/ProposalSteps/StrategiesStep";
 import { ProposalToneStep } from "@/components/ProposalSteps/ProposalToneStep";
+import { CompanyCredentialsStep } from "@/components/ProposalSteps/CompanyCredentialsStep";
 import { ProposalFormData } from "@/types/proposal";
 
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 7;
 
 const CreateProposal = () => {
   const navigate = useNavigate();
@@ -31,6 +32,11 @@ const CreateProposal = () => {
       strengths: [],
       recommended_strategies: [],
       proposal_tone: "",
+      reasons_to_work_with: "",
+      awards_recognitions: [],
+      relevant_experience: [],
+      guarantees: [],
+      testimonials: [],
     }
   });
 
@@ -72,6 +78,11 @@ const CreateProposal = () => {
         custom_message: data.custom_message,
         persuasion_level: data.persuasion_level,
         content: { text: data.content },
+        reasons_to_work_with: data.reasons_to_work_with,
+        awards_recognitions: data.awards_recognitions,
+        relevant_experience: data.relevant_experience,
+        guarantees: data.guarantees,
+        testimonials: data.testimonials,
         user_id: user.id,
         status: 'draft'
       });
@@ -108,6 +119,8 @@ const CreateProposal = () => {
         return <StrategiesStep form={form} />;
       case 6:
         return <ProposalToneStep form={form} />;
+      case 7:
+        return <CompanyCredentialsStep form={form} />;
       default:
         return null;
     }
