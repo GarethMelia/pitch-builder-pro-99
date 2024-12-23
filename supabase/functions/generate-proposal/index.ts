@@ -35,70 +35,33 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are an expert business proposal writer with years of experience creating winning proposals. You excel at crafting compelling, professional, and persuasive business proposals that are highly personalized to each client\'s needs.'
+            content: `You are an expert business proposal writer. Your task is to create a professional, compelling proposal based on the provided information. Focus on clear value propositions and actionable solutions.`
           },
           {
             role: 'user',
-            content: `
-              Create a professional business proposal using the following information:
+            content: `Create a detailed business proposal using this information:
               
-              COMPANY INFORMATION:
-              Company Name: ${formData.company_name}
-              Primary Goal: ${formData.primary_goal}
+              Company: ${formData.company_name}
               Website: ${websiteUrl}
+              Primary Goal: ${formData.primary_goal}
               Target Audience: ${JSON.stringify(formData.target_audience)}
-              Services: ${formData.services?.join('\n')}
-              Challenges: ${formData.challenges?.join('\n')}
-              Company Strengths: ${formData.strengths?.join('\n')}
-              Success Metrics: ${JSON.stringify(formData.success_metrics)}
-              Proposal Tone: ${formData.proposal_tone || 'Professional and confident'}
-              Persuasion Level: ${formData.persuasion_level || 'Moderate'}
-              Awards & Recognition: ${formData.awards_recognitions?.join('\n')}
-              Testimonials: ${JSON.stringify(formData.testimonials)}
-              Reasons to Work With Us: ${formData.reasons_to_work_with}
-
-              Format the proposal with the following sections:
-
-              1. EXECUTIVE SUMMARY
-              - Brief overview
-              - Client's goals
-              - Value proposition
-
-              2. UNDERSTANDING THE CLIENT
-              - Business insights
-              - Industry context
-              - Pain points
-
-              3. PROPOSED SOLUTION
-              - Services and strategies
-              - Expected outcomes
-              - Key deliverables
-
-              4. WHY CHOOSE US
-              - Unique value proposition
-              - Experience and expertise
-              - Client testimonials
-
-              5. TIMELINE AND MILESTONES
-              - Project phases
-              - Key dates
-              - Deliverables schedule
-
-              6. SUCCESS METRICS
-              - KPIs
-              - Measurement approach
-              - Expected outcomes
-
-              7. NEXT STEPS
-              - Clear call to action
-              - Contact information
-              - How to proceed
-
-              Use professional language and format the content clearly with proper headings and subheadings.`
+              Services Offered: ${formData.services?.join(', ')}
+              Key Challenges: ${formData.challenges?.join(', ')}
+              Company Strengths: ${formData.strengths?.join(', ')}
+              
+              Format the proposal to include:
+              1. Executive Summary
+              2. Understanding of Client Needs
+              3. Proposed Solution
+              4. Implementation Strategy
+              5. Success Metrics
+              6. Why Choose Us
+              
+              Make it professional, persuasive, and focused on value delivery.`
           }
         ],
         temperature: 0.7,
-        max_tokens: 4000
+        max_tokens: 2000,
       }),
     });
 
@@ -109,7 +72,7 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    console.log('Received response from OpenAI');
+    console.log('Received response from OpenAI:', data);
 
     if (!data.choices?.[0]?.message?.content) {
       throw new Error('No content received from OpenAI');
