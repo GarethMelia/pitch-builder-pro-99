@@ -24,6 +24,10 @@ const CreateProposal = () => {
   
   const form = useForm<ProposalFormData>({
     defaultValues: {
+      title: "",
+      company_name: "",
+      website_url: "",
+      primary_goal: "",
       services: [],
       target_audience: {},
       success_metrics: [],
