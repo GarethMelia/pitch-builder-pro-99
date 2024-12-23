@@ -16,6 +16,20 @@ export const CompanyInfoStep = ({ form }: CompanyInfoStepProps) => {
       
       <FormField
         control={form.control}
+        name="title"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Proposal Title</FormLabel>
+            <FormControl>
+              <Input placeholder="Enter proposal title" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
         name="company_name"
         render={({ field }) => (
           <FormItem>
