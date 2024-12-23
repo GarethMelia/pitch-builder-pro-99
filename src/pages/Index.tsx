@@ -7,7 +7,16 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-end mb-8">
+          <Button
+            variant="outline"
+            onClick={() => navigate("/auth")}
+            className="mr-4"
+          >
+            Sign In
+          </Button>
+        </div>
         <div className="text-center animate-fadeIn">
           <h1 className="text-5xl font-bold text-primary mb-6">
             AI-Powered Proposal Generator
@@ -17,7 +26,7 @@ const Index = () => {
             and your expertise.
           </p>
           <Button
-            onClick={() => navigate("/create")}
+            onClick={() => navigate("/auth")}
             size="lg"
             className="bg-accent hover:bg-accent/90 text-white px-8 py-6 text-lg rounded-full"
           >
