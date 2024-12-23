@@ -16,9 +16,14 @@ serve(async (req) => {
 
   try {
     const { websiteUrl, formData } = await req.json();
+    console.log('Received request with data:', { websiteUrl, formData });
+
+    if (!openAIApiKey) {
+      throw new Error('OpenAI API key is not configured');
+    }
 
     const prompt = `
-      You are tasked with writing a compelling and professionally formatted proposal that persuades the client to move forward with the project. Use the provided information to create a tailored, persuasive proposal.
+      You are tasked with writing a compelling and professionally formatted proposal that persuades the client to move forward with the project. Use the inputs provided in the questionnaire and insights derived from the company's website to tailor the proposal.
 
       COMPANY INFORMATION:
       Company Name: ${formData.company_name}
@@ -35,7 +40,7 @@ serve(async (req) => {
       Testimonials: ${JSON.stringify(formData.testimonials)}
       Reasons to Work With Us: ${formData.reasons_to_work_with}
 
-      Structure the proposal with the following sections:
+      Key Components to Include:
 
       1. EXECUTIVE SUMMARY
       - Provide a concise overview of the proposal's purpose
@@ -43,64 +48,40 @@ serve(async (req) => {
       - End with a strong value statement
 
       2. UNDERSTANDING THE CLIENT
-      - Demonstrate deep understanding of their business, goals, and challenges
-      - Show industry expertise and knowledge of their target audience
+      - Summarize insights about their business, goals, and challenges
+      - Demonstrate understanding of their industry and audience
       - Address specific pain points identified
 
       3. PROPOSED SOLUTION
-      - Detail specific services and strategies to achieve their goals
+      - Outline specific services, strategies, or tactics
       - Use results-oriented language with concrete metrics
-      - Outline key deliverables and methodologies
-      - Include implementation approach
+      - Include key deliverables and methodologies
 
       4. WHY CHOOSE US
-      - Highlight company credentials and unique value proposition
-      - Showcase relevant experience and success stories
-      - Feature client testimonials and awards
-      - Emphasize any guarantees or special commitments
+      - Highlight unique strengths, awards, and experience
+      - Feature client testimonials
+      - Emphasize guarantees or special commitments
 
       5. TIMELINE AND MILESTONES
-      - Present clear project phases and deliverables
-      - Include specific timeframes where possible
-      - Show key milestones and outcomes
+      - Present clear project phases
+      - Include specific timeframes
+      - Show key deliverables
 
       6. SUCCESS METRICS AND REPORTING
       - Detail how success will be measured
       - Outline specific KPIs and targets
-      - Explain monitoring and reporting process
+      - Explain monitoring process
 
       7. NEXT STEPS
       - Provide clear call to action
       - Outline immediate next steps
-      - Include contact information and response timeframes
-
-      Formatting Guidelines:
-      - Use clear headings and subheadings
-      - Include bullet points for easy scanning
-      - Keep paragraphs concise and focused
-      - Use professional business language
-      - Maintain consistent formatting throughout
-
-      Style Requirements:
-      - Professional yet approachable tone
-      - Results-focused language
-      - Data-driven where possible
-      - Highly personalized to the client
-      - Confident but not aggressive
-      - Clear and jargon-free
-      
-      The proposal should be:
-      - Highly tailored to their specific needs and industry
-      - Professional and polished in presentation
-      - Focused on concrete outcomes and ROI
-      - Clear and easy to understand
-      - Persuasive without being pushy
-      - Backed by data and evidence where possible
+      - Include contact information
 
       Format the response in clear sections with proper headings and professional business language.
+      Make it persuasive and tailored to the client's specific needs.
     `;
 
-    console.log('Generating proposal with prompt:', prompt);
+    console.log('Sending request to OpenAI with prompt');
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -109,11 +90,11 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
-            content: 'You are an expert business proposal writer with years of experience creating winning proposals. You excel at crafting compelling, professional, and persuasive business proposals that are highly personalized to each client\'s needs. Your proposals consistently achieve high conversion rates by focusing on client value and concrete outcomes.'
+            content: 'You are an expert business proposal writer with years of experience creating winning proposals. You excel at crafting compelling, professional, and persuasive business proposals that are highly personalized to each client\'s needs.'
           },
           {
             role: 'user',
@@ -125,7 +106,19 @@ serve(async (req) => {
       }),
     });
 
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('OpenAI API error:', error);
+      throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`);
+    }
+
     const data = await response.json();
+    console.log('Received response from OpenAI:', data);
+
+    if (!data.choices?.[0]?.message?.content) {
+      throw new Error('No content received from OpenAI');
+    }
+
     const formattedProposal = data.choices[0].message.content;
 
     return new Response(JSON.stringify({ formattedProposal }), {
@@ -133,7 +126,10 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error('Error in generate-proposal function:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ 
+      error: error.message,
+      details: error.toString()
+    }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
