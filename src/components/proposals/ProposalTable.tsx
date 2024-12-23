@@ -37,9 +37,9 @@ export function ProposalTable({ proposals, onDelete, onDuplicate, onEdit }: Prop
               <TableCell>
                 <ProposalActions
                   proposal={proposal}
-                  onDelete={onDelete}
-                  onDuplicate={onDuplicate}
-                  onEdit={onEdit}
+                  onDelete={() => onDelete(proposal.id)}
+                  onDuplicate={() => onDuplicate(proposal)}
+                  onEdit={() => onEdit(proposal.id)}
                 />
               </TableCell>
             </TableRow>

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { ProposalPDF } from '@/components/ProposalPDF';
-import { ProposalFormData } from '@/types/proposal';
+import { ProposalFormData, MetricItem } from '@/types/proposal';
 import { toast } from 'sonner';
 
 const ViewProposal = () => {
@@ -20,7 +20,33 @@ const ViewProposal = () => {
           .single();
 
         if (error) throw error;
-        setProposal(data as ProposalFormData);
+
+        // Transform the data to match ProposalFormData type
+        const transformedData: ProposalFormData = {
+          ...data,
+          success_metrics: Array.isArray(data.success_metrics) 
+            ? data.success_metrics.map((metric: any) => ({
+                id: metric.id,
+                value: metric.value
+              }))
+            : [],
+          testimonials: Array.isArray(data.testimonials)
+            ? data.testimonials.map((testimonial: any) => ({
+                text: testimonial.text,
+                client: testimonial.client
+              }))
+            : [],
+          services: Array.isArray(data.services) ? data.services : [],
+          challenges: Array.isArray(data.challenges) ? data.challenges : [],
+          strengths: Array.isArray(data.strengths) ? data.strengths : [],
+          recommended_strategies: Array.isArray(data.recommended_strategies) ? data.recommended_strategies : [],
+          awards_recognitions: Array.isArray(data.awards_recognitions) ? data.awards_recognitions : [],
+          relevant_experience: Array.isArray(data.relevant_experience) ? data.relevant_experience : [],
+          guarantees: Array.isArray(data.guarantees) ? data.guarantees : [],
+          target_audience: typeof data.target_audience === 'object' ? data.target_audience : {},
+        };
+
+        setProposal(transformedData);
       } catch (error) {
         console.error('Error fetching proposal:', error);
         toast.error('Failed to load proposal');
