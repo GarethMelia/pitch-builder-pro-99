@@ -1,9 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { FirecrawlApp } from "npm:@mendable/firecrawl-js";
 
 const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
-const firecrawlApiKey = Deno.env.get('FIRECRAWL_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -19,48 +17,49 @@ serve(async (req) => {
   try {
     const { websiteUrl, formData } = await req.json();
 
-    // Initialize Firecrawl
-    const firecrawl = new FirecrawlApp({ apiKey: firecrawlApiKey });
-    
-    // Crawl website
-    const crawlResult = await firecrawl.crawlUrl(websiteUrl, {
-      limit: 5,
-      scrapeOptions: {
-        formats: ['markdown']
-      }
-    });
-
-    const websiteContent = crawlResult.data?.map(page => page.markdown).join('\n\n');
-
+    // Create a detailed prompt for the proposal
     const prompt = `
-      Create a professional business proposal using the following information:
-      
-      Company Information:
-      - Company Name: ${formData.company_name}
-      - Primary Goal: ${formData.primary_goal}
-      - Website: ${websiteUrl}
-      
-      Website Analysis:
-      ${websiteContent}
-      
-      Additional Context:
-      - Target Audience: ${JSON.stringify(formData.target_audience)}
-      - Challenges: ${formData.challenges?.join(', ')}
-      - Strengths: ${formData.strengths?.join(', ')}
-      
-      Proposal Structure:
-      1. Executive Summary
-      2. Company Overview
-      3. Problem Statement
-      4. Proposed Solutions
-      5. Detailed Service Offerings
-      6. Implementation Strategy
-      7. Success Metrics
-      8. Why Choose Us
-      9. Next Steps
+      As an expert business proposal writer, create a compelling and professional business proposal using the following information:
 
-      Use a professional and persuasive tone. Highlight the company's unique strengths and how they address the target audience's needs.
+      COMPANY INFORMATION:
+      Company Name: ${formData.company_name}
+      Primary Goal: ${formData.primary_goal}
+      Website: ${websiteUrl}
+
+      TARGET AUDIENCE:
+      ${JSON.stringify(formData.target_audience)}
+
+      SERVICES TO BE PROVIDED:
+      ${formData.services?.join('\n')}
+
+      CHALLENGES TO ADDRESS:
+      ${formData.challenges?.join('\n')}
+
+      COMPANY STRENGTHS:
+      ${formData.strengths?.join('\n')}
+
+      PROPOSAL TONE: ${formData.proposal_tone || 'Professional and confident'}
+      PERSUASION LEVEL: ${formData.persuasion_level || 'Moderate'}
+
+      Please write a comprehensive business proposal that includes:
+
+      1. An engaging executive summary that highlights our understanding of their needs and our unique value proposition
+      2. A detailed breakdown of our proposed solutions and how they address the client's specific challenges
+      3. Clear success metrics and expected outcomes
+      4. A compelling section about why they should choose us, incorporating our strengths and relevant experience
+      5. Implementation timeline and next steps
+
+      The proposal should be:
+      - Highly personalized to their needs
+      - Professional yet engaging
+      - Focused on value and outcomes
+      - Clear and well-structured
+      - Persuasive without being pushy
+
+      Format the response in clear sections with proper headings and professional business language.
     `;
+
+    console.log('Generating proposal with prompt:', prompt);
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -73,13 +72,14 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are an expert business proposal writer creating comprehensive, persuasive proposals.'
+            content: 'You are an expert business proposal writer with years of experience creating winning proposals. You excel at crafting compelling, professional, and persuasive business proposals that are highly personalized to each client\'s needs.'
           },
           {
             role: 'user',
             content: prompt
           }
         ],
+        temperature: 0.7,
         max_tokens: 2000
       }),
     });
