@@ -1,21 +1,71 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, FileText, Globe, Zap } from "lucide-react";
+import { ArrowRight, FileText, Globe, Zap, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsAuthenticated(!!session);
+    };
+    
+    checkUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast({
+        title: "Signed out successfully",
+        duration: 2000,
+      });
+      navigate("/auth");
+    } catch (error) {
+      toast({
+        title: "Error signing out",
+        variant: "destructive",
+        duration: 2000,
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-end mb-8">
-          <Button
-            variant="outline"
-            onClick={() => navigate("/auth")}
-            className="mr-4"
-          >
-            Sign In
-          </Button>
+          {isAuthenticated ? (
+            <Button
+              variant="outline"
+              onClick={handleSignOut}
+              className="mr-4"
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Sign Out
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              onClick={() => navigate("/auth")}
+              className="mr-4"
+            >
+              Sign In
+            </Button>
+          )}
         </div>
         <div className="text-center animate-fadeIn">
           <h1 className="text-5xl font-bold text-primary mb-6">
@@ -26,11 +76,11 @@ const Index = () => {
             and your expertise.
           </p>
           <Button
-            onClick={() => navigate("/auth")}
+            onClick={() => navigate(isAuthenticated ? "/create" : "/auth")}
             size="lg"
             className="bg-accent hover:bg-accent/90 text-white px-8 py-6 text-lg rounded-full"
           >
-            Create Your First Proposal
+            {isAuthenticated ? "Create Your First Proposal" : "Sign In to Get Started"}
             <ArrowRight className="ml-2" />
           </Button>
         </div>
