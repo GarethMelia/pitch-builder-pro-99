@@ -1,5 +1,5 @@
 import { UseFormReturn } from "react-hook-form";
-import { ProposalFormData } from "@/types/proposal";
+import { ProposalFormData, MetricItem } from "@/types/proposal";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -55,27 +55,27 @@ export const MetricsStep = ({ form }: MetricsStepProps) => {
               <div key={metric.id} className="flex flex-col space-y-2">
                 <div className="flex items-center space-x-2">
                   <Checkbox
-                    checked={field.value?.some(m => m.id === metric.id)}
+                    checked={field.value?.some((m: MetricItem) => m.id === metric.id)}
                     onCheckedChange={(checked) => {
                       const currentMetrics = field.value || [];
                       if (checked) {
                         field.onChange([...currentMetrics, { id: metric.id, value: "" }]);
                       } else {
-                        field.onChange(currentMetrics.filter(m => m.id !== metric.id));
+                        field.onChange(currentMetrics.filter((m: MetricItem) => m.id !== metric.id));
                       }
                     }}
                   />
                   <Label htmlFor={metric.id}>{metric.label}</Label>
                 </div>
-                {field.value?.some(m => m.id === metric.id) && (
+                {field.value?.some((m: MetricItem) => m.id === metric.id) && (
                   <div className="ml-6">
                     <Input
                       id={metric.valueField}
                       placeholder={metric.placeholder}
-                      value={field.value.find(m => m.id === metric.id)?.value || ""}
+                      value={field.value.find((m: MetricItem) => m.id === metric.id)?.value || ""}
                       onChange={(e) => {
                         const currentMetrics = field.value || [];
-                        const updatedMetrics = currentMetrics.map(m => 
+                        const updatedMetrics = currentMetrics.map((m: MetricItem) => 
                           m.id === metric.id ? { ...m, value: e.target.value } : m
                         );
                         field.onChange(updatedMetrics);

@@ -1,3 +1,8 @@
+export interface MetricItem {
+  id: string;
+  value: string;
+}
+
 export interface ProposalFormData {
   title: string;
   company_name: string;
@@ -9,7 +14,7 @@ export interface ProposalFormData {
     interests?: string[];
   };
   timeframe: string;
-  success_metrics: string[];
+  success_metrics: MetricItem[];
   budget_range: string;
   internal_resources: string[];
   challenges: string[];
