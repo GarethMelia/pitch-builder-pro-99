@@ -9,6 +9,41 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Navigation Bar */}
+      <nav className="bg-white border-b">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center">
+              <Link to="/" className="text-xl font-bold text-primary">
+                Pitch Builder Pro
+              </Link>
+              <div className="hidden md:flex ml-10 space-x-8">
+                <Link to="/about" className="text-gray-600 hover:text-gray-900">About</Link>
+                <Link to="/features" className="text-gray-600 hover:text-gray-900">Features</Link>
+                <Link to="/pricing" className="text-gray-600 hover:text-gray-900">Pricing</Link>
+                <Link to="/blog" className="text-gray-600 hover:text-gray-900">Blog</Link>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4">
+              {!user ? (
+                <>
+                  <Button variant="outline" onClick={() => navigate("/auth")}>
+                    Sign In
+                  </Button>
+                  <Button onClick={() => navigate("/auth")}>
+                    Sign Up
+                  </Button>
+                </>
+              ) : (
+                <Button onClick={() => navigate("/create")}>
+                  Dashboard
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section */}
       <section className="relative h-[90vh] flex items-center justify-center bg-gradient-to-r from-primary to-accent overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -107,6 +142,77 @@ export default function Index() {
                   <p className="text-gray-600">Generate your professional proposal in PDF format, ready to send to your clients.</p>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold mb-4">Just hear what they're saying about us</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Our AI-powered tool takes your ideas and turns them into captivating, reader-friendly content that resonates with your audience.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Testimonial 1 */}
+            <div className="bg-white p-6 rounded-lg border">
+              <div className="flex items-center mb-4">
+                <img
+                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330"
+                  alt="Luna Mars"
+                  className="w-12 h-12 rounded-full mr-4"
+                />
+                <div>
+                  <h3 className="font-semibold">Luna Mars</h3>
+                  <p className="text-gray-600">@EntrepreneurJane</p>
+                </div>
+              </div>
+              <p className="text-gray-700 mb-4">
+                "Just started using Pitch Builder Pro and it's a game-changer! The AI-powered proposals and predictions help me stay ahead of market trends."
+              </p>
+              <p className="text-gray-500 text-sm">Mar 8, 2024</p>
+            </div>
+
+            {/* Testimonial 2 */}
+            <div className="bg-white p-6 rounded-lg border">
+              <div className="flex items-center mb-4">
+                <img
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e"
+                  alt="Andrew Clerk"
+                  className="w-12 h-12 rounded-full mr-4"
+                />
+                <div>
+                  <h3 className="font-semibold">Andrew Clerk</h3>
+                  <p className="text-gray-600">@andrew-99</p>
+                </div>
+              </div>
+              <p className="text-gray-700 mb-4">
+                "The proposal templates are fantastic. Saved me hours of work and helped me win more clients. The AI suggestions are spot on!"
+              </p>
+              <p className="text-gray-500 text-sm">Jan 3, 2024</p>
+            </div>
+
+            {/* Testimonial 3 */}
+            <div className="bg-white p-6 rounded-lg border">
+              <div className="flex items-center mb-4">
+                <img
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d"
+                  alt="Michael Walker"
+                  className="w-12 h-12 rounded-full mr-4"
+                />
+                <div>
+                  <h3 className="font-semibold">Michael Walker</h3>
+                  <p className="text-gray-600">@EntrepreneurJane</p>
+                </div>
+              </div>
+              <p className="text-gray-700 mb-4">
+                "Professional proposals in minutes instead of hours. The AI understands exactly what my clients need and helps me deliver it."
+              </p>
+              <p className="text-gray-500 text-sm">Feb 8, 2024</p>
             </div>
           </div>
         </div>
