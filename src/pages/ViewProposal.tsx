@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { ProposalPDF } from '@/components/ProposalPDF';
-import { ProposalFormData } from '@/types/proposal';
+import { ProposalFormData, MetricItem, TestimonialItem } from '@/types/proposal';
 import { toast } from 'sonner';
 import { Button } from "@/components/ui/button";
 import { FileDown, FileEdit } from "lucide-react";
+import { Json } from '@/integrations/supabase/types';
 
 const ViewProposal = () => {
   const { id } = useParams();
@@ -36,30 +37,67 @@ const ViewProposal = () => {
           return;
         }
 
-        // Transform the data to match ProposalFormData type
+        // Helper function to safely convert JSON array to string array
+        const toStringArray = (jsonArray: Json[] | null): string[] => {
+          if (!Array.isArray(jsonArray)) return [];
+          return jsonArray.map(item => String(item));
+        };
+
+        // Helper function to safely convert JSON array to MetricItem array
+        const toMetricItems = (jsonArray: Json[] | null): MetricItem[] => {
+          if (!Array.isArray(jsonArray)) return [];
+          return jsonArray.map(item => {
+            if (typeof item === 'object' && item !== null) {
+              return {
+                id: String(item.id || ''),
+                value: String(item.value || '')
+              };
+            }
+            return { id: '', value: '' };
+          });
+        };
+
+        // Helper function to safely convert JSON array to TestimonialItem array
+        const toTestimonialItems = (jsonArray: Json[] | null): TestimonialItem[] => {
+          if (!Array.isArray(jsonArray)) return [];
+          return jsonArray.map(item => {
+            if (typeof item === 'object' && item !== null) {
+              return {
+                text: String(item.text || ''),
+                client: String(item.client || '')
+              };
+            }
+            return { text: '', client: '' };
+          });
+        };
+
+        // Transform the data to match ProposalFormData type with proper type conversion
         const transformedData: ProposalFormData = {
-          title: data.title || '',
-          company_name: data.company_name || '',
-          website_url: data.website_url || '',
-          primary_goal: data.primary_goal || '',
-          services: Array.isArray(data.services) ? data.services : [],
-          target_audience: data.target_audience || {},
-          timeframe: data.timeframe || '',
-          success_metrics: Array.isArray(data.success_metrics) ? data.success_metrics : [],
-          budget_range: data.budget_range || '',
-          internal_resources: Array.isArray(data.internal_resources) ? data.internal_resources : [],
-          challenges: Array.isArray(data.challenges) ? data.challenges : [],
-          strengths: Array.isArray(data.strengths) ? data.strengths : [],
-          recommended_strategies: Array.isArray(data.recommended_strategies) ? data.recommended_strategies : [],
-          proposal_tone: data.proposal_tone || '',
-          custom_message: data.custom_message || '',
-          persuasion_level: data.persuasion_level || '',
-          content: data.content || '',
-          reasons_to_work_with: data.reasons_to_work_with || '',
-          awards_recognitions: Array.isArray(data.awards_recognitions) ? data.awards_recognitions : [],
-          relevant_experience: Array.isArray(data.relevant_experience) ? data.relevant_experience : [],
-          guarantees: Array.isArray(data.guarantees) ? data.guarantees : [],
-          testimonials: Array.isArray(data.testimonials) ? data.testimonials : [],
+          title: String(data.title || ''),
+          company_name: String(data.company_name || ''),
+          website_url: String(data.website_url || ''),
+          primary_goal: String(data.primary_goal || ''),
+          services: toStringArray(data.services as Json[]),
+          target_audience: {
+            demographics: typeof data.target_audience === 'object' ? String(data.target_audience?.demographics || '') : '',
+            interests: Array.isArray(data.target_audience?.interests) ? data.target_audience.interests.map(String) : []
+          },
+          timeframe: String(data.timeframe || ''),
+          success_metrics: toMetricItems(data.success_metrics as Json[]),
+          budget_range: String(data.budget_range || ''),
+          internal_resources: toStringArray(data.internal_resources as Json[]),
+          challenges: toStringArray(data.challenges as Json[]),
+          strengths: toStringArray(data.strengths as Json[]),
+          recommended_strategies: toStringArray(data.recommended_strategies as Json[]),
+          proposal_tone: String(data.proposal_tone || ''),
+          custom_message: String(data.custom_message || ''),
+          persuasion_level: String(data.persuasion_level || ''),
+          content: String(data.content || ''),
+          reasons_to_work_with: String(data.reasons_to_work_with || ''),
+          awards_recognitions: Array.isArray(data.awards_recognitions) ? data.awards_recognitions.map(String) : [],
+          relevant_experience: Array.isArray(data.relevant_experience) ? data.relevant_experience.map(String) : [],
+          guarantees: Array.isArray(data.guarantees) ? data.guarantees.map(String) : [],
+          testimonials: toTestimonialItems(data.testimonials as Json[]),
         };
 
         console.log('Transformed proposal data:', transformedData);
