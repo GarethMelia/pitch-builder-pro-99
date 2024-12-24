@@ -15,18 +15,20 @@ export default function Index() {
       <nav className="bg-white border-b">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center">
+            <div className="flex-1">
               <Link to="/" className="text-xl font-bold text-primary">
                 Pitch Builder Pro
               </Link>
-              <div className="hidden md:flex ml-10 space-x-8">
+            </div>
+            <div className="flex-1">
+              <div className="flex justify-center space-x-8">
                 <Link to="/about" className="text-gray-600 hover:text-gray-900">About</Link>
                 <Link to="/features" className="text-gray-600 hover:text-gray-900">Features</Link>
                 <Link to="/pricing" className="text-gray-600 hover:text-gray-900">Pricing</Link>
                 <Link to="/blog" className="text-gray-600 hover:text-gray-900">Blog</Link>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex-1 flex justify-end space-x-4">
               {!user ? (
                 <>
                   <Button variant="outline" onClick={() => navigate("/auth")}>
