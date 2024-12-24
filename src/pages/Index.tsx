@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { BlogSection } from "@/components/landing/BlogSection";
 import { FooterSection } from "@/components/landing/FooterSection";
+import { PricingSection } from "@/components/landing/PricingSection";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -219,6 +220,9 @@ export default function Index() {
           </div>
         </div>
       </section>
+
+      {/* Pricing Section */}
+      <PricingSection />
 
       {/* Blog Section */}
       <BlogSection />
