@@ -97,9 +97,9 @@ export const PricingSection = () => {
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => handlePricingClick('YOUR_PAY_PER_USE_PRICE_ID', 'payment')}
+              onClick={() => toast.error("Please set up the Pay Per Use price in Stripe first")}
             >
-              Choose Plan
+              Coming Soon
             </Button>
           </div>
 
@@ -134,7 +134,7 @@ export const PricingSection = () => {
             </div>
             <Button
               className="w-full"
-              onClick={() => handlePricingClick('YOUR_PRO_PRICE_ID', 'subscription')}
+              onClick={() => handlePricingClick('price_1QZS02S3o3uyD8gMpwZOP5mo', 'subscription')}
             >
               Get Started
             </Button>
