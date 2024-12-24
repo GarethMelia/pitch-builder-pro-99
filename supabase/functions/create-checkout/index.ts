@@ -8,6 +8,7 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -44,7 +45,7 @@ serve(async (req) => {
       customerId = customers.data[0].id
     }
 
-    // Create checkout session
+    console.log('Creating checkout session...')
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
@@ -59,6 +60,7 @@ serve(async (req) => {
       cancel_url: `${req.headers.get('origin')}/?canceled=true`,
     })
 
+    console.log('Payment session created:', session.id)
     return new Response(
       JSON.stringify({ url: session.url }),
       { 
@@ -67,6 +69,7 @@ serve(async (req) => {
       }
     )
   } catch (error) {
+    console.error('Error creating checkout session:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       { 
