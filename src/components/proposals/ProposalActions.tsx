@@ -17,9 +17,19 @@ interface ProposalActionsProps {
   onEdit: () => void;
 }
 
-export function ProposalActions({ proposalId, onDelete, onDuplicate, onEdit }: ProposalActionsProps) {
+export function ProposalActions({
+  proposalId,
+  onDelete,
+  onDuplicate,
+  onEdit,
+}: ProposalActionsProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const navigate = useNavigate();
+
+  const handleDelete = () => {
+    onDelete();
+    setShowDeleteDialog(false);
+  };
 
   return (
     <>
@@ -53,7 +63,7 @@ export function ProposalActions({ proposalId, onDelete, onDuplicate, onEdit }: P
       <DeleteProposalDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
-        onConfirm={onDelete}
+        onConfirm={handleDelete}
       />
     </>
   );

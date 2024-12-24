@@ -1,3 +1,4 @@
+import React from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -7,6 +8,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
 interface DeleteProposalDialogProps {
@@ -15,7 +17,11 @@ interface DeleteProposalDialogProps {
   onConfirm: () => void;
 }
 
-export function DeleteProposalDialog({ open, onOpenChange, onConfirm }: DeleteProposalDialogProps) {
+export function DeleteProposalDialog({
+  open,
+  onOpenChange,
+  onConfirm,
+}: DeleteProposalDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
@@ -27,7 +33,10 @@ export function DeleteProposalDialog({ open, onOpenChange, onConfirm }: DeletePr
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm} className="bg-destructive text-destructive-foreground">
+          <AlertDialogAction
+            onClick={onConfirm}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
             Delete
           </AlertDialogAction>
         </AlertDialogFooter>
