@@ -37,67 +37,82 @@ const ViewProposal = () => {
           return;
         }
 
-        // Helper function to safely convert JSON array to string array
-        const toStringArray = (jsonArray: Json[] | null): string[] => {
-          if (!Array.isArray(jsonArray)) return [];
-          return jsonArray.map(item => String(item));
+        // Helper function to safely parse JSON array to string array
+        const toStringArray = (value: unknown): string[] => {
+          if (Array.isArray(value)) {
+            return value.map(item => String(item));
+          }
+          return [];
         };
 
-        // Helper function to safely convert JSON array to MetricItem array
-        const toMetricItems = (jsonArray: Json[] | null): MetricItem[] => {
-          if (!Array.isArray(jsonArray)) return [];
-          return jsonArray.map(item => {
-            if (typeof item === 'object' && item !== null) {
-              return {
-                id: String(item.id || ''),
-                value: String(item.value || '')
-              };
-            }
-            return { id: '', value: '' };
-          });
+        // Helper function to safely parse metrics
+        const parseMetrics = (value: unknown): MetricItem[] => {
+          if (Array.isArray(value)) {
+            return value.map(item => {
+              if (typeof item === 'object' && item !== null) {
+                return {
+                  id: String((item as any).id || ''),
+                  value: String((item as any).value || '')
+                };
+              }
+              return { id: '', value: '' };
+            });
+          }
+          return [];
         };
 
-        // Helper function to safely convert JSON array to TestimonialItem array
-        const toTestimonialItems = (jsonArray: Json[] | null): TestimonialItem[] => {
-          if (!Array.isArray(jsonArray)) return [];
-          return jsonArray.map(item => {
-            if (typeof item === 'object' && item !== null) {
-              return {
-                text: String(item.text || ''),
-                client: String(item.client || '')
-              };
-            }
-            return { text: '', client: '' };
-          });
+        // Helper function to safely parse testimonials
+        const parseTestimonials = (value: unknown): TestimonialItem[] => {
+          if (Array.isArray(value)) {
+            return value.map(item => {
+              if (typeof item === 'object' && item !== null) {
+                return {
+                  text: String((item as any).text || ''),
+                  client: String((item as any).client || '')
+                };
+              }
+              return { text: '', client: '' };
+            });
+          }
+          return [];
         };
 
-        // Transform the data to match ProposalFormData type with proper type conversion
+        // Helper function to safely parse target audience
+        const parseTargetAudience = (value: unknown): { demographics?: string; interests?: string[] } => {
+          if (typeof value === 'object' && value !== null) {
+            const audience = value as any;
+            return {
+              demographics: typeof audience.demographics === 'string' ? audience.demographics : '',
+              interests: Array.isArray(audience.interests) ? audience.interests.map(String) : []
+            };
+          }
+          return { demographics: '', interests: [] };
+        };
+
+        // Transform the data to match ProposalFormData type
         const transformedData: ProposalFormData = {
           title: String(data.title || ''),
           company_name: String(data.company_name || ''),
           website_url: String(data.website_url || ''),
           primary_goal: String(data.primary_goal || ''),
-          services: toStringArray(data.services as Json[]),
-          target_audience: {
-            demographics: typeof data.target_audience === 'object' ? String(data.target_audience?.demographics || '') : '',
-            interests: Array.isArray(data.target_audience?.interests) ? data.target_audience.interests.map(String) : []
-          },
+          services: toStringArray(data.services),
+          target_audience: parseTargetAudience(data.target_audience),
           timeframe: String(data.timeframe || ''),
-          success_metrics: toMetricItems(data.success_metrics as Json[]),
+          success_metrics: parseMetrics(data.success_metrics),
           budget_range: String(data.budget_range || ''),
-          internal_resources: toStringArray(data.internal_resources as Json[]),
-          challenges: toStringArray(data.challenges as Json[]),
-          strengths: toStringArray(data.strengths as Json[]),
-          recommended_strategies: toStringArray(data.recommended_strategies as Json[]),
+          internal_resources: toStringArray(data.internal_resources),
+          challenges: toStringArray(data.challenges),
+          strengths: toStringArray(data.strengths),
+          recommended_strategies: toStringArray(data.recommended_strategies),
           proposal_tone: String(data.proposal_tone || ''),
           custom_message: String(data.custom_message || ''),
           persuasion_level: String(data.persuasion_level || ''),
           content: String(data.content || ''),
           reasons_to_work_with: String(data.reasons_to_work_with || ''),
-          awards_recognitions: Array.isArray(data.awards_recognitions) ? data.awards_recognitions.map(String) : [],
-          relevant_experience: Array.isArray(data.relevant_experience) ? data.relevant_experience.map(String) : [],
-          guarantees: Array.isArray(data.guarantees) ? data.guarantees.map(String) : [],
-          testimonials: toTestimonialItems(data.testimonials as Json[]),
+          awards_recognitions: toStringArray(data.awards_recognitions),
+          relevant_experience: toStringArray(data.relevant_experience),
+          guarantees: toStringArray(data.guarantees),
+          testimonials: parseTestimonials(data.testimonials),
         };
 
         console.log('Transformed proposal data:', transformedData);
