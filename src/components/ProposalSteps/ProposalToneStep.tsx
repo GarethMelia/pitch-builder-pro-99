@@ -8,7 +8,7 @@ const TONE_OPTIONS = [
   { value: "professional", label: "Professional and technical" },
   { value: "creative", label: "Creative and innovative" },
   { value: "direct", label: "Direct and results-focused" },
-];
+] as const;
 
 export function ProposalToneStep({
   form,
@@ -27,6 +27,9 @@ export function ProposalToneStep({
       <FormField
         control={form.control}
         name="proposal_tone"
+        rules={{
+          required: "Please select a tone for your proposal",
+        }}
         render={({ field }) => (
           <FormItem>
             <FormLabel>How should the proposal be framed?</FormLabel>
