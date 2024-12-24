@@ -3,6 +3,8 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { NavigationBar } from "@/components/layout/NavigationBar";
+import { FooterSection } from "@/components/landing/FooterSection";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -31,27 +33,31 @@ const Auth = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-gray-50 p-4">
-      <div className="w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-8">Welcome to Pitch Builder Pro</h1>
-        <div className="bg-white p-8 rounded-lg shadow-md">
-          <SupabaseAuth 
-            supabaseClient={supabase}
-            appearance={{ 
-              theme: ThemeSupa,
-              variables: {
-                default: {
-                  colors: {
-                    brand: '#000000',
-                    brandAccent: '#333333',
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      <NavigationBar />
+      <div className="flex items-center justify-center p-4 min-h-[calc(100vh-64px-320px)]">
+        <div className="w-full max-w-md">
+          <h1 className="text-2xl font-bold text-center mb-8">Welcome to Pitch Builder Pro</h1>
+          <div className="bg-white p-8 rounded-lg shadow-md">
+            <SupabaseAuth 
+              supabaseClient={supabase}
+              appearance={{ 
+                theme: ThemeSupa,
+                variables: {
+                  default: {
+                    colors: {
+                      brand: '#000000',
+                      brandAccent: '#333333',
+                    },
                   },
                 },
-              },
-            }}
-            providers={["google"]}
-          />
+              }}
+              providers={["google"]}
+            />
+          </div>
         </div>
       </div>
+      <FooterSection />
     </div>
   );
 };

@@ -1,8 +1,11 @@
 import { PricingSection } from "@/components/landing/PricingSection";
+import { NavigationBar } from "@/components/layout/NavigationBar";
+import { FooterSection } from "@/components/landing/FooterSection";
 
 export default function Pricing() {
   return (
     <div className="min-h-screen bg-white">
+      <NavigationBar />
       {/* Hero Section */}
       <section className="relative py-20 bg-gradient-to-r from-primary to-accent overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -22,6 +25,7 @@ export default function Pricing() {
 
       {/* Pricing Plans */}
       <PricingSection />
+      <FooterSection />
     </div>
   );
 }

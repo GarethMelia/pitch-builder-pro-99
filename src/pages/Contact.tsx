@@ -3,6 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { toast } from "sonner";
+import { NavigationBar } from "@/components/layout/NavigationBar";
+import { FooterSection } from "@/components/landing/FooterSection";
 
 export default function Contact() {
   const handleSubmit = (e: React.FormEvent) => {
@@ -12,6 +14,7 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-white">
+      <NavigationBar />
       {/* Hero Section */}
       <section className="relative py-20 bg-gradient-to-r from-[#243949] to-[#517fa4] overflow-hidden">
         <div className="container mx-auto px-4">
@@ -30,7 +33,6 @@ export default function Contact() {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-16">
-            {/* Contact Information */}
             <div className="space-y-8">
               <h2 className="text-3xl font-bold mb-8">Contact Information</h2>
               <div className="space-y-6">
@@ -96,6 +98,7 @@ export default function Contact() {
           </div>
         </div>
       </section>
+      <FooterSection />
     </div>
   );
 }

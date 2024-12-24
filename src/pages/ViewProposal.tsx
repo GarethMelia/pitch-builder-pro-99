@@ -6,6 +6,8 @@ import { ProposalFormData, MetricItem, TestimonialItem } from '@/types/proposal'
 import { toast } from 'sonner';
 import { Button } from "@/components/ui/button";
 import { FileDown, FileEdit, ArrowLeft } from "lucide-react";
+import { NavigationBar } from "@/components/layout/NavigationBar";
+import { FooterSection } from "@/components/landing/FooterSection";
 
 const ViewProposal = () => {
   const { id } = useParams();
@@ -151,31 +153,35 @@ const ViewProposal = () => {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex items-center mb-6">
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate('/')}
-          className="mr-4"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Home
-        </Button>
-        <h1 className="text-2xl font-bold flex-1">{proposal.title || 'Untitled Proposal'}</h1>
-        <div className="space-x-4">
-          <Button onClick={handleEdit} variant="outline">
-            <FileEdit className="w-4 h-4 mr-2" />
-            Edit Proposal
+    <div className="min-h-screen bg-white">
+      <NavigationBar />
+      <div className="container mx-auto py-8">
+        <div className="flex items-center mb-6">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate('/')}
+            className="mr-4"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Home
           </Button>
-          <Button>
-            <FileDown className="w-4 h-4 mr-2" />
-            Download PDF
-          </Button>
+          <h1 className="text-2xl font-bold flex-1">{proposal.title || 'Untitled Proposal'}</h1>
+          <div className="space-x-4">
+            <Button onClick={handleEdit} variant="outline">
+              <FileEdit className="w-4 h-4 mr-2" />
+              Edit Proposal
+            </Button>
+            <Button>
+              <FileDown className="w-4 h-4 mr-2" />
+              Download PDF
+            </Button>
+          </div>
+        </div>
+        <div className="bg-white rounded-lg shadow-lg">
+          <ProposalPDF data={proposal} />
         </div>
       </div>
-      <div className="bg-white rounded-lg shadow-lg">
-        <ProposalPDF data={proposal} />
-      </div>
+      <FooterSection />
     </div>
   );
 };

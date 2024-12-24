@@ -6,6 +6,8 @@ import { Form } from "@/components/ui/form";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
+import { NavigationBar } from "@/components/layout/NavigationBar";
+import { FooterSection } from "@/components/landing/FooterSection";
 import { CompanyInfoStep } from "@/components/ProposalSteps/CompanyInfoStep";
 import { ProjectScopeStep } from "@/components/ProposalSteps/ProjectScopeStep";
 import { MetricsStep } from "@/components/ProposalSteps/MetricsStep";
@@ -190,51 +192,55 @@ const CreateProposal = () => {
   }
 
   return (
-    <div className="container max-w-3xl py-10">
-      <div className="mb-8">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Create New Proposal</h1>
-          <div className="flex gap-4">
-            <Button variant="outline" onClick={() => navigate("/")}>
-              Back to Website
-            </Button>
-            <Button variant="secondary" onClick={() => navigate("/dashboard")}>
-              Go to Dashboard
-            </Button>
+    <div className="min-h-screen bg-white">
+      <NavigationBar />
+      <div className="container max-w-3xl py-10">
+        <div className="mb-8">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold">Create New Proposal</h1>
+            <div className="flex gap-4">
+              <Button variant="outline" onClick={() => navigate("/")}>
+                Back to Website
+              </Button>
+              <Button variant="secondary" onClick={() => navigate("/dashboard")}>
+                Go to Dashboard
+              </Button>
+            </div>
           </div>
+          <Progress value={(currentStep / TOTAL_STEPS) * 100} className="h-2 mt-4" />
+          <p className="text-sm text-muted-foreground mt-2">
+            Step {currentStep} of {TOTAL_STEPS}
+          </p>
         </div>
-        <Progress value={(currentStep / TOTAL_STEPS) * 100} className="h-2 mt-4" />
-        <p className="text-sm text-muted-foreground mt-2">
-          Step {currentStep} of {TOTAL_STEPS}
-        </p>
-      </div>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {renderStep()}
-          
-          <div className="flex justify-between pt-6">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={prevStep}
-              disabled={currentStep === 1}
-            >
-              Previous
-            </Button>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {renderStep()}
             
-            {currentStep < TOTAL_STEPS ? (
-              <Button type="button" onClick={nextStep}>
-                Next
+            <div className="flex justify-between pt-6">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={prevStep}
+                disabled={currentStep === 1}
+              >
+                Previous
               </Button>
-            ) : (
-              <Button type="submit" disabled={isGenerating}>
-                Create Proposal
-              </Button>
-            )}
-          </div>
-        </form>
-      </Form>
+              
+              {currentStep < TOTAL_STEPS ? (
+                <Button type="button" onClick={nextStep}>
+                  Next
+                </Button>
+              ) : (
+                <Button type="submit" disabled={isGenerating}>
+                  Create Proposal
+                </Button>
+              )}
+            </div>
+          </form>
+        </Form>
+      </div>
+      <FooterSection />
     </div>
   );
 };
