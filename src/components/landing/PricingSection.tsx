@@ -2,17 +2,31 @@ import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const PricingSection = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const handlePricingClick = () => {
+  const handlePricingClick = async (priceId: string, mode: 'payment' | 'subscription') => {
     if (!user) {
       navigate("/auth");
-    } else {
-      // Navigate to billing page or show upgrade modal
-      navigate("/billing");
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { priceId, mode }
+      });
+
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      toast.error("Failed to initiate checkout. Please try again.");
     }
   };
 
@@ -52,7 +66,7 @@ export const PricingSection = () => {
             <Button
               variant="outline"
               className="w-full"
-              onClick={handlePricingClick}
+              onClick={() => navigate(user ? "/create" : "/auth")}
             >
               Get Started
             </Button>
@@ -83,7 +97,7 @@ export const PricingSection = () => {
             <Button
               variant="outline"
               className="w-full"
-              onClick={handlePricingClick}
+              onClick={() => handlePricingClick('YOUR_PAY_PER_USE_PRICE_ID', 'payment')}
             >
               Choose Plan
             </Button>
@@ -120,7 +134,7 @@ export const PricingSection = () => {
             </div>
             <Button
               className="w-full"
-              onClick={handlePricingClick}
+              onClick={() => handlePricingClick('YOUR_PRO_PRICE_ID', 'subscription')}
             >
               Get Started
             </Button>
