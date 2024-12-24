@@ -1,4 +1,5 @@
 import { Award, Users, Zap } from "lucide-react";
+import { FooterSection } from "@/components/landing/FooterSection";
 
 export default function About() {
   return (
@@ -102,6 +103,9 @@ export default function About() {
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <FooterSection />
     </div>
   );
 }
