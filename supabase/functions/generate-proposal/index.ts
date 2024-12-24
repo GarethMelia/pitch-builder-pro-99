@@ -17,6 +17,10 @@ serve(async (req) => {
     const { formData } = await req.json();
     console.log('Received form data:', formData);
 
+    if (!Deno.env.get('OPENAI_API_KEY')) {
+      throw new Error('OpenAI API key not configured');
+    }
+
     // Initialize OpenAI
     const configuration = new Configuration({
       apiKey: Deno.env.get('OPENAI_API_KEY'),
@@ -45,7 +49,7 @@ serve(async (req) => {
       Project Timeframe: ${formData.timeframe || 'Not specified'}
       
       Success Metrics:
-      ${formData.success_metrics?.map((metric: any) => `- ${metric.id}: ${metric.value}`).join('\n') || 'Not specified'}
+      ${formData.success_metrics?.map((metric) => `- ${metric.id}: ${metric.value}`).join('\n') || 'Not specified'}
       
       Company Strengths:
       ${formData.strengths?.join('\n') || 'Not specified'}
@@ -91,12 +95,11 @@ serve(async (req) => {
       max_tokens: 2000
     });
 
-    const formattedProposal = completion.data.choices[0].message?.content;
-
-    if (!formattedProposal) {
+    if (!completion.data?.choices?.[0]?.message?.content) {
       throw new Error('No proposal content generated');
     }
 
+    const formattedProposal = completion.data.choices[0].message.content;
     console.log('Generated proposal:', formattedProposal);
 
     return new Response(
@@ -112,7 +115,10 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in generate-proposal function:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        details: error.toString()
+      }),
       {
         headers: {
           ...corsHeaders,
