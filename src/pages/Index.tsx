@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
+import { BlogSection } from "@/components/landing/BlogSection";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -217,6 +218,9 @@ export default function Index() {
           </div>
         </div>
       </section>
+
+      {/* Blog Section */}
+      <BlogSection />
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-r from-primary to-accent text-white">
