@@ -40,8 +40,8 @@ export const PricingSection = () => {
           </p>
         </div>
 
-      <div className="grid md:grid-cols-4 gap-8 max-w-7xl mx-auto">
-        {/* Free Tier */}
+        <div className="grid md:grid-cols-4 gap-8 max-w-7xl mx-auto">
+          {/* Free Tier */}
           <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200 flex flex-col">
             <div className="mb-8">
               <h3 className="text-xl font-bold mb-2">Free</h3>
@@ -72,38 +72,38 @@ export const PricingSection = () => {
             </Button>
           </div>
 
-        {/* Pay Per Use Tier */}
-        <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200 flex flex-col">
-          <div className="mb-8">
-            <h3 className="text-xl font-bold mb-2">Pay Per Use</h3>
-            <p className="text-gray-600 mb-4">For occasional users</p>
-            <div className="text-3xl font-bold mb-2">$2.50</div>
-            <p className="text-sm text-gray-500">per proposal</p>
+          {/* Pay Per Use Tier */}
+          <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200 flex flex-col">
+            <div className="mb-8">
+              <h3 className="text-xl font-bold mb-2">Pay Per Use</h3>
+              <p className="text-gray-600 mb-4">For occasional users</p>
+              <div className="text-3xl font-bold mb-2">$2.50</div>
+              <p className="text-sm text-gray-500">per proposal</p>
+            </div>
+            <div className="space-y-4 mb-8 flex-grow">
+              <div className="flex items-center">
+                <Check className="h-5 w-5 text-green-500 mr-2" />
+                <span>Pay as you go</span>
+              </div>
+              <div className="flex items-center">
+                <Check className="h-5 w-5 text-green-500 mr-2" />
+                <span>All templates</span>
+              </div>
+              <div className="flex items-center">
+                <Check className="h-5 w-5 text-green-500 mr-2" />
+                <span>Priority email support</span>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => handlePricingClick('price_1QZS3kS3o3uyD8gMUeEzrbZT', 'payment')}
+            >
+              Choose Plan
+            </Button>
           </div>
-          <div className="space-y-4 mb-8 flex-grow">
-            <div className="flex items-center">
-              <Check className="h-5 w-5 text-green-500 mr-2" />
-              <span>Pay as you go</span>
-            </div>
-            <div className="flex items-center">
-              <Check className="h-5 w-5 text-green-500 mr-2" />
-              <span>All templates</span>
-            </div>
-            <div className="flex items-center">
-              <Check className="h-5 w-5 text-green-500 mr-2" />
-              <span>Priority email support</span>
-            </div>
-          </div>
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => handlePricingClick('price_1QZS3kS3o3uyD8gMUeEzrbZT', 'payment')}
-          >
-            Choose Plan
-          </Button>
-        </div>
 
-        {/* Pro Tier */}
+          {/* Pro Tier */}
           <div className="bg-white p-8 rounded-lg shadow-sm border-2 border-primary relative flex flex-col">
             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
               <span className="bg-primary text-white px-3 py-1 rounded-full text-sm">Most Popular</span>
@@ -140,7 +140,7 @@ export const PricingSection = () => {
             </Button>
           </div>
 
-        {/* Enterprise Tier */}
+          {/* Enterprise Tier */}
           <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200 flex flex-col">
             <div className="mb-8">
               <h3 className="text-xl font-bold mb-2">Enterprise</h3>
@@ -174,6 +174,7 @@ export const PricingSection = () => {
               Contact Sales
             </Button>
           </div>
+        </div>
       </div>
     </section>
   );
