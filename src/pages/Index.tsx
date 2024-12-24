@@ -22,9 +22,8 @@ export default function Index() {
               </Link>
               <div className="hidden md:flex ml-10 space-x-8">
                 <Link to="/about" className="text-gray-600 hover:text-gray-900">About</Link>
-                <Link to="/features" className="text-gray-600 hover:text-gray-900">Features</Link>
                 <Link to="/pricing" className="text-gray-600 hover:text-gray-900">Pricing</Link>
-                <Link to="/blog" className="text-gray-600 hover:text-gray-900">Blog</Link>
+                <Link to="/contact" className="text-gray-600 hover:text-gray-900">Contact</Link>
               </div>
             </div>
             <div className="flex items-center space-x-4">
