@@ -18,6 +18,8 @@ export const PricingSection = () => {
     const toastId = toast.loading("Creating checkout session...");
 
     try {
+      console.log('Calling create-checkout function with:', { priceId, mode });
+      
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: { priceId, mode }
       });
@@ -28,6 +30,7 @@ export const PricingSection = () => {
       }
       
       if (data?.url) {
+        console.log('Received checkout URL:', data.url);
         toast.dismiss(toastId);
         window.location.href = data.url;
       } else {
