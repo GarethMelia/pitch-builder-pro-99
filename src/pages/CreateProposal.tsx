@@ -153,9 +153,14 @@ const CreateProposal = () => {
       <div className="container max-w-3xl py-10">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Generate Proposal</h1>
-          <Button variant="outline" onClick={() => navigate("/")}>
-            Back to Dashboard
-          </Button>
+          <div className="flex gap-4">
+            <Button variant="outline" onClick={() => navigate("/")}>
+              Back to Website
+            </Button>
+            <Button variant="secondary" onClick={() => navigate("/dashboard")}>
+              Go to Dashboard
+            </Button>
+          </div>
         </div>
         
         {isGenerating && !generatedProposal && (
@@ -189,9 +194,14 @@ const CreateProposal = () => {
       <div className="mb-8">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Create New Proposal</h1>
-          <Button variant="outline" onClick={() => navigate("/")}>
-            Back to Dashboard
-          </Button>
+          <div className="flex gap-4">
+            <Button variant="outline" onClick={() => navigate("/")}>
+              Back to Website
+            </Button>
+            <Button variant="secondary" onClick={() => navigate("/dashboard")}>
+              Go to Dashboard
+            </Button>
+          </div>
         </div>
         <Progress value={(currentStep / TOTAL_STEPS) * 100} className="h-2 mt-4" />
         <p className="text-sm text-muted-foreground mt-2">
