@@ -17,6 +17,8 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
     setProgress(0);
     
     try {
+      console.log('Form data being sent:', formData); // Debug log
+      
       toast({
         title: "Generating Proposal",
         description: "Our AI expert is crafting your proposal...",
@@ -38,14 +40,15 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
         body: { formData }
       });
 
+      console.log('Response from generate-proposal:', proposalData); // Debug log
+
       if (error) {
         console.error('Error generating proposal:', error);
         throw error;
       }
 
-      console.log('Received proposal data:', proposalData);
-
       if (proposalData?.formattedProposal) {
+        console.log('Generated proposal:', proposalData.formattedProposal); // Debug log
         onProposalGenerated(proposalData.formattedProposal);
         toast({
           title: "Success",
@@ -57,7 +60,7 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
       }
 
     } catch (error) {
-      console.error('Error generating proposal:', error);
+      console.error('Error in handleGenerateProposal:', error);
       toast({
         title: "Error",
         description: "Failed to generate proposal. Please try again.",
@@ -66,6 +69,7 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
       });
     } finally {
       setIsLoading(false);
+      setProgress(0);
     }
   };
 

@@ -1,140 +1,116 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { Configuration, OpenAIApi } from 'https://esm.sh/openai@3.3.0'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+}
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const { formData } = await req.json();
-    console.log('Received form data:', formData);
+    const { formData } = await req.json()
+    console.log('Received form data:', formData)
 
-    if (!openAIApiKey) {
-      throw new Error('OpenAI API key is not configured');
-    }
+    // Initialize OpenAI
+    const configuration = new Configuration({
+      apiKey: Deno.env.get('OPENAI_API_KEY'),
+    })
+    const openai = new OpenAIApi(configuration)
 
-    // Format the services, challenges, and metrics into readable bullet points
-    const services = formData.services?.map((s: string) => `• ${s}`).join('\n') || 'N/A';
-    const challenges = formData.challenges?.map((c: string) => `• ${c}`).join('\n') || 'N/A';
-    const metrics = formData.success_metrics?.map((m: any) => `• ${m.id}: ${m.value}`).join('\n') || 'N/A';
-    const strengths = formData.strengths?.map((s: string) => `• ${s}`).join('\n') || 'N/A';
-    const strategies = formData.recommended_strategies?.map((s: string) => `• ${s}`).join('\n') || 'N/A';
+    // Create a structured prompt from the form data
+    const prompt = `
+      Create a professional business proposal based on the following information:
+      
+      Company Information:
+      - Company Name: ${formData.company_name}
+      - Website: ${formData.website_url}
+      - Primary Goal: ${formData.primary_goal}
+      
+      Services Offered:
+      ${formData.services?.join(', ')}
+      
+      Target Audience:
+      ${JSON.stringify(formData.target_audience)}
+      
+      Project Timeframe: ${formData.timeframe}
+      
+      Success Metrics:
+      ${formData.success_metrics?.map((metric: any) => `- ${metric.id}: ${metric.value}`).join('\n')}
+      
+      Company Strengths:
+      ${formData.strengths?.join('\n')}
+      
+      Challenges to Address:
+      ${formData.challenges?.join('\n')}
+      
+      Recommended Strategies:
+      ${formData.recommended_strategies?.join('\n')}
+      
+      Company Credentials:
+      - Experience: ${formData.relevant_experience?.join('\n')}
+      - Awards: ${formData.awards_recognitions?.join('\n')}
+      - Guarantees: ${formData.guarantees?.join('\n')}
+      
+      Please write a detailed, professional proposal that:
+      1. Introduces the company and establishes credibility
+      2. Clearly outlines the services and solutions
+      3. Demonstrates understanding of the client's needs
+      4. Presents a clear action plan with timelines
+      5. Includes success metrics and guarantees
+      6. Maintains a ${formData.proposal_tone || 'professional'} tone
+      7. Concludes with a clear call to action
+      
+      Format the proposal with clear sections and professional language.
+    `
 
-    console.log('Sending request to OpenAI');
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
+    console.log('Sending prompt to OpenAI:', prompt)
+
+    const completion = await openai.createChatCompletion({
+      model: "gpt-4",
+      messages: [
+        {
+          role: "system",
+          content: "You are an expert business proposal writer with years of experience in creating compelling and successful proposals."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 2000
+    })
+
+    const formattedProposal = completion.data.choices[0].message?.content
+
+    console.log('Generated proposal:', formattedProposal)
+
+    return new Response(
+      JSON.stringify({ formattedProposal }),
+      {
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
+        status: 200,
       },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: `You are an expert business proposal writer with years of experience. 
-            Your task is to create a professional, compelling, and highly personalized proposal 
-            that addresses the client's specific needs and demonstrates clear value.`
-          },
-          {
-            role: 'user',
-            content: `Create a detailed business proposal using this information:
-
-COMPANY PROFILE:
-Company Name: ${formData.company_name}
-Primary Goal: ${formData.primary_goal}
-Target Audience: ${JSON.stringify(formData.target_audience)}
-
-SERVICES AND SOLUTIONS:
-${services}
-
-KEY CHALLENGES TO ADDRESS:
-${challenges}
-
-COMPANY STRENGTHS:
-${strengths}
-
-SUCCESS METRICS:
-${metrics}
-
-RECOMMENDED STRATEGIES:
-${strategies}
-
-Additional Information:
-- Proposal Tone: ${formData.proposal_tone || 'Professional'}
-- Timeline: ${formData.timeframe || 'To be discussed'}
-- Why Choose Us: ${formData.reasons_to_work_with || 'Our expertise and track record'}
-
-Format the proposal with these sections:
-1. Executive Summary
-   - Brief overview of the proposal
-   - Value proposition
-   - Key benefits
-
-2. Understanding Your Needs
-   - Current challenges
-   - Business objectives
-   - Target audience analysis
-
-3. Our Proposed Solution
-   - Detailed service description
-   - Implementation approach
-   - Expected outcomes
-
-4. Implementation Strategy
-   - Timeline and milestones
-   - Key deliverables
-   - Success metrics
-
-5. Why Choose Us
-   - Company strengths
-   - Relevant experience
-   - Unique value proposition
-
-Make the proposal professional, persuasive, and focused on demonstrating clear value 
-to the client. Use clear headings and maintain a confident yet approachable tone.`
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 2500,
-      }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      console.error('OpenAI API error:', error);
-      throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`);
-    }
-
-    const data = await response.json();
-    console.log('Received response from OpenAI');
-
-    if (!data.choices?.[0]?.message?.content) {
-      throw new Error('No content received from OpenAI');
-    }
-
-    const formattedProposal = data.choices[0].message.content;
-
-    return new Response(JSON.stringify({ formattedProposal }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    )
   } catch (error) {
-    console.error('Error in generate-proposal function:', error);
-    return new Response(JSON.stringify({ 
-      error: error.message,
-      details: error.toString()
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    console.error('Error:', error)
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      {
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json',
+        },
+        status: 500,
+      },
+    )
   }
-});
+})
