@@ -5,8 +5,7 @@ import { ProposalPDF } from '@/components/ProposalPDF';
 import { ProposalFormData, MetricItem, TestimonialItem } from '@/types/proposal';
 import { toast } from 'sonner';
 import { Button } from "@/components/ui/button";
-import { FileDown, FileEdit } from "lucide-react";
-import { Json } from '@/integrations/supabase/types';
+import { FileDown, FileEdit, ArrowLeft } from "lucide-react";
 
 const ViewProposal = () => {
   const { id } = useParams();
@@ -153,8 +152,16 @@ const ViewProposal = () => {
 
   return (
     <div className="container mx-auto py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">{proposal.title || 'Untitled Proposal'}</h1>
+      <div className="flex items-center mb-6">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate('/')}
+          className="mr-4"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Home
+        </Button>
+        <h1 className="text-2xl font-bold flex-1">{proposal.title || 'Untitled Proposal'}</h1>
         <div className="space-x-4">
           <Button onClick={handleEdit} variant="outline">
             <FileEdit className="w-4 h-4 mr-2" />
