@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/use-mobile";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function Index() {
   const navigate = useNavigate();
