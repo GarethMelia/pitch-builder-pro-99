@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { BlogSection } from "@/components/landing/BlogSection";
+import { FooterSection } from "@/components/landing/FooterSection";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -239,6 +240,9 @@ export default function Index() {
           </Button>
         </div>
       </section>
+
+      {/* Footer */}
+      <FooterSection />
     </div>
   );
 }
