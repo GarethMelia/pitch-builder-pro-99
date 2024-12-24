@@ -15,23 +15,28 @@ export const PricingSection = () => {
       return;
     }
 
+    const toastId = toast.loading("Creating checkout session...");
+
     try {
-      toast.loading("Creating checkout session...");
-      
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: { priceId, mode }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw new Error(error.message || 'Failed to create checkout session');
+      }
       
       if (data?.url) {
+        toast.dismiss(toastId);
         window.location.href = data.url;
       } else {
         throw new Error("No checkout URL received");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating checkout session:', error);
-      toast.error("Failed to initiate checkout. Please try again.");
+      toast.error(error.message || "Failed to initiate checkout. Please try again.");
+      toast.dismiss(toastId);
     }
   };
 

@@ -2,7 +2,7 @@ project_id = "snhutzqpxhylymkzlhga"
 
 [functions]
 [functions.create-checkout]
-verify_jwt = false
+verify_jwt = true
 
 [functions.create-checkout.cors]
 origins = ["*"]
