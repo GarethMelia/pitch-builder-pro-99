@@ -15,15 +15,21 @@ serve(async (req) => {
   }
 
   try {
-    const { websiteUrl, formData } = await req.json();
-    console.log('Received request with data:', { websiteUrl, formData });
+    const { formData } = await req.json();
+    console.log('Received form data:', formData);
 
     if (!openAIApiKey) {
       throw new Error('OpenAI API key is not configured');
     }
 
-    console.log('Sending request to OpenAI');
+    // Format the services, challenges, and metrics into readable bullet points
+    const services = formData.services?.map((s: string) => `• ${s}`).join('\n') || 'N/A';
+    const challenges = formData.challenges?.map((c: string) => `• ${c}`).join('\n') || 'N/A';
+    const metrics = formData.success_metrics?.map((m: any) => `• ${m.id}: ${m.value}`).join('\n') || 'N/A';
+    const strengths = formData.strengths?.map((s: string) => `• ${s}`).join('\n') || 'N/A';
+    const strategies = formData.recommended_strategies?.map((s: string) => `• ${s}`).join('\n') || 'N/A';
 
+    console.log('Sending request to OpenAI');
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -35,33 +41,71 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: `You are an expert business proposal writer. Your task is to create a professional, compelling proposal based on the provided information. Focus on clear value propositions and actionable solutions.`
+            content: `You are an expert business proposal writer with years of experience. 
+            Your task is to create a professional, compelling, and highly personalized proposal 
+            that addresses the client's specific needs and demonstrates clear value.`
           },
           {
             role: 'user',
             content: `Create a detailed business proposal using this information:
-              
-              Company: ${formData.company_name}
-              Website: ${websiteUrl}
-              Primary Goal: ${formData.primary_goal}
-              Target Audience: ${JSON.stringify(formData.target_audience)}
-              Services Offered: ${formData.services?.join(', ')}
-              Key Challenges: ${formData.challenges?.join(', ')}
-              Company Strengths: ${formData.strengths?.join(', ')}
-              
-              Format the proposal to include:
-              1. Executive Summary
-              2. Understanding of Client Needs
-              3. Proposed Solution
-              4. Implementation Strategy
-              5. Success Metrics
-              6. Why Choose Us
-              
-              Make it professional, persuasive, and focused on value delivery.`
+
+COMPANY PROFILE:
+Company Name: ${formData.company_name}
+Primary Goal: ${formData.primary_goal}
+Target Audience: ${JSON.stringify(formData.target_audience)}
+
+SERVICES AND SOLUTIONS:
+${services}
+
+KEY CHALLENGES TO ADDRESS:
+${challenges}
+
+COMPANY STRENGTHS:
+${strengths}
+
+SUCCESS METRICS:
+${metrics}
+
+RECOMMENDED STRATEGIES:
+${strategies}
+
+Additional Information:
+- Proposal Tone: ${formData.proposal_tone || 'Professional'}
+- Timeline: ${formData.timeframe || 'To be discussed'}
+- Why Choose Us: ${formData.reasons_to_work_with || 'Our expertise and track record'}
+
+Format the proposal with these sections:
+1. Executive Summary
+   - Brief overview of the proposal
+   - Value proposition
+   - Key benefits
+
+2. Understanding Your Needs
+   - Current challenges
+   - Business objectives
+   - Target audience analysis
+
+3. Our Proposed Solution
+   - Detailed service description
+   - Implementation approach
+   - Expected outcomes
+
+4. Implementation Strategy
+   - Timeline and milestones
+   - Key deliverables
+   - Success metrics
+
+5. Why Choose Us
+   - Company strengths
+   - Relevant experience
+   - Unique value proposition
+
+Make the proposal professional, persuasive, and focused on demonstrating clear value 
+to the client. Use clear headings and maintain a confident yet approachable tone.`
           }
         ],
         temperature: 0.7,
-        max_tokens: 2000,
+        max_tokens: 2500,
       }),
     });
 
@@ -72,7 +116,7 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    console.log('Received response from OpenAI:', data);
+    console.log('Received response from OpenAI');
 
     if (!data.choices?.[0]?.message?.content) {
       throw new Error('No content received from OpenAI');

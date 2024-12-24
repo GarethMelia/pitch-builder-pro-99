@@ -1,45 +1,29 @@
 import { useState } from 'react';
 import { useToast } from "@/components/ui/use-toast"; 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-
-interface CrawlResult {
-  success: boolean;
-  status?: string;
-  completed?: number;
-  total?: number;
-  creditsUsed?: number;
-  expiresAt?: string;
-  data?: any[];
-}
 
 export const CrawlForm = ({ formData, onProposalGenerated }: { 
   formData: any;
   onProposalGenerated: (proposal: string) => void;
 }) => {
   const { toast } = useToast();
-  const [url, setUrl] = useState(formData.website_url || '');
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [crawlResult, setCrawlResult] = useState<CrawlResult | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleGenerateProposal = async () => {
     setIsLoading(true);
     setProgress(0);
-    setCrawlResult(null);
     
     try {
       toast({
-        title: "Website Analysis Started",
-        description: "We're analyzing the website content...",
+        title: "Generating Proposal",
+        description: "Our AI expert is crafting your proposal...",
         duration: 3000,
       });
       
-      // Simulate progress
+      // Simulate progress for user feedback
       let currentProgress = 0;
       const interval = setInterval(() => {
         currentProgress += 10;
@@ -51,30 +35,34 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
 
       // Generate proposal using OpenAI
       const { data: proposalData, error } = await supabase.functions.invoke('generate-proposal', {
-        body: {
-          websiteUrl: url,
-          formData: formData
-        }
+        body: { formData }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error generating proposal:', error);
+        throw error;
+      }
 
-      if (proposalData.formattedProposal) {
+      console.log('Received proposal data:', proposalData);
+
+      if (proposalData?.formattedProposal) {
         onProposalGenerated(proposalData.formattedProposal);
         toast({
           title: "Success",
           description: "Proposal generated successfully!",
           duration: 3000,
         });
+      } else {
+        throw new Error('No proposal content received');
       }
 
     } catch (error) {
-      console.error('Error analyzing website:', error);
+      console.error('Error generating proposal:', error);
       toast({
         title: "Error",
-        description: "Failed to generate proposal",
+        description: "Failed to generate proposal. Please try again.",
         variant: "destructive",
-        duration: 3000,
+        duration: 5000,
       });
     } finally {
       setIsLoading(false);
@@ -83,30 +71,17 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
 
   return (
     <div className="space-y-4">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <Input
-            type="url"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            className="w-full"
-            placeholder="https://example.com"
-            required
-          />
-        </div>
-        
-        {isLoading && (
-          <Progress value={progress} className="w-full" />
-        )}
-        
-        <Button
-          type="submit"
-          disabled={isLoading}
-          className="w-full"
-        >
-          {isLoading ? "Generating Proposal..." : "Analyze Website & Generate Proposal"}
-        </Button>
-      </form>
+      {isLoading && (
+        <Progress value={progress} className="w-full" />
+      )}
+      
+      <Button
+        onClick={handleGenerateProposal}
+        disabled={isLoading}
+        className="w-full"
+      >
+        {isLoading ? "Generating Proposal..." : "Generate AI Proposal"}
+      </Button>
     </div>
   );
 };
