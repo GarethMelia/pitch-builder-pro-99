@@ -14,6 +14,7 @@ import { StrategiesStep } from "@/components/ProposalSteps/StrategiesStep";
 import { ProposalToneStep } from "@/components/ProposalSteps/ProposalToneStep";
 import { CompanyCredentialsStep } from "@/components/ProposalSteps/CompanyCredentialsStep";
 import { ProposalFormData } from "@/types/proposal";
+import { CrawlForm } from "@/components/CrawlForm";
 
 const TOTAL_STEPS = 7;
 
@@ -21,6 +22,7 @@ const CreateProposal = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedProposal, setGeneratedProposal] = useState<string | null>(null);
   
   const form = useForm<ProposalFormData>({
     defaultValues: {
@@ -64,13 +66,12 @@ const CreateProposal = () => {
         value: metric.value
       }));
 
-      // Transform testimonials to a JSON-compatible format
       const transformedTestimonials = data.testimonials?.map(testimonial => ({
         text: testimonial.text,
         client: testimonial.client
       }));
 
-      const { error } = await supabase.from("proposals").insert({
+      const { data: proposal, error } = await supabase.from("proposals").insert({
         title: data.title,
         company_name: data.company_name,
         website_url: data.website_url,
@@ -95,16 +96,27 @@ const CreateProposal = () => {
         testimonials: transformedTestimonials,
         user_id: user.id,
         status: 'draft'
-      });
+      }).select().single();
 
       if (error) throw error;
 
       toast.success("Proposal created successfully!");
-      navigate("/");
+      
+      // Instead of navigating home, show the CrawlForm for proposal generation
+      if (proposal) {
+        setGeneratedProposal(null); // Reset any previous proposal
+        setIsGenerating(true);
+      }
+
     } catch (error) {
       console.error("Error creating proposal:", error);
       toast.error("Failed to create proposal");
     }
+  };
+
+  const handleProposalGenerated = (proposal: string) => {
+    setGeneratedProposal(proposal);
+    setIsGenerating(false);
   };
 
   const nextStep = () => {
@@ -136,11 +148,52 @@ const CreateProposal = () => {
     }
   };
 
+  if (isGenerating || generatedProposal) {
+    return (
+      <div className="container max-w-3xl py-10">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Generate Proposal</h1>
+          <Button variant="outline" onClick={() => navigate("/")}>
+            Back to Dashboard
+          </Button>
+        </div>
+        
+        {isGenerating && !generatedProposal && (
+          <CrawlForm 
+            formData={form.getValues()} 
+            onProposalGenerated={handleProposalGenerated} 
+          />
+        )}
+        
+        {generatedProposal && (
+          <div className="space-y-4">
+            <div className="p-4 bg-white rounded-lg shadow">
+              <pre className="whitespace-pre-wrap">{generatedProposal}</pre>
+            </div>
+            <div className="flex justify-end space-x-4">
+              <Button variant="outline" onClick={() => navigate("/")}>
+                Back to Dashboard
+              </Button>
+              <Button onClick={() => setGeneratedProposal(null)}>
+                Generate Again
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="container max-w-3xl py-10">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold mb-4">Create New Proposal</h1>
-        <Progress value={(currentStep / TOTAL_STEPS) * 100} className="h-2" />
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold">Create New Proposal</h1>
+          <Button variant="outline" onClick={() => navigate("/")}>
+            Back to Dashboard
+          </Button>
+        </div>
+        <Progress value={(currentStep / TOTAL_STEPS) * 100} className="h-2 mt-4" />
         <p className="text-sm text-muted-foreground mt-2">
           Step {currentStep} of {TOTAL_STEPS}
         </p>
