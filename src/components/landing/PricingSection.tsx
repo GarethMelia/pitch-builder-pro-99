@@ -4,10 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useState } from "react";
 
 export const PricingSection = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
   const handlePricingClick = async (priceId: string, mode: 'payment' | 'subscription') => {
     if (!user) {
@@ -15,6 +17,7 @@ export const PricingSection = () => {
       return;
     }
 
+    setLoadingPlan(priceId);
     const toastId = toast.loading("Creating checkout session...");
 
     try {
@@ -31,7 +34,6 @@ export const PricingSection = () => {
       
       if (data?.url) {
         console.log('Received checkout URL:', data.url);
-        toast.dismiss(toastId);
         window.location.href = data.url;
       } else {
         throw new Error("No checkout URL received");
@@ -39,6 +41,8 @@ export const PricingSection = () => {
     } catch (error: any) {
       console.error('Error creating checkout session:', error);
       toast.error(error.message || "Failed to initiate checkout. Please try again.");
+    } finally {
+      setLoadingPlan(null);
       toast.dismiss(toastId);
     }
   };
@@ -80,8 +84,9 @@ export const PricingSection = () => {
               variant="outline"
               className="w-full"
               onClick={() => navigate(user ? "/create" : "/auth")}
+              disabled={loadingPlan === 'free'}
             >
-              Get Started
+              {loadingPlan === 'free' ? 'Loading...' : 'Get Started'}
             </Button>
           </div>
 
@@ -111,8 +116,9 @@ export const PricingSection = () => {
               variant="outline"
               className="w-full"
               onClick={() => handlePricingClick('price_1QZS3kS3o3uyD8gMUeEzrbZT', 'payment')}
+              disabled={loadingPlan === 'price_1QZS3kS3o3uyD8gMUeEzrbZT'}
             >
-              Choose Plan
+              {loadingPlan === 'price_1QZS3kS3o3uyD8gMUeEzrbZT' ? 'Loading...' : 'Choose Plan'}
             </Button>
           </div>
 
@@ -148,8 +154,9 @@ export const PricingSection = () => {
             <Button
               className="w-full"
               onClick={() => handlePricingClick('price_1QZS02S3o3uyD8gMpwZOP5mo', 'subscription')}
+              disabled={loadingPlan === 'price_1QZS02S3o3uyD8gMpwZOP5mo'}
             >
-              Get Started
+              {loadingPlan === 'price_1QZS02S3o3uyD8gMpwZOP5mo' ? 'Loading...' : 'Get Started'}
             </Button>
           </div>
 
@@ -183,6 +190,7 @@ export const PricingSection = () => {
               variant="outline"
               className="w-full"
               onClick={() => window.location.href = "mailto:enterprise@pitchbuilderpro.com"}
+              disabled={loadingPlan === 'enterprise'}
             >
               Contact Sales
             </Button>
