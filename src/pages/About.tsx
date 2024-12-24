@@ -1,9 +1,12 @@
 import { Award, Users, Zap } from "lucide-react";
 import { FooterSection } from "@/components/landing/FooterSection";
+import { NavigationBar } from "@/components/layout/NavigationBar";
 
 export default function About() {
   return (
     <div className="min-h-screen bg-white">
+      <NavigationBar />
+      
       {/* Hero Section */}
       <section className="relative py-20 bg-gradient-to-r from-[#e6b980] to-[#eacda3] overflow-hidden">
         <div className="container mx-auto px-4">
