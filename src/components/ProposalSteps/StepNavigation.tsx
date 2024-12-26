@@ -1,24 +1,26 @@
 import { Button } from "@/components/ui/button";
+import { ProposalFormData } from "@/types/proposal";
+import { validateStep } from "@/utils/proposalValidation";
 
 interface StepNavigationProps {
   currentStep: number;
   totalSteps: number;
-  stepsCompleted: boolean[];
   onPrevious: () => void;
   onNext: () => void;
   onSubmit: () => void;
+  formData: ProposalFormData;
 }
 
 export const StepNavigation = ({
   currentStep,
   totalSteps,
-  stepsCompleted,
   onPrevious,
   onNext,
-  onSubmit
+  onSubmit,
+  formData
 }: StepNavigationProps) => {
   const isLastStep = currentStep === totalSteps;
-  const allPreviousStepsCompleted = stepsCompleted.slice(0, currentStep).every(Boolean);
+  const isCurrentStepValid = validateStep(currentStep, formData);
 
   return (
     <div className="flex justify-between pt-6">
@@ -34,7 +36,8 @@ export const StepNavigation = ({
       {isLastStep ? (
         <Button 
           type="submit"
-          disabled={!allPreviousStepsCompleted}
+          onClick={onSubmit}
+          disabled={!isCurrentStepValid}
         >
           Create Proposal
         </Button>
@@ -42,7 +45,7 @@ export const StepNavigation = ({
         <Button 
           type="button" 
           onClick={onNext}
-          disabled={!stepsCompleted[currentStep - 1]}
+          disabled={!isCurrentStepValid}
         >
           Next
         </Button>

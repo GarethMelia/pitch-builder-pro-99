@@ -26,7 +26,6 @@ const CreateProposal = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedProposal, setGeneratedProposal] = useState<string | null>(null);
-  const [stepsCompleted, setStepsCompleted] = useState<boolean[]>(Array(TOTAL_STEPS).fill(false));
   
   const form = useForm<ProposalFormData>({
     defaultValues: {
@@ -60,45 +59,7 @@ const CreateProposal = () => {
     checkAuth();
   }, [navigate]);
 
-  const validateCurrentStep = () => {
-    const currentFields = getFieldsForStep(currentStep);
-    return currentFields.every(field => {
-      const value = form.getValues(field as any);
-      return value && (Array.isArray(value) ? value.length > 0 : true);
-    });
-  };
-
-  const getFieldsForStep = (step: number): string[] => {
-    switch (step) {
-      case 1:
-        return ['title', 'company_name', 'website_url', 'primary_goal'];
-      case 2:
-        return ['services', 'target_audience', 'timeframe'];
-      case 3:
-        return ['success_metrics'];
-      case 4:
-        return ['challenges', 'strengths'];
-      case 5:
-        return ['recommended_strategies'];
-      case 6:
-        return ['proposal_tone', 'persuasion_level'];
-      case 7:
-        return ['reasons_to_work_with', 'awards_recognitions', 'relevant_experience'];
-      default:
-        return [];
-    }
-  };
-
-  const nextStep = async () => {
-    const isValid = validateCurrentStep();
-    if (!isValid) {
-      toast.error("Please complete all fields in this step before proceeding.");
-      return;
-    }
-
-    const newStepsCompleted = [...stepsCompleted];
-    newStepsCompleted[currentStep - 1] = true;
-    setStepsCompleted(newStepsCompleted);
+  const nextStep = () => {
     setCurrentStep((prev) => Math.min(prev + 1, TOTAL_STEPS));
   };
 
@@ -107,18 +68,6 @@ const CreateProposal = () => {
   };
 
   const onSubmit = async (data: ProposalFormData) => {
-    const isValid = validateCurrentStep();
-    if (!isValid) {
-      toast.error("Please complete all fields in the final step.");
-      return;
-    }
-
-    setStepsCompleted(prev => {
-      const newSteps = [...prev];
-      newSteps[TOTAL_STEPS - 1] = true;
-      return newSteps;
-    });
-
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -133,7 +82,7 @@ const CreateProposal = () => {
         client: testimonial.client
       }));
 
-      const { data: proposal, error } = await supabase.from("proposals").insert({
+      const { error } = await supabase.from("proposals").insert({
         title: data.title,
         company_name: data.company_name,
         website_url: data.website_url,
@@ -158,12 +107,11 @@ const CreateProposal = () => {
         testimonials: transformedTestimonials,
         user_id: user.id,
         status: 'draft'
-      }).select().single();
+      });
 
       if (error) throw error;
 
       toast.success("Proposal created successfully!");
-      
       setIsGenerating(true);
       setGeneratedProposal(null);
 
@@ -272,10 +220,10 @@ const CreateProposal = () => {
             <StepNavigation
               currentStep={currentStep}
               totalSteps={TOTAL_STEPS}
-              stepsCompleted={stepsCompleted}
               onPrevious={prevStep}
               onNext={nextStep}
               onSubmit={form.handleSubmit(onSubmit)}
+              formData={form.getValues()}
             />
           </form>
         </Form>
