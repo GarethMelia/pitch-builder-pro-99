@@ -1,31 +1,20 @@
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/use-auth";
-import { BlogSection } from "@/components/landing/BlogSection";
-import { FooterSection } from "@/components/landing/FooterSection";
-import { PricingSection } from "@/components/landing/PricingSection";
 import { NavigationBar } from "@/components/layout/NavigationBar";
-import { HeroSection } from "@/components/landing/HeroSection";
-import { FeaturesSection } from "@/components/landing/FeaturesSection";
-import { HowItWorksSection } from "@/components/landing/HowItWorksSection";
-import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
-import { CTASection } from "@/components/landing/CTASection";
+import { FooterSection } from "@/components/landing/FooterSection";
+import { WelcomeSection } from "@/components/dashboard/WelcomeSection";
+import { ProposalTabs } from "@/components/dashboard/ProposalTabs";
+import { TemplateLibrary } from "@/components/dashboard/TemplateLibrary";
+import { AnalyticsSection } from "@/components/dashboard/AnalyticsSection";
 
 export default function Index() {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <NavigationBar />
-      <HeroSection />
-      <FeaturesSection />
-      <HowItWorksSection />
-      <TestimonialsSection />
-      <PricingSection />
-      <BlogSection />
-      <CTASection />
+      <main className="container py-8">
+        <WelcomeSection />
+        <ProposalTabs />
+        <TemplateLibrary />
+        <AnalyticsSection />
+      </main>
       <FooterSection />
     </div>
   );
