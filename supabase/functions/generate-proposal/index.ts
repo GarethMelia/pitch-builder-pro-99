@@ -30,60 +30,72 @@ serve(async (req) => {
       throw new Error('No form data provided');
     }
 
-    // Create a structured prompt from the form data
     const prompt = `
-      Create a professional business proposal based on the following information:
+      Create a professional business proposal with the following structure and formatting:
       
-      Company Information:
-      - Company Name: ${formData.company_name || 'Not specified'}
-      - Website: ${formData.website_url || 'Not specified'}
-      - Primary Goal: ${formData.primary_goal || 'Not specified'}
+      # Business Proposal for ${formData.company_name}
       
-      Services Offered:
-      ${formData.services?.join(', ') || 'Not specified'}
+      ## Executive Summary
       
-      Target Audience:
+      Prepared for: [Client Name]
+      Prepared by: ${formData.company_name}
+      Date: ${new Date().toLocaleDateString()}
+      Website: ${formData.website_url}
+      
+      ## Introduction
+      
+      ${formData.primary_goal}
+      
+      ## Services Offered
+      
+      ${formData.services?.join('\n- ') || 'Not specified'}
+      
+      ## Target Audience
+      
       ${JSON.stringify(formData.target_audience || {})}
       
-      Project Timeframe: ${formData.timeframe || 'Not specified'}
+      ## Project Timeline
       
-      Success Metrics:
+      ${formData.timeframe || 'To be determined based on project requirements'}
+      
+      ## Success Metrics
+      
       ${formData.success_metrics?.map((metric) => `- ${metric.id}: ${metric.value}`).join('\n') || 'Not specified'}
       
-      Company Strengths:
-      ${formData.strengths?.join('\n') || 'Not specified'}
+      ## Our Strengths
       
-      Challenges to Address:
-      ${formData.challenges?.join('\n') || 'Not specified'}
+      ${formData.strengths?.map(strength => `- ${strength}`).join('\n') || 'Not specified'}
       
-      Recommended Strategies:
-      ${formData.recommended_strategies?.join('\n') || 'Not specified'}
+      ## Challenges We'll Address
       
-      Company Credentials:
-      - Experience: ${formData.relevant_experience?.join('\n') || 'Not specified'}
-      - Awards: ${formData.awards_recognitions?.join('\n') || 'Not specified'}
-      - Guarantees: ${formData.guarantees?.join('\n') || 'Not specified'}
+      ${formData.challenges?.map(challenge => `- ${challenge}`).join('\n') || 'Not specified'}
       
-      Please write a detailed, professional proposal that:
-      1. Introduces the company and establishes credibility
-      2. Clearly outlines the services and solutions
-      3. Demonstrates understanding of the client's needs
-      4. Presents a clear action plan with timelines
-      5. Includes success metrics and guarantees
-      6. Maintains a ${formData.proposal_tone || 'professional'} tone
-      7. Concludes with a clear call to action
+      ## Recommended Strategies
       
-      Format the proposal with clear sections and professional language.
+      ${formData.recommended_strategies?.map(strategy => `- ${strategy}`).join('\n') || 'Not specified'}
+      
+      ## Company Credentials
+      
+      ### Experience
+      ${formData.relevant_experience?.join('\n- ') || 'Not specified'}
+      
+      ### Awards & Recognition
+      ${formData.awards_recognitions?.join('\n- ') || 'Not specified'}
+      
+      ### Guarantees
+      ${formData.guarantees?.join('\n- ') || 'Not specified'}
+      
+      Please format this as a clean, professional business proposal without showing any markdown syntax in the final output.
     `;
 
     console.log('Sending prompt to OpenAI:', prompt);
 
     const completion = await openai.createChatCompletion({
-      model: "gpt-4o-mini",
+      model: "gpt-4",
       messages: [
         {
           role: "system",
-          content: "You are an expert business proposal writer with years of experience in creating compelling and successful proposals."
+          content: "You are an expert business proposal writer. Create a professional, well-formatted proposal without showing any markdown syntax in the output. Use proper formatting for headings, lists, and emphasis."
         },
         {
           role: "user",
@@ -98,9 +110,11 @@ serve(async (req) => {
       throw new Error('No proposal content generated');
     }
 
-    // Convert markdown to HTML
     const markdownContent = completion.data.choices[0].message.content;
-    const htmlContent = marked(markdownContent);
+    const htmlContent = marked(markdownContent, {
+      headerIds: false,
+      mangle: false
+    });
 
     return new Response(
       JSON.stringify({ formattedProposal: htmlContent }),
