@@ -5,12 +5,20 @@ import { BillingSection } from "@/components/settings/BillingSection";
 import { HelpSection } from "@/components/settings/HelpSection";
 import { NavigationBar } from "@/components/layout/NavigationBar";
 import { FooterSection } from "@/components/landing/FooterSection";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const Settings = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/auth");
+    }
+  }, [user, navigate]);
 
   if (!user) {
-    window.location.href = "/auth";
     return null;
   }
 
