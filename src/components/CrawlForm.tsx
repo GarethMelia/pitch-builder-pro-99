@@ -5,11 +5,11 @@ import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { marked } from 'marked';
 
-// Configure marked to sanitize the output and prevent XSS attacks
+// Configure marked with the correct options
 marked.setOptions({
-  headerIds: false,
   mangle: false,
-  sanitize: true
+  headerPrefix: '', // Use headerPrefix instead of headerIds
+  silent: true // Suppress warnings
 });
 
 export const CrawlForm = ({ formData, onProposalGenerated }: { 
@@ -54,8 +54,9 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
       }
 
       if (proposalData?.formattedProposal) {
-        // Convert markdown to HTML before passing it to the parent
-        const htmlContent = marked(proposalData.formattedProposal);
+        // Ensure we're working with a string before passing to marked
+        const markdownContent = String(proposalData.formattedProposal);
+        const htmlContent = marked.parse(markdownContent); // Use marked.parse instead of marked
         console.log('Generated proposal HTML:', htmlContent);
         onProposalGenerated(htmlContent);
         
