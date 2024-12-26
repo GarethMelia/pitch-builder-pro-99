@@ -3,6 +3,14 @@ import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
+import { marked } from 'marked';
+
+// Configure marked to sanitize the output and prevent XSS attacks
+marked.setOptions({
+  headerIds: false,
+  mangle: false,
+  sanitize: true
+});
 
 export const CrawlForm = ({ formData, onProposalGenerated }: { 
   formData: any;
@@ -46,8 +54,11 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
       }
 
       if (proposalData?.formattedProposal) {
-        console.log('Generated proposal:', proposalData.formattedProposal);
-        onProposalGenerated(proposalData.formattedProposal);
+        // Convert markdown to HTML before passing it to the parent
+        const htmlContent = marked(proposalData.formattedProposal);
+        console.log('Generated proposal HTML:', htmlContent);
+        onProposalGenerated(htmlContent);
+        
         toast({
           title: "Success",
           description: "Proposal generated successfully!",
