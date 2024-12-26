@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { marked } from 'marked';
 import { Share2 } from 'lucide-react';
 
-// Configure marked with the correct options
 marked.setOptions({
   breaks: true,
   silent: true
@@ -26,11 +25,16 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
     setProgress(0);
     
     try {
-      console.log('Form data being sent:', formData);
+      const formalFormData = {
+        ...formData,
+        proposal_tone: "formal" // Explicitly set formal tone
+      };
+      
+      console.log('Form data being sent:', formalFormData);
       
       toast({
         title: "Generating Proposal",
-        description: "Our AI expert is crafting your proposal...",
+        description: "Our AI expert is crafting your formal proposal...",
         duration: 3000,
       });
       
@@ -44,26 +48,21 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
       }, 500);
 
       const { data: proposalData, error } = await supabase.functions.invoke('generate-proposal', {
-        body: { formData }
+        body: { formData: formalFormData }
       });
 
       console.log('Response from generate-proposal:', proposalData);
 
-      if (error) {
-        console.error('Error generating proposal:', error);
-        throw error;
-      }
+      if (error) throw error;
 
       if (proposalData?.formattedProposal) {
-        const markdownContent = String(proposalData.formattedProposal || '');
-        setEditableContent(markdownContent);
-        const htmlContent = marked.parse(markdownContent);
-        console.log('Generated proposal HTML:', htmlContent);
-        onProposalGenerated(htmlContent);
+        const markdownContent = marked.parse(proposalData.formattedProposal);
+        setEditableContent(proposalData.formattedProposal);
+        onProposalGenerated(markdownContent);
         
         toast({
           title: "Success",
-          description: "Proposal generated successfully!",
+          description: "Formal proposal generated successfully!",
           duration: 3000,
         });
       } else {
@@ -85,9 +84,9 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
   };
 
   const handleContentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newContent = event.target.value || '';
+    const newContent = event.target.value;
     setEditableContent(newContent);
-    const htmlContent = marked.parse(String(newContent));
+    const htmlContent = marked.parse(newContent);
     onProposalGenerated(htmlContent);
   };
 
@@ -99,10 +98,11 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
       const { data, error } = await supabase
         .from('proposals')
         .insert({
-          content: { text: String(editableContent || '') },
+          content: { text: editableContent },
           title: formData.title || 'Untitled Proposal',
           user_id: user.id,
-          status: 'shared'
+          status: 'shared',
+          tone: 'formal' // Explicitly set formal tone in database
         })
         .select()
         .single();
@@ -110,7 +110,6 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
       if (error) throw error;
 
       const shareableLink = `${window.location.origin}/view/${data.id}`;
-      
       await navigator.clipboard.writeText(shareableLink);
       
       toast({
@@ -159,7 +158,7 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
         disabled={isLoading}
         className="w-full"
       >
-        {isLoading ? "Generating Proposal..." : "Generate AI Proposal"}
+        {isLoading ? "Generating Proposal..." : "Generate Formal AI Proposal"}
       </Button>
     </div>
   );
