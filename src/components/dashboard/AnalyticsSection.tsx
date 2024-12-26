@@ -49,22 +49,25 @@ export function AnalyticsSection() {
       title: "TOTAL",
       count: counts.total,
       topColor: "bg-[#1A1F2C]", // Navy Blue
-      description: "Track and manage all your business proposals efficiently in one centralized location. Stay organized and never miss a proposal opportunity.",
-      accent: "border-[#1A1F2C]"
+      description: "Track and manage all your business proposals efficiently in one place.",
+      accent: "border-[#1A1F2C]",
+      textColor: "text-[#1A1F2C]"
     },
     {
       title: "DRAFTED",
       count: counts.drafts,
       topColor: "bg-[#F97316]", // Orange
-      description: "Keep track of your work-in-progress proposals. These drafts represent opportunities waiting to be refined and completed.",
-      accent: "border-[#F97316]"
+      description: "Keep track of your work-in-progress proposals and opportunities.",
+      accent: "border-[#F97316]",
+      textColor: "text-[#F97316]"
     },
     {
       title: "COMPLETED",
       count: counts.completed,
       topColor: "bg-[#0EA5E9]", // Teal
-      description: "Successfully finalized proposals ready for client presentation. Each one represents a potential business opportunity.",
-      accent: "border-[#0EA5E9]"
+      description: "View your finalized proposals ready for client presentation.",
+      accent: "border-[#0EA5E9]",
+      textColor: "text-[#0EA5E9]"
     }
   ];
 
@@ -80,21 +83,21 @@ export function AnalyticsSection() {
             {/* Card Container */}
             <div className="relative bg-white rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl">
               {/* Top Square with Paperclip */}
-              <div className="absolute -top-4 left-6 z-10">
-                <div className={`${card.topColor} w-12 h-12 transform -rotate-6 rounded shadow-md flex items-center justify-center`}>
-                  <span className="text-white font-bold text-lg">{card.count}</span>
+              <div className="absolute -top-6 left-6 z-10">
+                <div className={`${card.topColor} w-16 h-16 transform -rotate-12 rounded shadow-md flex items-center justify-center`}>
+                  <span className="text-white font-bold text-2xl">{card.count}</span>
                 </div>
                 <Paperclip 
-                  className="absolute -top-2 -right-2 w-6 h-6 text-gray-400 transform rotate-45" 
+                  className="absolute -top-3 -right-2 w-8 h-8 text-gray-400 transform rotate-[135deg]" 
                 />
               </div>
 
               {/* Card Content */}
-              <div className="pt-12 pb-4 px-6">
-                <h3 className="text-center font-bold text-gray-800 tracking-wider mb-4">
+              <div className="pt-14 pb-4 px-6">
+                <h3 className={`text-center font-bold ${card.textColor} tracking-wider mb-4 text-xl`}>
                   {card.title}
                 </h3>
-                <p className="text-sm text-gray-600 text-center leading-relaxed min-h-[3rem]">
+                <p className="text-sm text-gray-600 text-center leading-relaxed line-clamp-2">
                   {card.description}
                 </p>
               </div>
