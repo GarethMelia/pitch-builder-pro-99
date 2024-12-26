@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
+import { Settings } from "lucide-react";
 
 export const NavigationBar = () => {
   const navigate = useNavigate();
@@ -32,9 +33,15 @@ export const NavigationBar = () => {
                 </Button>
               </>
             ) : (
-              <Button onClick={() => navigate("/create")}>
-                Dashboard
-              </Button>
+              <>
+                <Button variant="ghost" onClick={() => navigate("/settings")} className="gap-2">
+                  <Settings className="h-4 w-4" />
+                  Settings
+                </Button>
+                <Button onClick={() => navigate("/create")}>
+                  Dashboard
+                </Button>
+              </>
             )}
           </div>
         </div>
