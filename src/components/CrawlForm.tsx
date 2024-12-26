@@ -87,17 +87,25 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
   const handleContentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = event.target.value;
     setEditableContent(newContent);
-    const htmlContent = marked.parse(newContent);
+    // Ensure we're passing a string to marked.parse
+    const htmlContent = marked.parse(String(newContent));
     onProposalGenerated(htmlContent);
   };
 
   const handleShare = async () => {
     try {
+      // First, get the current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
       const { data, error } = await supabase
-        .from('shared_proposals')
-        .insert([
-          { content: editableContent }
-        ])
+        .from('proposals')
+        .insert({
+          content: { text: editableContent },
+          title: formData.title || 'Untitled Proposal',
+          user_id: user.id,
+          status: 'shared'
+        })
         .select()
         .single();
 
