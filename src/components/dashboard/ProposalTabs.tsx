@@ -1,6 +1,6 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Edit2, Share2, ArrowRight, Copy } from "lucide-react";
+import { Edit2, Share2, ArrowRight, Copy, FileText, CheckCircle2 } from "lucide-react";
 
 const dummyProposals = {
   drafts: [
@@ -17,11 +17,19 @@ export function ProposalTabs() {
   return (
     <Tabs defaultValue="drafts" className="w-full mb-8">
       <TabsList className="grid w-full grid-cols-2 mb-8">
-        <TabsTrigger value="drafts" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-200">
-          📝 Drafts
+        <TabsTrigger 
+          value="drafts" 
+          className="data-[state=active]:bg-[#F97316] data-[state=active]:text-white transition-all duration-200 flex items-center gap-2"
+        >
+          <FileText className="w-4 h-4" />
+          Drafts
         </TabsTrigger>
-        <TabsTrigger value="completed" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-200">
-          ✓ Completed
+        <TabsTrigger 
+          value="completed" 
+          className="data-[state=active]:bg-emerald-500 data-[state=active]:text-white transition-all duration-200 flex items-center gap-2"
+        >
+          <CheckCircle2 className="w-4 h-4" />
+          Completed
         </TabsTrigger>
       </TabsList>
 
@@ -29,8 +37,9 @@ export function ProposalTabs() {
         {dummyProposals.drafts.map((proposal) => (
           <div
             key={proposal.id}
-            className="p-6 rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-200 hover:shadow-md hover:translate-y-[-2px]"
+            className="relative p-6 rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-200 hover:shadow-md hover:translate-y-[-2px] pl-8"
           >
+            <div className="absolute left-0 top-0 bottom-0 w-2 bg-[#F97316] rounded-l-lg" />
             <div className="flex justify-between items-center">
               <div className="space-y-1">
                 <h3 className="font-semibold">{proposal.title}</h3>
@@ -56,8 +65,9 @@ export function ProposalTabs() {
         {dummyProposals.completed.map((proposal) => (
           <div
             key={proposal.id}
-            className="p-6 rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-200 hover:shadow-md hover:translate-y-[-2px]"
+            className="relative p-6 rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-200 hover:shadow-md hover:translate-y-[-2px] pl-8"
           >
+            <div className="absolute left-0 top-0 bottom-0 w-2 bg-emerald-500 rounded-l-lg" />
             <div className="flex justify-between items-center">
               <div className="space-y-1">
                 <h3 className="font-semibold">{proposal.title}</h3>
