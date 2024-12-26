@@ -6,19 +6,24 @@ import { HelpSection } from "@/components/settings/HelpSection";
 import { NavigationBar } from "@/components/layout/NavigationBar";
 import { FooterSection } from "@/components/landing/FooterSection";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const Settings = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    if (!user) {
+    // Only redirect if we're sure the user is not authenticated
+    if (!loading && !user) {
       navigate("/auth");
+    } else if (!loading && user) {
+      setIsAuthenticated(true);
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
 
-  if (!user) {
+  // Show nothing while checking authentication
+  if (loading || !isAuthenticated) {
     return null;
   }
 
