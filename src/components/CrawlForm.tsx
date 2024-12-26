@@ -17,7 +17,7 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
     setProgress(0);
     
     try {
-      console.log('Form data being sent:', formData); // Debug log
+      console.log('Form data being sent:', formData);
       
       toast({
         title: "Generating Proposal",
@@ -25,7 +25,6 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
         duration: 3000,
       });
       
-      // Simulate progress for user feedback
       let currentProgress = 0;
       const interval = setInterval(() => {
         currentProgress += 10;
@@ -35,12 +34,11 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
         }
       }, 500);
 
-      // Generate proposal using OpenAI
       const { data: proposalData, error } = await supabase.functions.invoke('generate-proposal', {
         body: { formData }
       });
 
-      console.log('Response from generate-proposal:', proposalData); // Debug log
+      console.log('Response from generate-proposal:', proposalData);
 
       if (error) {
         console.error('Error generating proposal:', error);
@@ -48,7 +46,7 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
       }
 
       if (proposalData?.formattedProposal) {
-        console.log('Generated proposal:', proposalData.formattedProposal); // Debug log
+        console.log('Generated proposal:', proposalData.formattedProposal);
         onProposalGenerated(proposalData.formattedProposal);
         toast({
           title: "Success",

@@ -174,8 +174,8 @@ const CreateProposal = () => {
         
         {generatedProposal && (
           <div className="space-y-4">
-            <div className="p-4 bg-white rounded-lg shadow">
-              <pre className="whitespace-pre-wrap">{generatedProposal}</pre>
+            <div className="p-4 bg-white rounded-lg shadow prose prose-slate max-w-none">
+              <div dangerouslySetInnerHTML={{ __html: generatedProposal }} />
             </div>
             <div className="flex justify-end space-x-4">
               <Button variant="outline" onClick={() => navigate("/")}>

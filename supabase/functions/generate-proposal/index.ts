@@ -1,6 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { Configuration, OpenAIApi } from 'https://esm.sh/openai@3.3.0';
+import { marked } from 'https://esm.sh/marked@9.1.6';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -8,7 +9,6 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -21,7 +21,6 @@ serve(async (req) => {
       throw new Error('OpenAI API key not configured');
     }
 
-    // Initialize OpenAI
     const configuration = new Configuration({
       apiKey: Deno.env.get('OPENAI_API_KEY'),
     });
@@ -99,11 +98,12 @@ serve(async (req) => {
       throw new Error('No proposal content generated');
     }
 
-    const formattedProposal = completion.data.choices[0].message.content;
-    console.log('Generated proposal:', formattedProposal);
+    // Convert markdown to HTML
+    const markdownContent = completion.data.choices[0].message.content;
+    const htmlContent = marked(markdownContent);
 
     return new Response(
-      JSON.stringify({ formattedProposal }),
+      JSON.stringify({ formattedProposal: htmlContent }),
       {
         headers: {
           ...corsHeaders,
