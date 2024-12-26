@@ -15,8 +15,8 @@ import { ChallengesStrengthsStep } from "@/components/ProposalSteps/ChallengesSt
 import { StrategiesStep } from "@/components/ProposalSteps/StrategiesStep";
 import { ProposalToneStep } from "@/components/ProposalSteps/ProposalToneStep";
 import { CompanyCredentialsStep } from "@/components/ProposalSteps/CompanyCredentialsStep";
-import { ProposalFormData } from "@/types/proposal";
 import { CrawlForm } from "@/components/CrawlForm";
+import { ProposalFormData } from "@/types/proposal";
 
 const TOTAL_STEPS = 7;
 
@@ -25,6 +25,7 @@ const CreateProposal = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedProposal, setGeneratedProposal] = useState<string | null>(null);
+  const [stepsCompleted, setStepsCompleted] = useState<boolean[]>(Array(TOTAL_STEPS).fill(false));
   
   const form = useForm<ProposalFormData>({
     defaultValues: {
@@ -58,7 +59,65 @@ const CreateProposal = () => {
     checkAuth();
   }, [navigate]);
 
+  const validateCurrentStep = () => {
+    const currentFields = getFieldsForStep(currentStep);
+    return currentFields.every(field => {
+      const value = form.getValues(field as any);
+      return value && (Array.isArray(value) ? value.length > 0 : true);
+    });
+  };
+
+  const getFieldsForStep = (step: number): string[] => {
+    switch (step) {
+      case 1:
+        return ['title', 'company_name', 'website_url', 'primary_goal'];
+      case 2:
+        return ['services', 'target_audience', 'timeframe'];
+      case 3:
+        return ['success_metrics'];
+      case 4:
+        return ['challenges', 'strengths'];
+      case 5:
+        return ['recommended_strategies'];
+      case 6:
+        return ['proposal_tone', 'persuasion_level'];
+      case 7:
+        return ['reasons_to_work_with', 'awards_recognitions', 'relevant_experience'];
+      default:
+        return [];
+    }
+  };
+
+  const nextStep = async () => {
+    const isValid = validateCurrentStep();
+    if (!isValid) {
+      toast.error("Please complete all fields in this step before proceeding.");
+      return;
+    }
+
+    const newStepsCompleted = [...stepsCompleted];
+    newStepsCompleted[currentStep - 1] = true;
+    setStepsCompleted(newStepsCompleted);
+    setCurrentStep((prev) => Math.min(prev + 1, TOTAL_STEPS));
+  };
+
+  const prevStep = () => {
+    setCurrentStep((prev) => Math.max(prev - 1, 1));
+  };
+
   const onSubmit = async (data: ProposalFormData) => {
+    const isValid = validateCurrentStep();
+    if (!isValid) {
+      toast.error("Please complete all fields in the final step.");
+      return;
+    }
+
+    setStepsCompleted(prev => {
+      const newSteps = [...prev];
+      newSteps[TOTAL_STEPS - 1] = true;
+      return newSteps;
+    });
+
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -104,11 +163,8 @@ const CreateProposal = () => {
 
       toast.success("Proposal created successfully!");
       
-      // Instead of navigating home, show the CrawlForm for proposal generation
-      if (proposal) {
-        setGeneratedProposal(null); // Reset any previous proposal
-        setIsGenerating(true);
-      }
+      setIsGenerating(true);
+      setGeneratedProposal(null);
 
     } catch (error) {
       console.error("Error creating proposal:", error);
@@ -119,14 +175,6 @@ const CreateProposal = () => {
   const handleProposalGenerated = (proposal: string) => {
     setGeneratedProposal(proposal);
     setIsGenerating(false);
-  };
-
-  const nextStep = () => {
-    setCurrentStep((prev) => Math.min(prev + 1, TOTAL_STEPS));
-  };
-
-  const prevStep = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 1));
   };
 
   const renderStep = () => {
@@ -235,7 +283,10 @@ const CreateProposal = () => {
                   Next
                 </Button>
               ) : (
-                <Button type="submit" disabled={isGenerating}>
+                <Button 
+                  type="submit" 
+                  disabled={!stepsCompleted.every(Boolean)}
+                >
                   Create Proposal
                 </Button>
               )}
