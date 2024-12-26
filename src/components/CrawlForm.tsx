@@ -56,9 +56,11 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
       if (error) throw error;
 
       if (proposalData?.formattedProposal) {
-        const markdownContent = marked.parse(proposalData.formattedProposal);
-        setEditableContent(proposalData.formattedProposal);
-        onProposalGenerated(markdownContent);
+        // Ensure we're working with a string before parsing
+        const markdownString = String(proposalData.formattedProposal);
+        const htmlContent = marked.parse(markdownString);
+        setEditableContent(markdownString);
+        onProposalGenerated(htmlContent);
         
         toast({
           title: "Success",
@@ -86,7 +88,8 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
   const handleContentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = event.target.value;
     setEditableContent(newContent);
-    const htmlContent = marked.parse(newContent);
+    // Ensure we're working with a string before parsing
+    const htmlContent = marked.parse(String(newContent));
     onProposalGenerated(htmlContent);
   };
 
