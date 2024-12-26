@@ -46,52 +46,62 @@ export function AnalyticsSection() {
 
   const countCards = [
     {
-      number: "01",
-      title: "Total Proposals",
+      title: "TOTAL",
       count: counts.total,
-      color: "bg-[#1e3a8a]",
-      description: "Track all your business proposals in one place"
+      topColor: "bg-[#1A1F2C]", // Navy Blue
+      description: "Track and manage all your business proposals efficiently in one centralized location. Stay organized and never miss a proposal opportunity.",
+      accent: "border-[#1A1F2C]"
     },
     {
-      number: "02",
-      title: "Draft Proposals",
+      title: "DRAFTED",
       count: counts.drafts,
-      color: "bg-[#ea580c]",
-      description: "Proposals currently in progress awaiting completion"
+      topColor: "bg-[#F97316]", // Orange
+      description: "Keep track of your work-in-progress proposals. These drafts represent opportunities waiting to be refined and completed.",
+      accent: "border-[#F97316]"
     },
     {
-      number: "03",
-      title: "Completed Proposals",
+      title: "COMPLETED",
       count: counts.completed,
-      color: "bg-[#0d9488]",
-      description: "Successfully completed and ready to share proposals"
+      topColor: "bg-[#0EA5E9]", // Teal
+      description: "Successfully finalized proposals ready for client presentation. Each one represents a potential business opportunity.",
+      accent: "border-[#0EA5E9]"
     }
   ];
 
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {countCards.map((card, index) => (
           <div 
-            key={card.number}
+            key={card.title}
             className="relative group animate-fade-in"
             style={{ animationDelay: `${index * 200}ms` }}
           >
-            <div className="absolute -top-3 left-4 z-10">
-              <div className={`${card.color} text-white w-10 h-10 flex items-center justify-center rounded-sm shadow-lg`}>
-                <span className="font-bold">{card.number}</span>
+            {/* Card Container */}
+            <div className="relative bg-white rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl">
+              {/* Top Square with Paperclip */}
+              <div className="absolute -top-4 left-6 z-10">
+                <div className={`${card.topColor} w-12 h-12 transform -rotate-6 rounded shadow-md flex items-center justify-center`}>
+                  <span className="text-white font-bold text-lg">{card.count}</span>
+                </div>
+                <Paperclip 
+                  className="absolute -top-2 -right-2 w-6 h-6 text-gray-400 transform rotate-45" 
+                />
               </div>
-              <Paperclip className="absolute -top-1 -right-1 w-6 h-6 text-gray-400 transform rotate-45" />
-            </div>
-            <Card className="bg-white border-none shadow-lg hover:shadow-xl transition-shadow duration-300 pt-8">
-              <CardContent className="space-y-3">
-                <h3 className="font-semibold text-lg text-gray-800">{card.title}</h3>
-                <p className="text-3xl font-bold">{card.count}</p>
-                <p className="text-sm text-gray-600 leading-relaxed">
+
+              {/* Card Content */}
+              <div className="pt-12 pb-4 px-6">
+                <h3 className="text-center font-bold text-gray-800 tracking-wider mb-4">
+                  {card.title}
+                </h3>
+                <p className="text-sm text-gray-600 text-center leading-relaxed min-h-[3rem]">
                   {card.description}
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+
+              {/* Bottom Accent Bar */}
+              <div className={`h-2 ${card.accent} border-b-4 rounded-b-lg`} />
+            </div>
           </div>
         ))}
       </div>
