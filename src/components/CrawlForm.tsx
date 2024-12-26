@@ -55,7 +55,7 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
       }
 
       if (proposalData?.formattedProposal) {
-        const markdownContent = String(proposalData.formattedProposal);
+        const markdownContent = String(proposalData.formattedProposal || '');
         setEditableContent(markdownContent);
         const htmlContent = marked.parse(markdownContent);
         console.log('Generated proposal HTML:', htmlContent);
@@ -85,23 +85,21 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
   };
 
   const handleContentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newContent = event.target.value;
+    const newContent = event.target.value || '';
     setEditableContent(newContent);
-    // Ensure we're passing a string to marked.parse
     const htmlContent = marked.parse(String(newContent));
     onProposalGenerated(htmlContent);
   };
 
   const handleShare = async () => {
     try {
-      // First, get the current user
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
       const { data, error } = await supabase
         .from('proposals')
         .insert({
-          content: { text: editableContent },
+          content: { text: String(editableContent || '') },
           title: formData.title || 'Untitled Proposal',
           user_id: user.id,
           status: 'shared'
@@ -113,7 +111,6 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
 
       const shareableLink = `${window.location.origin}/view/${data.id}`;
       
-      // Copy link to clipboard
       await navigator.clipboard.writeText(shareableLink);
       
       toast({
