@@ -66,7 +66,7 @@ export function TemplateLibrary() {
 
   return (
     <div ref={containerRef} className="mb-8">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-semibold">Popular Templates</h2>
         <Button variant="ghost" className="group">
           View All Templates
@@ -74,39 +74,41 @@ export function TemplateLibrary() {
         </Button>
       </div>
       <div
-        className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-opacity duration-500 ${
+        className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 transition-opacity duration-500 ${
           isVisible ? "opacity-100" : "opacity-0"
         }`}
       >
-        {templates.slice(0, 3).map((template) => {
+        {templates.map((template) => {
           const Icon = template.icon;
           return (
             <div
               key={template.id}
-              className={`group relative overflow-hidden rounded-xl border bg-white p-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 ${template.bgLight}`}
+              className={`group relative overflow-hidden rounded-lg border bg-white p-4 transition-all duration-200 hover:shadow-md hover:-translate-y-1 ${template.bgLight}`}
             >
-              <div className="mb-4">
-                <div className={`inline-flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br ${template.gradient}`}>
-                  <Icon className="h-6 w-6 text-white" />
+              <div className="mb-3">
+                <div className={`inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br ${template.gradient}`}>
+                  <Icon className="h-4 w-4 text-white" />
                 </div>
               </div>
-              <div className="space-y-2">
-                <h3 className="font-semibold text-lg">{template.name}</h3>
-                <p className="text-sm text-muted-foreground">
+              <div className="space-y-1">
+                <h3 className="font-semibold text-sm">{template.name}</h3>
+                <p className="text-xs text-muted-foreground">
                   {template.description}
                 </p>
               </div>
-              <div className="mt-4 flex items-center space-x-2">
+              <div className="mt-3 flex items-center space-x-2">
                 <Button 
                   variant="ghost" 
-                  className="text-sm hover:bg-black/5"
+                  size="sm"
+                  className="text-xs h-7 px-2 hover:bg-black/5"
                 >
                   Learn more
                 </Button>
                 <Button 
-                  className={`text-sm bg-gradient-to-r ${template.gradient} text-white hover:opacity-90`}
+                  size="sm"
+                  className={`text-xs h-7 px-2 bg-gradient-to-r ${template.gradient} text-white hover:opacity-90`}
                 >
-                  Use Template
+                  Use
                 </Button>
               </div>
             </div>
