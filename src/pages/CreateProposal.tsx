@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -15,6 +14,7 @@ import { ChallengesStrengthsStep } from "@/components/ProposalSteps/ChallengesSt
 import { StrategiesStep } from "@/components/ProposalSteps/StrategiesStep";
 import { ProposalToneStep } from "@/components/ProposalSteps/ProposalToneStep";
 import { CompanyCredentialsStep } from "@/components/ProposalSteps/CompanyCredentialsStep";
+import { StepNavigation } from "@/components/ProposalSteps/StepNavigation";
 import { CrawlForm } from "@/components/CrawlForm";
 import { ProposalFormData } from "@/types/proposal";
 
@@ -268,29 +268,14 @@ const CreateProposal = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {renderStep()}
             
-            <div className="flex justify-between pt-6">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={prevStep}
-                disabled={currentStep === 1}
-              >
-                Previous
-              </Button>
-              
-              {currentStep < TOTAL_STEPS ? (
-                <Button type="button" onClick={nextStep}>
-                  Next
-                </Button>
-              ) : (
-                <Button 
-                  type="submit" 
-                  disabled={!stepsCompleted.every(Boolean)}
-                >
-                  Create Proposal
-                </Button>
-              )}
-            </div>
+            <StepNavigation
+              currentStep={currentStep}
+              totalSteps={TOTAL_STEPS}
+              stepsCompleted={stepsCompleted}
+              onPrevious={prevStep}
+              onNext={nextStep}
+              onSubmit={form.handleSubmit(onSubmit)}
+            />
           </form>
         </Form>
       </div>
