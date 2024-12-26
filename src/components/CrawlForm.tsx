@@ -27,7 +27,7 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
     try {
       const formalFormData = {
         ...formData,
-        proposal_tone: "formal" // Explicitly set formal tone
+        proposal_tone: "formal"
       };
       
       console.log('Form data being sent:', formalFormData);
@@ -56,9 +56,8 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
       if (error) throw error;
 
       if (proposalData?.formattedProposal) {
-        // Ensure we're working with a string before parsing
         const markdownString = String(proposalData.formattedProposal);
-        const htmlContent = marked.parse(markdownString);
+        const htmlContent = await Promise.resolve(marked.parse(markdownString));
         setEditableContent(markdownString);
         onProposalGenerated(htmlContent);
         
@@ -85,11 +84,10 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
     }
   };
 
-  const handleContentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleContentChange = async (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = event.target.value;
     setEditableContent(newContent);
-    // Ensure we're working with a string before parsing
-    const htmlContent = marked.parse(String(newContent));
+    const htmlContent = await Promise.resolve(marked.parse(String(newContent)));
     onProposalGenerated(htmlContent);
   };
 
@@ -105,7 +103,7 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
           title: formData.title || 'Untitled Proposal',
           user_id: user.id,
           status: 'shared',
-          tone: 'formal' // Explicitly set formal tone in database
+          tone: 'formal'
         })
         .select()
         .single();
