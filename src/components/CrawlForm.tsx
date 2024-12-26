@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { marked } from 'marked';
+import { Share2 } from 'lucide-react';
 
 // Configure marked with the correct options
 marked.setOptions({
-  mangle: false,
-  headerPrefix: '', // Use headerPrefix instead of headerIds
-  silent: true // Suppress warnings
+  breaks: true,
+  silent: true
 });
 
 export const CrawlForm = ({ formData, onProposalGenerated }: { 
@@ -19,6 +19,7 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [editableContent, setEditableContent] = useState('');
 
   const handleGenerateProposal = async () => {
     setIsLoading(true);
@@ -54,9 +55,9 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
       }
 
       if (proposalData?.formattedProposal) {
-        // Ensure we're working with a string before passing to marked
         const markdownContent = String(proposalData.formattedProposal);
-        const htmlContent = marked.parse(markdownContent); // Use marked.parse instead of marked
+        setEditableContent(markdownContent);
+        const htmlContent = marked.parse(markdownContent);
         console.log('Generated proposal HTML:', htmlContent);
         onProposalGenerated(htmlContent);
         
@@ -83,10 +84,69 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
     }
   };
 
+  const handleContentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newContent = event.target.value;
+    setEditableContent(newContent);
+    const htmlContent = marked.parse(newContent);
+    onProposalGenerated(htmlContent);
+  };
+
+  const handleShare = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('shared_proposals')
+        .insert([
+          { content: editableContent }
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const shareableLink = `${window.location.origin}/view/${data.id}`;
+      
+      // Copy link to clipboard
+      await navigator.clipboard.writeText(shareableLink);
+      
+      toast({
+        title: "Link Copied!",
+        description: "Shareable link has been copied to your clipboard",
+        duration: 3000,
+      });
+    } catch (error) {
+      console.error('Error sharing proposal:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate shareable link",
+        variant: "destructive",
+        duration: 5000,
+      });
+    }
+  };
+
   return (
     <div className="space-y-4">
       {isLoading && (
         <Progress value={progress} className="w-full" />
+      )}
+      
+      {editableContent && (
+        <div className="space-y-4">
+          <textarea
+            value={editableContent}
+            onChange={handleContentChange}
+            className="w-full min-h-[400px] p-4 border rounded-lg font-mono"
+            placeholder="Edit your proposal here..."
+          />
+          <Button
+            onClick={handleShare}
+            variant="outline"
+            className="w-full"
+          >
+            <Share2 className="w-4 h-4 mr-2" />
+            Share Proposal
+          </Button>
+        </div>
       )}
       
       <Button
