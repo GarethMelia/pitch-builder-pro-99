@@ -76,7 +76,7 @@ export const NavigationBar = () => {
   }
 
   return (
-    <nav className="bg-white border-b relative">
+    <nav className="bg-white border-b relative z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
@@ -94,7 +94,7 @@ export const NavigationBar = () => {
                       Templates
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
-                      <div className="fixed left-0 right-0 bg-white shadow-lg z-50">
+                      <div className="fixed left-0 right-0 bg-white shadow-lg z-[100]">
                         <div className="container mx-auto p-6">
                           <div className="grid grid-cols-3 gap-6">
                             {templateCategories.map((category, index) => (

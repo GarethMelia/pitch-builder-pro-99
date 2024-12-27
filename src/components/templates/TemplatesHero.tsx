@@ -14,11 +14,11 @@ export const TemplatesHero = () => {
       
       {/* Solid Background Overlay */}
       <div 
-        className="absolute inset-0 z-1 bg-primary/90"
+        className="absolute inset-0 z-10 bg-primary/90"
       />
 
       {/* Content */}
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-4 relative z-20">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Discover the Perfect Template for Every Need
