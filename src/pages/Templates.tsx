@@ -71,10 +71,10 @@ export default function Templates() {
         <div 
           className="absolute inset-0 z-1 bg-gradient-to-b from-white/60 via-white/70 to-white/95"
           style={{
-            backgroundImage: "url('/lovable-uploads/d4ba166f-f7a7-417b-8554-5b39f8fc9667.png')",
+            backgroundImage: `linear-gradient(109.6deg, rgba(223,234,247,0.9) 11.2%, rgba(244,248,252,0.9) 91.1%), url('/lovable-uploads/d4ba166f-f7a7-417b-8554-5b39f8fc9667.png')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            opacity: '0.3'
+            opacity: '0.2'
           }}
         />
 
