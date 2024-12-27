@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { UseCaseGuide } from "@/components/templates/UseCaseGuide";
+import { Briefcase, FileText, Users } from "lucide-react";
 
 const categories = [
   {
@@ -89,6 +89,57 @@ export default function Templates() {
         </div>
       </section>
 
+      {/* Template Categories */}
+      <section className="py-16">
+        <div className="container mx-auto px-4">
+          <div className="space-y-24">
+            {categories.map((category, index) => (
+              <div 
+                key={index}
+                className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row-reverse' : 'md:flex-row'} items-center gap-12`}
+              >
+                {/* Image Section */}
+                <div className="w-full md:w-1/2">
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-xl transition-all duration-300 hover:scale-105">
+                    <img
+                      src={category.image}
+                      alt={category.title}
+                      className="object-cover w-full h-full shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+                    />
+                  </div>
+                </div>
+
+                {/* Content Section */}
+                <div className="w-full md:w-1/2 space-y-6">
+                  <div>
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4">{category.title}</h2>
+                    <p className="text-lg text-gray-600 mb-8">{category.description}</p>
+                    <Button 
+                      className="group"
+                      size="lg"
+                    >
+                      {category.cta}
+                      <svg
+                        className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Missing Template Section */}
       <section className="py-24 bg-primary">
         <div className="container mx-auto px-4">
@@ -104,8 +155,45 @@ export default function Templates() {
         </div>
       </section>
 
-      {/* Use Case Guide */}
-      <UseCaseGuide />
+      {/* Use Case Guide Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+              Not sure which template to choose?
+            </h2>
+            
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Proposal Use Case */}
+              <div className="flex flex-col items-center text-center space-y-4 p-6 rounded-lg hover:bg-gray-50 transition-colors">
+                <div className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-100">
+                  <Briefcase className="w-6 h-6 text-blue-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900">Need to pitch a project?</h3>
+                <p className="text-gray-600">Use Proposal Templates</p>
+              </div>
+
+              {/* Contract Use Case */}
+              <div className="flex flex-col items-center text-center space-y-4 p-6 rounded-lg hover:bg-gray-50 transition-colors">
+                <div className="w-12 h-12 flex items-center justify-center rounded-full bg-green-100">
+                  <FileText className="w-6 h-6 text-green-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900">Want to seal the deal?</h3>
+                <p className="text-gray-600">Use Contract Templates</p>
+              </div>
+
+              {/* Job Offer Use Case */}
+              <div className="flex flex-col items-center text-center space-y-4 p-6 rounded-lg hover:bg-gray-50 transition-colors">
+                <div className="w-12 h-12 flex items-center justify-center rounded-full bg-purple-100">
+                  <Users className="w-6 h-6 text-purple-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900">Hiring new talent?</h3>
+                <p className="text-gray-600">Choose Job Offer Templates</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
