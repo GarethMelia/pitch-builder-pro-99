@@ -1,4 +1,4 @@
-import { Document, Page, Text, View, StyleSheet, PDFViewer, Font } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, PDFViewer, Font, Image } from '@react-pdf/renderer';
 import { ProposalFormData } from '@/types/proposal';
 
 // Register fonts
@@ -11,6 +11,26 @@ const styles = StyleSheet.create({
   page: {
     padding: 40,
     fontFamily: 'Open Sans',
+  },
+  coverImage: {
+    width: '100%',
+    height: 200,
+    objectFit: 'cover',
+    marginBottom: 20,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  logo: {
+    width: 100,
+    height: 100,
+    objectFit: 'contain',
+    marginRight: 20,
+  },
+  headerText: {
+    flex: 1,
   },
   section: {
     marginBottom: 20,
@@ -52,7 +72,6 @@ interface ProposalPDFProps {
 }
 
 export const ProposalPDF = ({ data }: ProposalPDFProps) => {
-  // Early return if no data
   if (!data) {
     return (
       <PDFViewer style={{ width: '100%', height: '800px' }}>
@@ -71,13 +90,23 @@ export const ProposalPDF = ({ data }: ProposalPDFProps) => {
     <PDFViewer style={{ width: '100%', height: '800px' }}>
       <Document>
         <Page size="A4" style={styles.page}>
-          {/* Header */}
-          <View style={styles.section}>
-            <Text style={styles.title}>{data.title || 'Untitled Proposal'}</Text>
-            <Text style={styles.text}>Prepared by: {data.company_name || 'Company Name'}</Text>
-            {data.website_url && (
-              <Text style={styles.text}>Website: {data.website_url}</Text>
+          {/* Cover Image */}
+          {data.cover_image && (
+            <Image src={data.cover_image} style={styles.coverImage} />
+          )}
+
+          {/* Header with Logo */}
+          <View style={styles.header}>
+            {data.company_logo && (
+              <Image src={data.company_logo} style={styles.logo} />
             )}
+            <View style={styles.headerText}>
+              <Text style={styles.title}>{data.title || 'Untitled Proposal'}</Text>
+              <Text style={styles.text}>Prepared by: {data.company_name || 'Company Name'}</Text>
+              {data.website_url && (
+                <Text style={styles.text}>Website: {data.website_url}</Text>
+              )}
+            </View>
           </View>
 
           {/* Primary Goal */}
