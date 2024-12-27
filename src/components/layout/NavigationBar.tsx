@@ -3,10 +3,26 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { Settings } from "lucide-react";
+import { useEffect } from "react";
 
 export const NavigationBar = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  // Prevent any UI rendering until auth state is confirmed
+  if (loading) {
+    return (
+      <nav className="bg-white border-b">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            <Link to="/" className="text-xl font-bold text-primary">
+              Pitch Builder Pro
+            </Link>
+          </div>
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav className="bg-white border-b">

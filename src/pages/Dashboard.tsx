@@ -8,8 +8,14 @@ import { useAuth } from "@/hooks/use-auth";
 import { Navigate } from "react-router-dom";
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
+  // Show nothing while checking auth state
+  if (loading) {
+    return null;
+  }
+
+  // Redirect to auth if not logged in
   if (!user) {
     return <Navigate to="/auth" replace />;
   }
