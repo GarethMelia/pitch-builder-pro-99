@@ -1,48 +1,40 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Code, Megaphone, Briefcase, Globe, Layout } from "lucide-react";
+import { ChevronRight, FileText, Calculator, FileCheck, Briefcase } from "lucide-react";
 
 const templates = [
   { 
     id: 1, 
-    name: "Web Development", 
-    description: "Create professional web development proposals with detailed technical specifications and project milestones.",
-    icon: Code,
-    gradient: "from-emerald-500 to-emerald-700",
-    bgLight: "bg-emerald-50"
-  },
-  { 
-    id: 2, 
-    name: "Marketing Plan", 
-    description: "Design comprehensive marketing strategies with campaign timelines, budget allocation, and target audience analysis.",
-    icon: Megaphone,
+    name: "Proposal Templates", 
+    description: "Professional business proposal templates for pitching your services, products, or projects to potential clients.",
+    icon: FileText,
     gradient: "from-blue-500 to-blue-700",
     bgLight: "bg-blue-50"
   },
   { 
+    id: 2, 
+    name: "Service Quotes Templates", 
+    description: "Customizable quote templates for pricing your services with detailed breakdowns and terms.",
+    icon: Calculator,
+    gradient: "from-emerald-500 to-emerald-700",
+    bgLight: "bg-emerald-50"
+  },
+  { 
     id: 3, 
-    name: "Business Proposal", 
-    description: "Craft compelling business proposals with financial projections, market analysis, and implementation roadmap.",
-    icon: Briefcase,
-    gradient: "from-amber-500 to-amber-700",
-    bgLight: "bg-amber-50"
-  },
-  { 
-    id: 4, 
-    name: "Corporate Services", 
-    description: "Present professional service offerings with detailed scope, deliverables, and client success stories.",
-    icon: Globe,
-    gradient: "from-rose-500 to-rose-700",
-    bgLight: "bg-rose-50"
-  },
-  { 
-    id: 5, 
-    name: "Digital Marketing", 
-    description: "Build strategic digital marketing proposals with channel-specific strategies and performance metrics.",
-    icon: Layout,
+    name: "Agreement Templates", 
+    description: "Comprehensive agreement templates for contracts, partnerships, and service level agreements.",
+    icon: FileCheck,
     gradient: "from-purple-500 to-purple-700",
     bgLight: "bg-purple-50"
   },
+  { 
+    id: 4, 
+    name: "Job Offer Templates", 
+    description: "Professional job offer templates with customizable terms, benefits, and employment conditions.",
+    icon: Briefcase,
+    gradient: "from-amber-500 to-amber-700",
+    bgLight: "bg-amber-50"
+  }
 ];
 
 export function TemplateLibrary() {
@@ -68,7 +60,7 @@ export function TemplateLibrary() {
   const displayedTemplates = showAll ? templates : templates.slice(0, 3);
 
   return (
-    <div ref={containerRef} className="mb-16"> {/* Increased margin bottom here */}
+    <div ref={containerRef} className="mb-16">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-semibold">Template Category</h2>
         <Button 
