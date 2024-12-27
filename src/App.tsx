@@ -8,6 +8,7 @@ import Pricing from "./pages/Pricing";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
 import Settings from "./pages/Settings";
+import Templates from "./pages/Templates";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/templates" element={<Templates />} />
       </Routes>
     </Router>
   );
