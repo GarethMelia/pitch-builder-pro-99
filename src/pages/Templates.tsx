@@ -63,8 +63,25 @@ export default function Templates() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="relative py-20 bg-white">
-        <div className="container mx-auto px-4">
+      <section className="relative py-20">
+        {/* Background Image Container */}
+        <div 
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: "url('/lovable-uploads/d4ba166f-f7a7-417b-8554-5b39f8fc9667.png')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            opacity: '0.1' // Makes the background very light
+          }}
+        />
+        
+        {/* Gradient Overlay */}
+        <div 
+          className="absolute inset-0 z-1 bg-gradient-to-b from-white/80 to-white/95"
+        />
+
+        {/* Content */}
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
               Discover the Perfect Template for Every Need
