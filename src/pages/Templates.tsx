@@ -71,7 +71,7 @@ export default function Templates() {
           className="absolute inset-0 z-1"
           style={{
             background: 'linear-gradient(109.6deg, rgba(255,228,230,1) 11.2%, rgba(244,248,255,1) 91.1%)',
-            opacity: '0.3'
+            opacity: '0.27'
           }}
         />
 
