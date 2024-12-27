@@ -38,7 +38,7 @@ export const NavigationBar = () => {
                   <Settings className="h-4 w-4" />
                   Settings
                 </Button>
-                <Button onClick={() => navigate("/create")}>
+                <Button onClick={() => navigate("/dashboard")}>
                   Dashboard
                 </Button>
               </>
