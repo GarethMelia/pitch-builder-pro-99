@@ -94,7 +94,7 @@ export const NavigationBar = () => {
                       Templates
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
-                      <div className="w-[1000px] p-6 bg-white">
+                      <div className="w-[1000px] p-6 bg-white shadow-lg">
                         <div className="grid grid-cols-3 gap-6 md:grid-cols-2 sm:grid-cols-1">
                           {templateCategories.map((category, index) => (
                             <NavigationMenuLink asChild key={index}>
