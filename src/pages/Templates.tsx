@@ -74,7 +74,7 @@ export default function Templates() {
             backgroundImage: "url('/lovable-uploads/d4ba166f-f7a7-417b-8554-5b39f8fc9667.png')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            opacity: '0.4'
+            opacity: '0.3'
           }}
         />
 
