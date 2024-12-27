@@ -21,8 +21,7 @@ const templates = [
     description: "Professional business proposal templates for pitching your services, products, or projects to potential clients.",
     icon: FileText,
     gradient: "from-blue-500 to-blue-700",
-    bgLight: "bg-blue-50",
-    preview: "/lovable-uploads/97d4d9a3-b869-45f8-aaf3-ac37720d5e33.png"
+    bgLight: "bg-blue-50"
   },
   { 
     id: 2, 
@@ -30,8 +29,7 @@ const templates = [
     description: "Customizable quote templates for pricing your services with detailed breakdowns and terms.",
     icon: Calculator,
     gradient: "from-emerald-500 to-emerald-700",
-    bgLight: "bg-emerald-50",
-    preview: "/lovable-uploads/97d4d9a3-b869-45f8-aaf3-ac37720d5e33.png"
+    bgLight: "bg-emerald-50"
   },
   { 
     id: 3, 
@@ -39,8 +37,7 @@ const templates = [
     description: "Comprehensive agreement templates for contracts, partnerships, and service level agreements.",
     icon: FileCheck,
     gradient: "from-purple-500 to-purple-700",
-    bgLight: "bg-purple-50",
-    preview: "/lovable-uploads/97d4d9a3-b869-45f8-aaf3-ac37720d5e33.png"
+    bgLight: "bg-purple-50"
   },
   { 
     id: 4, 
@@ -48,8 +45,7 @@ const templates = [
     description: "Professional job offer templates with customizable terms, benefits, and employment conditions.",
     icon: Briefcase,
     gradient: "from-amber-500 to-amber-700",
-    bgLight: "bg-amber-50",
-    preview: "/lovable-uploads/97d4d9a3-b869-45f8-aaf3-ac37720d5e33.png"
+    bgLight: "bg-amber-50"
   },
   {
     id: 5,
@@ -57,8 +53,7 @@ const templates = [
     description: "Create compelling about pages and company profiles with our professional templates.",
     icon: Info,
     gradient: "from-indigo-500 to-indigo-700",
-    bgLight: "bg-indigo-50",
-    preview: "/lovable-uploads/97d4d9a3-b869-45f8-aaf3-ac37720d5e33.png"
+    bgLight: "bg-indigo-50"
   },
   {
     id: 6,
@@ -66,8 +61,7 @@ const templates = [
     description: "Design attractive pricing pages and packages with our customizable templates.",
     icon: DollarSign,
     gradient: "from-rose-500 to-rose-700",
-    bgLight: "bg-rose-50",
-    preview: "/lovable-uploads/97d4d9a3-b869-45f8-aaf3-ac37720d5e33.png"
+    bgLight: "bg-rose-50"
   },
   {
     id: 7,
@@ -75,15 +69,13 @@ const templates = [
     description: "Create professional contact forms and pages with our ready-to-use templates.",
     icon: Phone,
     gradient: "from-cyan-500 to-cyan-700",
-    bgLight: "bg-cyan-50",
-    preview: "/lovable-uploads/97d4d9a3-b869-45f8-aaf3-ac37720d5e33.png"
+    bgLight: "bg-cyan-50"
   }
 ];
 
 export function TemplateLibrary() {
   const [isVisible, setIsVisible] = useState(false);
   const [showAll, setShowAll] = useState(false);
-  const [hoveredTemplate, setHoveredTemplate] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -145,9 +137,7 @@ export function TemplateLibrary() {
               return (
                 <div
                   key={template.id}
-                  className={`group relative overflow-hidden rounded-lg border p-4 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 ${template.bgLight}`}
-                  onMouseEnter={() => setHoveredTemplate(template.id)}
-                  onMouseLeave={() => setHoveredTemplate(null)}
+                  className={`relative overflow-hidden rounded-lg border p-4 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 ${template.bgLight}`}
                 >
                   <div className="mb-3">
                     <div className={`inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br ${template.gradient}`}>
@@ -156,32 +146,10 @@ export function TemplateLibrary() {
                   </div>
                   <div className="space-y-2">
                     <h3 className="font-semibold text-base">{template.name}</h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2 min-h-[40px]">
+                    <p className="text-sm text-muted-foreground line-clamp-2">
                       {template.description}
                     </p>
                   </div>
-                  
-                  {/* Hover Preview */}
-                  {hoveredTemplate === template.id && (
-                    <div className="absolute inset-0 bg-white/95 p-4 transition-all duration-200 animate-fade-in">
-                      <div className="flex flex-col h-full">
-                        <img 
-                          src={template.preview} 
-                          alt={template.name}
-                          className="w-full h-32 object-cover rounded-lg mb-3"
-                        />
-                        <p className="text-sm text-gray-600 flex-grow">
-                          {template.description}
-                        </p>
-                        <Button 
-                          size="sm"
-                          className={`w-full bg-gradient-to-r ${template.gradient} text-white hover:opacity-90 mt-2`}
-                        >
-                          Use this template
-                        </Button>
-                      </div>
-                    </div>
-                  )}
                 </div>
               );
             })}

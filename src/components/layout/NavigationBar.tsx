@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
 import { Settings } from "lucide-react";
-import { useEffect } from "react";
 
 export const NavigationBar = () => {
   const navigate = useNavigate();
@@ -36,6 +35,7 @@ export const NavigationBar = () => {
               <Link to="/about" className="text-gray-600 hover:text-gray-900">About</Link>
               <Link to="/pricing" className="text-gray-600 hover:text-gray-900">Pricing</Link>
               <Link to="/contact" className="text-gray-600 hover:text-gray-900">Contact</Link>
+              <Link to="/templates" className="text-gray-600 hover:text-gray-900">Templates</Link>
             </div>
           </div>
           <div className="flex items-center space-x-4">
