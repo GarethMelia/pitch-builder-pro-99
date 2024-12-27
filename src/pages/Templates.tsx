@@ -77,7 +77,7 @@ export default function Templates() {
 
         {/* Content */}
         <div className="container mx-auto px-4 relative z-20">
-          <div className="bg-black py-12 px-8 rounded-xl shadow-2xl">
+          <div className="bg-primary py-12 px-8 rounded-xl shadow-2xl">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
                 Discover the Perfect Template for Every Need
