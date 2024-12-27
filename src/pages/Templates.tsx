@@ -1,10 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { 
-  Briefcase, FileText, Users, PenTool, Building, 
-  Presentation, HandshakeIcon, BookOpen, MessageSquare, 
-  Target, ShoppingBag, Award
-} from "lucide-react";
+import { UseCaseGuide } from "@/components/templates/UseCaseGuide";
 
 const categories = [
   {
@@ -108,108 +104,8 @@ export default function Templates() {
         </div>
       </section>
 
-      {/* Use Case Guide Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-              Not sure which template to choose?
-            </h2>
-            
-            <div className="space-y-4">
-              {/* Proposals */}
-              <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-blue-600">Proposal Templates</h3>
-                <div className="space-y-2">
-                  <div className="group flex items-center p-3 rounded-lg hover:bg-blue-50 transition-all duration-300 animate-fade-in cursor-pointer">
-                    <Briefcase className="w-5 h-5 text-blue-500 mr-4" />
-                    <p className="text-gray-700 group-hover:text-blue-700 transition-colors">Need to pitch a consulting project? →</p>
-                  </div>
-                  <div className="group flex items-center p-3 rounded-lg hover:bg-blue-50 transition-all duration-300 animate-fade-in cursor-pointer">
-                    <PenTool className="w-5 h-5 text-blue-500 mr-4" />
-                    <p className="text-gray-700 group-hover:text-blue-700 transition-colors">Want to propose a design service? →</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Quotes */}
-              <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-yellow-600">Quote Templates</h3>
-                <div className="space-y-2">
-                  <div className="group flex items-center p-3 rounded-lg hover:bg-yellow-50 transition-all duration-300 animate-fade-in cursor-pointer">
-                    <Building className="w-5 h-5 text-yellow-500 mr-4" />
-                    <p className="text-gray-700 group-hover:text-yellow-700 transition-colors">Preparing a construction estimate? →</p>
-                  </div>
-                  <div className="group flex items-center p-3 rounded-lg hover:bg-yellow-50 transition-all duration-300 animate-fade-in cursor-pointer">
-                    <ShoppingBag className="w-5 h-5 text-yellow-500 mr-4" />
-                    <p className="text-gray-700 group-hover:text-yellow-700 transition-colors">Need to quote for product supplies? →</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Contracts */}
-              <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-green-600">Contract Templates</h3>
-                <div className="space-y-2">
-                  <div className="group flex items-center p-3 rounded-lg hover:bg-green-50 transition-all duration-300 animate-fade-in cursor-pointer">
-                    <FileText className="w-5 h-5 text-green-500 mr-4" />
-                    <p className="text-gray-700 group-hover:text-green-700 transition-colors">Setting up a service agreement? →</p>
-                  </div>
-                  <div className="group flex items-center p-3 rounded-lg hover:bg-green-50 transition-all duration-300 animate-fade-in cursor-pointer">
-                    <HandshakeIcon className="w-5 h-5 text-green-500 mr-4" />
-                    <p className="text-gray-700 group-hover:text-green-700 transition-colors">Need a partnership contract? →</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Job Offers */}
-              <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-purple-600">Job Offer Templates</h3>
-                <div className="space-y-2">
-                  <div className="group flex items-center p-3 rounded-lg hover:bg-purple-50 transition-all duration-300 animate-fade-in cursor-pointer">
-                    <Users className="w-5 h-5 text-purple-500 mr-4" />
-                    <p className="text-gray-700 group-hover:text-purple-700 transition-colors">Hiring for a senior position? →</p>
-                  </div>
-                  <div className="group flex items-center p-3 rounded-lg hover:bg-purple-50 transition-all duration-300 animate-fade-in cursor-pointer">
-                    <Target className="w-5 h-5 text-purple-500 mr-4" />
-                    <p className="text-gray-700 group-hover:text-purple-700 transition-colors">Looking for entry-level talent? →</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Client Sign-Offs */}
-              <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-pink-600">Sign-Off Templates</h3>
-                <div className="space-y-2">
-                  <div className="group flex items-center p-3 rounded-lg hover:bg-pink-50 transition-all duration-300 animate-fade-in cursor-pointer">
-                    <MessageSquare className="w-5 h-5 text-pink-500 mr-4" />
-                    <p className="text-gray-700 group-hover:text-pink-700 transition-colors">Need project milestone approval? →</p>
-                  </div>
-                  <div className="group flex items-center p-3 rounded-lg hover:bg-pink-50 transition-all duration-300 animate-fade-in cursor-pointer">
-                    <Award className="w-5 h-5 text-pink-500 mr-4" />
-                    <p className="text-gray-700 group-hover:text-pink-700 transition-colors">Completing a project phase? →</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Online Brochures */}
-              <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-indigo-600">Brochure Templates</h3>
-                <div className="space-y-2">
-                  <div className="group flex items-center p-3 rounded-lg hover:bg-indigo-50 transition-all duration-300 animate-fade-in cursor-pointer">
-                    <Presentation className="w-5 h-5 text-indigo-500 mr-4" />
-                    <p className="text-gray-700 group-hover:text-indigo-700 transition-colors">Showcasing your services? →</p>
-                  </div>
-                  <div className="group flex items-center p-3 rounded-lg hover:bg-indigo-50 transition-all duration-300 animate-fade-in cursor-pointer">
-                    <BookOpen className="w-5 h-5 text-indigo-500 mr-4" />
-                    <p className="text-gray-700 group-hover:text-indigo-700 transition-colors">Creating a product catalog? →</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Use Case Guide */}
+      <UseCaseGuide />
     </div>
   );
 }
