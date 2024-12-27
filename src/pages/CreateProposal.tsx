@@ -17,6 +17,7 @@ import { ProposalToneStep } from "@/components/ProposalSteps/ProposalToneStep";
 import { CompanyCredentialsStep } from "@/components/ProposalSteps/CompanyCredentialsStep";
 import { StepNavigation } from "@/components/ProposalSteps/StepNavigation";
 import { CrawlForm } from "@/components/CrawlForm";
+import { GeneratedProposalView } from "@/components/GeneratedProposalView";
 import { ProposalFormData } from "@/types/proposal";
 
 const TOTAL_STEPS = 7;
@@ -59,13 +60,8 @@ const CreateProposal = () => {
     checkAuth();
   }, [navigate]);
 
-  const nextStep = () => {
-    setCurrentStep((prev) => Math.min(prev + 1, TOTAL_STEPS));
-  };
-
-  const prevStep = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 1));
-  };
+  const nextStep = () => setCurrentStep((prev) => Math.min(prev + 1, TOTAL_STEPS));
+  const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
 
   const onSubmit = async (data: ProposalFormData) => {
     try {
@@ -170,22 +166,11 @@ const CreateProposal = () => {
         )}
         
         {generatedProposal && (
-          <div className="space-y-4">
-            <div className="p-6 bg-white rounded-lg shadow prose prose-slate max-w-none">
-              <div 
-                dangerouslySetInnerHTML={{ __html: generatedProposal }}
-                className="prose-headings:font-bold prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-p:text-gray-600 prose-strong:text-gray-800 prose-ul:list-disc prose-ol:list-decimal"
-              />
-            </div>
-            <div className="flex justify-end space-x-4">
-              <Button variant="outline" onClick={() => navigate("/dashboard")}>
-                Back to Dashboard
-              </Button>
-              <Button onClick={() => setGeneratedProposal(null)}>
-                Generate Again
-              </Button>
-            </div>
-          </div>
+          <GeneratedProposalView
+            proposal={generatedProposal}
+            formData={form.getValues()}
+            onRegenerateClick={() => setGeneratedProposal(null)}
+          />
         )}
       </div>
     );
