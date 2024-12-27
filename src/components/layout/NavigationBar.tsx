@@ -76,7 +76,7 @@ export const NavigationBar = () => {
   }
 
   return (
-    <nav className="bg-white border-b">
+    <nav className="bg-white border-b relative">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
@@ -94,30 +94,32 @@ export const NavigationBar = () => {
                       Templates
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
-                      <div className="w-[1000px] p-6 bg-white shadow-lg">
-                        <div className="grid grid-cols-3 gap-6 md:grid-cols-2 sm:grid-cols-1">
-                          {templateCategories.map((category, index) => (
-                            <NavigationMenuLink asChild key={index}>
-                              <Link
-                                to="/templates"
-                                className={`block p-4 rounded-lg transition-all duration-200 hover:shadow-lg hover:-translate-y-1 ${category.bgColor}`}
-                              >
-                                <div className="flex items-start space-x-4">
-                                  <div className={`p-2 rounded-lg ${category.bgColor}`}>
-                                    <category.icon className={`w-5 h-5 ${category.color}`} />
+                      <div className="w-screen left-0 absolute bg-white shadow-lg">
+                        <div className="container mx-auto p-6">
+                          <div className="grid grid-cols-3 gap-6">
+                            {templateCategories.map((category, index) => (
+                              <NavigationMenuLink asChild key={index}>
+                                <Link
+                                  to="/templates"
+                                  className={`block p-4 rounded-lg transition-all duration-200 hover:shadow-lg hover:-translate-y-1 ${category.bgColor}`}
+                                >
+                                  <div className="flex items-start space-x-4">
+                                    <div className={`p-2 rounded-lg ${category.bgColor}`}>
+                                      <category.icon className={`w-5 h-5 ${category.color}`} />
+                                    </div>
+                                    <div>
+                                      <h3 className="font-semibold text-sm text-gray-900 mb-1">
+                                        {category.title}
+                                      </h3>
+                                      <p className="text-xs text-gray-600 line-clamp-2">
+                                        {category.description}
+                                      </p>
+                                    </div>
                                   </div>
-                                  <div>
-                                    <h3 className="font-semibold text-sm text-gray-900 mb-1">
-                                      {category.title}
-                                    </h3>
-                                    <p className="text-xs text-gray-600 line-clamp-2">
-                                      {category.description}
-                                    </p>
-                                  </div>
-                                </div>
-                              </Link>
-                            </NavigationMenuLink>
-                          ))}
+                                </Link>
+                              </NavigationMenuLink>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </NavigationMenuContent>
