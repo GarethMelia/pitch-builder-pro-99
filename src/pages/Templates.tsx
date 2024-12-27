@@ -76,12 +76,12 @@ export default function Templates() {
         />
 
         {/* Content */}
-        <div className="container mx-auto px-4 relative z-10 bg-primary py-8 my-8 rounded-lg shadow-lg">
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
               Discover the Perfect Template for Every Need
             </h1>
-            <p className="text-xl text-white/90 mb-8">
+            <p className="text-xl text-gray-600 mb-8">
               Streamline your workflow with professionally designed templates – crafted to save time and boost productivity.
             </p>
           </div>
