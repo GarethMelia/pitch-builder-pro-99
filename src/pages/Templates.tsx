@@ -65,19 +65,17 @@ export default function Templates() {
       {/* Hero Section */}
       <section className="relative py-20">
         {/* Background Image Container */}
+        <div className="absolute inset-0 z-0" />
+        
+        {/* Gradient Overlay with Background Image */}
         <div 
-          className="absolute inset-0 z-0"
+          className="absolute inset-0 z-1 bg-gradient-to-b from-white/80 to-white/95"
           style={{
             backgroundImage: "url('/lovable-uploads/d4ba166f-f7a7-417b-8554-5b39f8fc9667.png')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            opacity: '0.1' // Makes the background very light
+            opacity: '0.1'
           }}
-        />
-        
-        {/* Gradient Overlay */}
-        <div 
-          className="absolute inset-0 z-1 bg-gradient-to-b from-white/80 to-white/95"
         />
 
         {/* Content */}
