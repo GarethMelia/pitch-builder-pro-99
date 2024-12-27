@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
-import { Settings, FileText, FileCheck, Users, ClipboardList, FileSpreadsheet, LayoutTemplate, Box } from "lucide-react";
+import { Settings, FileText, FileCheck, Users, ClipboardList, FileSpreadsheet, LayoutTemplate } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -94,7 +94,7 @@ export const NavigationBar = () => {
                       Templates
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
-                      <div className="w-screen left-0 absolute bg-white shadow-lg">
+                      <div className="fixed left-0 right-0 bg-white shadow-lg z-50">
                         <div className="container mx-auto p-6">
                           <div className="grid grid-cols-3 gap-6">
                             {templateCategories.map((category, index) => (
