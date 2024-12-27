@@ -1,19 +1,25 @@
 import { NavigationBar } from "@/components/layout/NavigationBar";
+import { HeroSection } from "@/components/landing/HeroSection";
+import { FeaturesSection } from "@/components/landing/FeaturesSection";
+import { HowItWorksSection } from "@/components/landing/HowItWorksSection";
+import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
+import { PricingSection } from "@/components/landing/PricingSection";
+import { BlogSection } from "@/components/landing/BlogSection";
+import { CTASection } from "@/components/landing/CTASection";
 import { FooterSection } from "@/components/landing/FooterSection";
-import { WelcomeSection } from "@/components/dashboard/WelcomeSection";
-import { ProposalTabs } from "@/components/dashboard/ProposalTabs";
-import { TemplateLibrary } from "@/components/dashboard/TemplateLibrary";
-import { AnalyticsSection } from "@/components/dashboard/AnalyticsSection";
 
 export default function Index() {
   return (
     <div className="min-h-screen bg-background">
       <NavigationBar />
-      <main className="container py-8">
-        <WelcomeSection />
-        <ProposalTabs />
-        <TemplateLibrary />
-        <AnalyticsSection />
+      <main>
+        <HeroSection />
+        <FeaturesSection />
+        <HowItWorksSection />
+        <TestimonialsSection />
+        <PricingSection />
+        <BlogSection />
+        <CTASection />
       </main>
       <FooterSection />
     </div>
