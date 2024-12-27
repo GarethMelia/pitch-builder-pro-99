@@ -68,7 +68,7 @@ export default function Templates() {
         
         {/* Gradient Overlay */}
         <div 
-          className="absolute inset-0 z-1"
+          className="absolute inset-0"
           style={{
             background: 'linear-gradient(109.6deg, rgba(255,228,230,1) 11.2%, rgba(244,248,255,1) 91.1%)',
             opacity: '0.27'
@@ -76,14 +76,16 @@ export default function Templates() {
         />
 
         {/* Content */}
-        <div className="container mx-auto px-4 relative z-10 bg-primary py-8 my-8 rounded-lg shadow-lg">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Discover the Perfect Template for Every Need
-            </h1>
-            <p className="text-xl text-white/90 mb-8">
-              Streamline your workflow with professionally designed templates – crafted to save time and boost productivity.
-            </p>
+        <div className="container mx-auto px-4 relative z-20">
+          <div className="bg-primary py-12 px-8 rounded-xl shadow-2xl">
+            <div className="max-w-4xl mx-auto text-center">
+              <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                Discover the Perfect Template for Every Need
+              </h1>
+              <p className="text-xl text-white/90 mb-8">
+                Streamline your workflow with professionally designed templates – crafted to save time and boost productivity.
+              </p>
+            </div>
           </div>
         </div>
       </section>
