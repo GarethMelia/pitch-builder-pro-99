@@ -7,7 +7,7 @@ import { TemplatesHero } from "@/components/templates/TemplatesHero";
 const categories = [
   {
     title: "Proposals",
-    description: "Craft winning project proposals effortlessly with our professional templates. Create compelling proposals that showcase your expertise and win more business.",
+    description: "Craft winning project proposals effortlessly with our professional templates. Create compelling proposals that showcase your expertise, highlight your unique value proposition, and demonstrate clear deliverables. Our templates are designed to help you structure your ideas effectively and present your solutions in a way that resonates with potential clients.",
     image: "/lovable-uploads/c82f051f-28e1-4c32-9e43-52ec121766e3.png",
     color: "text-blue-500",
     bgColor: "bg-blue-50",
@@ -15,7 +15,7 @@ const categories = [
   },
   {
     title: "Quotes",
-    description: "Send professional, clear pricing estimates that win business. Our quote templates help you present your pricing in a clear, professional format.",
+    description: "Send professional, clear pricing estimates that win business. Our quote templates help you present your pricing in a clear, professional format that builds trust and credibility. Include detailed breakdowns of costs, terms and conditions, and optional add-ons while maintaining a clean, easy-to-understand layout that makes decision-making simple for your clients.",
     image: "/lovable-uploads/837556c2-4c8e-43dd-bddc-5887f73be0d9.png",
     color: "text-yellow-500",
     bgColor: "bg-yellow-50",
@@ -23,7 +23,7 @@ const categories = [
   },
   {
     title: "Contracts",
-    description: "Secure your agreements with legally binding contract templates. Get started quickly with professional templates that protect your interests.",
+    description: "Secure your agreements with legally binding contract templates. Get started quickly with professional templates that protect your interests while maintaining clarity and fairness. Our contract templates include essential clauses, clear terms and conditions, and customizable sections that can be tailored to your specific business needs while maintaining legal compliance.",
     image: "/lovable-uploads/879e9a9c-ab77-41a3-b1b7-65fac45e88e8.png",
     color: "text-green-500",
     bgColor: "bg-green-50",
@@ -31,7 +31,7 @@ const categories = [
   },
   {
     title: "Job Offers",
-    description: "Send transparent and beautifully designed job offers that make it easy for candidates to accept. Make a great first impression with professional offer letters.",
+    description: "Send transparent and beautifully designed job offers that make it easy for candidates to accept. Make a great first impression with professional offer letters that clearly outline compensation, benefits, and role expectations. Our templates help you create comprehensive offers that address all crucial employment terms while maintaining an engaging and welcoming tone.",
     image: "/lovable-uploads/5a8cf6f8-d8dd-4522-a9b2-f9bff0234cc3.png",
     color: "text-purple-500",
     bgColor: "bg-purple-50",
@@ -39,7 +39,7 @@ const categories = [
   },
   {
     title: "Client Sign-Offs",
-    description: "Prevent misunderstandings and disputes with sign-off documents that keep everyone accountable. Streamline your approval process with clear templates.",
+    description: "Prevent misunderstandings and disputes with sign-off documents that keep everyone accountable. Streamline your approval process with clear templates that document project milestones, deliverables, and client acceptance criteria. Our templates include detailed sections for feedback, revisions, and final approvals, ensuring a smooth and professional project completion process.",
     image: "/lovable-uploads/3b31e153-255d-4f2f-8370-00fa43858692.png",
     color: "text-pink-500",
     bgColor: "bg-pink-50",
@@ -47,7 +47,7 @@ const categories = [
   },
   {
     title: "Online Brochures",
-    description: "Showcase your services with trackable, modern brochure templates. Create engaging digital brochures that capture attention and drive action.",
+    description: "Showcase your services with trackable, modern brochure templates that capture attention and drive action. Create engaging digital brochures that effectively communicate your brand story, showcase your products or services, and include interactive elements. Our templates help you create professional marketing materials that look great on any device and include clear calls-to-action to generate leads.",
     image: "/lovable-uploads/b54ef0cd-d28b-437b-8524-f20c78c67173.png",
     color: "text-indigo-500",
     bgColor: "bg-indigo-50",
