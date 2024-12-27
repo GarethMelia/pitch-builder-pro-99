@@ -69,12 +69,12 @@ export default function Templates() {
         
         {/* Gradient Overlay with Background Image */}
         <div 
-          className="absolute inset-0 z-1 bg-gradient-to-b from-white/80 to-white/95"
+          className="absolute inset-0 z-1 bg-gradient-to-b from-white/60 via-white/70 to-white/95"
           style={{
             backgroundImage: "url('/lovable-uploads/d4ba166f-f7a7-417b-8554-5b39f8fc9667.png')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            opacity: '0.1'
+            opacity: '0.4'
           }}
         />
 
