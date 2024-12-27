@@ -140,14 +140,14 @@ export default function Templates() {
       </section>
 
       {/* Missing Template Section */}
-      <section className="py-16 bg-white">
+      <section className="py-24 bg-primary">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-3xl font-semibold mb-4">Can't find the template you need?</h2>
-            <p className="text-gray-600 mb-8">
+            <h2 className="text-3xl font-semibold mb-4 text-white">Can't find the template you need?</h2>
+            <p className="text-gray-200 mb-8">
               Let us know! We'd love to create it for you.
             </p>
-            <Button variant="outline" size="lg">
+            <Button variant="secondary" size="lg">
               Request a New Template
             </Button>
           </div>
