@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import { 
   ChevronRight, 
   FileText, 
@@ -77,6 +78,7 @@ export function TemplateLibrary() {
   const [isVisible, setIsVisible] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -92,6 +94,10 @@ export function TemplateLibrary() {
 
     return () => observer.disconnect();
   }, []);
+
+  const handleViewAllTemplates = () => {
+    navigate('/templates');
+  };
 
   const displayedTemplates = showAll ? templates : templates.slice(0, 4);
 
@@ -121,7 +127,7 @@ export function TemplateLibrary() {
             <Button 
               variant="ghost" 
               className="group"
-              onClick={() => setShowAll(!showAll)}
+              onClick={handleViewAllTemplates}
             >
               {showAll ? "Show Less" : "View All Templates"}
               <ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
