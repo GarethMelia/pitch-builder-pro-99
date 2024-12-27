@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Briefcase, FileText, Users } from "lucide-react";
 
 const categories = [
   {
@@ -150,6 +151,46 @@ export default function Templates() {
             <Button variant="secondary" size="lg">
               Request a New Template
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Use Case Guide Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+              Not sure which template to choose?
+            </h2>
+            
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Proposal Use Case */}
+              <div className="flex flex-col items-center text-center space-y-4 p-6 rounded-lg hover:bg-gray-50 transition-colors">
+                <div className="w-12 h-12 flex items-center justify-center rounded-full bg-blue-100">
+                  <Briefcase className="w-6 h-6 text-blue-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900">Need to pitch a project?</h3>
+                <p className="text-gray-600">Use Proposal Templates</p>
+              </div>
+
+              {/* Contract Use Case */}
+              <div className="flex flex-col items-center text-center space-y-4 p-6 rounded-lg hover:bg-gray-50 transition-colors">
+                <div className="w-12 h-12 flex items-center justify-center rounded-full bg-green-100">
+                  <FileText className="w-6 h-6 text-green-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900">Want to seal the deal?</h3>
+                <p className="text-gray-600">Use Contract Templates</p>
+              </div>
+
+              {/* Job Offer Use Case */}
+              <div className="flex flex-col items-center text-center space-y-4 p-6 rounded-lg hover:bg-gray-50 transition-colors">
+                <div className="w-12 h-12 flex items-center justify-center rounded-full bg-purple-100">
+                  <Users className="w-6 h-6 text-purple-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900">Hiring new talent?</h3>
+                <p className="text-gray-600">Choose Job Offer Templates</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
