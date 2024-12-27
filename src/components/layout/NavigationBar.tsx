@@ -15,42 +15,42 @@ import {
 const templateCategories = [
   {
     title: "Proposals",
-    description: "Explore professionally written and designed proposal templates that actually work",
+    description: "Professional proposal templates for successful pitches",
     icon: FileText,
     color: "text-pink-500",
     bgColor: "bg-pink-50",
   },
   {
     title: "Contracts",
-    description: "Seal and protect your deals with legally binding digital contracts",
+    description: "Legally binding digital contract templates",
     icon: FileCheck,
     color: "text-yellow-500",
     bgColor: "bg-yellow-50",
   },
   {
     title: "Job Offers",
-    description: "Attract top talent with modern job offers that make accepting easy",
+    description: "Modern job offer templates for hiring",
     icon: Users,
     color: "text-blue-500",
     bgColor: "bg-blue-50",
   },
   {
     title: "Client Sign-offs",
-    description: "Gain peace of mind by making sure you and your client are on the same page",
+    description: "Streamlined client approval templates",
     icon: ClipboardList,
     color: "text-purple-500",
     bgColor: "bg-purple-50",
   },
   {
     title: "Online Brochures",
-    description: "Show off your products and services with modern, trackable brochures",
+    description: "Digital brochure templates with tracking",
     icon: LayoutTemplate,
     color: "text-emerald-500",
     bgColor: "bg-emerald-50",
   },
   {
     title: "Statement of Work",
-    description: "Prevent scope creep by setting clear project expectations",
+    description: "Clear project scope templates",
     icon: FileSpreadsheet,
     color: "text-indigo-500",
     bgColor: "bg-indigo-50",
@@ -101,17 +101,17 @@ export const NavigationBar = () => {
                               <NavigationMenuLink asChild key={index}>
                                 <Link
                                   to="/templates"
-                                  className={`block p-4 rounded-lg transition-all duration-200 hover:shadow-lg hover:-translate-y-1 ${category.bgColor}`}
+                                  className={`block p-3 rounded-lg transition-all duration-200 hover:shadow-lg hover:-translate-y-1 ${category.bgColor}`}
                                 >
-                                  <div className="flex items-start space-x-4">
-                                    <div className={`p-2 rounded-lg ${category.bgColor}`}>
-                                      <category.icon className={`w-5 h-5 ${category.color}`} />
+                                  <div className="flex items-start space-x-3">
+                                    <div className={`p-1.5 rounded-lg ${category.bgColor}`}>
+                                      <category.icon className={`w-4 h-4 ${category.color}`} />
                                     </div>
                                     <div>
-                                      <h3 className="font-semibold text-sm text-gray-900 mb-1">
+                                      <h3 className="font-medium text-xs text-gray-900 mb-0.5">
                                         {category.title}
                                       </h3>
-                                      <p className="text-xs text-gray-600 line-clamp-2">
+                                      <p className="text-[10px] text-gray-600 line-clamp-1">
                                         {category.description}
                                       </p>
                                     </div>
