@@ -1,12 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { FileText, Calculator, FileCheck, Briefcase, ClipboardList, LayoutTemplate } from "lucide-react";
 
 const categories = [
   {
     title: "Proposals",
     description: "Craft winning project proposals effortlessly with our professional templates. Create compelling proposals that showcase your expertise and win more business.",
-    icon: FileText,
     image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
     color: "text-blue-500",
     bgColor: "bg-blue-50",
@@ -15,7 +13,6 @@ const categories = [
   {
     title: "Quotes",
     description: "Send professional, clear pricing estimates that win business. Our quote templates help you present your pricing in a clear, professional format.",
-    icon: Calculator,
     image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
     color: "text-yellow-500",
     bgColor: "bg-yellow-50",
@@ -24,7 +21,6 @@ const categories = [
   {
     title: "Contracts",
     description: "Secure your agreements with legally binding contract templates. Get started quickly with professional templates that protect your interests.",
-    icon: FileCheck,
     image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
     color: "text-green-500",
     bgColor: "bg-green-50",
@@ -33,7 +29,6 @@ const categories = [
   {
     title: "Job Offers",
     description: "Send transparent and beautifully designed job offers that make it easy for candidates to accept. Make a great first impression with professional offer letters.",
-    icon: Briefcase,
     image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
     color: "text-purple-500",
     bgColor: "bg-purple-50",
@@ -42,7 +37,6 @@ const categories = [
   {
     title: "Client Sign-Offs",
     description: "Prevent misunderstandings and disputes with sign-off documents that keep everyone accountable. Streamline your approval process with clear templates.",
-    icon: ClipboardList,
     image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
     color: "text-pink-500",
     bgColor: "bg-pink-50",
@@ -51,7 +45,6 @@ const categories = [
   {
     title: "Online Brochures",
     description: "Showcase your services with trackable, modern brochure templates. Create engaging digital brochures that capture attention and drive action.",
-    icon: LayoutTemplate,
     image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
     color: "text-indigo-500",
     bgColor: "bg-indigo-50",
@@ -113,9 +106,6 @@ export default function Templates() {
 
                 {/* Content Section */}
                 <div className="w-full md:w-1/2 space-y-6">
-                  <div className={`inline-flex h-12 w-12 items-center justify-center rounded-lg ${category.bgColor}`}>
-                    <category.icon className={`h-6 w-6 ${category.color}`} />
-                  </div>
                   <div>
                     <h2 className="text-3xl font-bold text-gray-900 mb-4">{category.title}</h2>
                     <p className="text-lg text-gray-600 mb-8">{category.description}</p>
