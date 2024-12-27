@@ -5,7 +5,7 @@ const categories = [
   {
     title: "Proposals",
     description: "Craft winning project proposals effortlessly with our professional templates. Create compelling proposals that showcase your expertise and win more business.",
-    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
+    image: "/lovable-uploads/c82f051f-28e1-4c32-9e43-52ec121766e3.png",
     color: "text-blue-500",
     bgColor: "bg-blue-50",
     cta: "Create a proposal",
@@ -13,7 +13,7 @@ const categories = [
   {
     title: "Quotes",
     description: "Send professional, clear pricing estimates that win business. Our quote templates help you present your pricing in a clear, professional format.",
-    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
+    image: "/lovable-uploads/837556c2-4c8e-43dd-bddc-5887f73be0d9.png",
     color: "text-yellow-500",
     bgColor: "bg-yellow-50",
     cta: "Create a quote",
@@ -21,7 +21,7 @@ const categories = [
   {
     title: "Contracts",
     description: "Secure your agreements with legally binding contract templates. Get started quickly with professional templates that protect your interests.",
-    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
+    image: "/lovable-uploads/879e9a9c-ab77-41a3-b1b7-65fac45e88e8.png",
     color: "text-green-500",
     bgColor: "bg-green-50",
     cta: "Create a contract",
@@ -29,7 +29,7 @@ const categories = [
   {
     title: "Job Offers",
     description: "Send transparent and beautifully designed job offers that make it easy for candidates to accept. Make a great first impression with professional offer letters.",
-    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
+    image: "/lovable-uploads/5a8cf6f8-d8dd-4522-a9b2-f9bff0234cc3.png",
     color: "text-purple-500",
     bgColor: "bg-purple-50",
     cta: "Create a job offer",
@@ -37,7 +37,7 @@ const categories = [
   {
     title: "Client Sign-Offs",
     description: "Prevent misunderstandings and disputes with sign-off documents that keep everyone accountable. Streamline your approval process with clear templates.",
-    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
+    image: "/lovable-uploads/3b31e153-255d-4f2f-8370-00fa43858692.png",
     color: "text-pink-500",
     bgColor: "bg-pink-50",
     cta: "Create a sign-off",
@@ -45,7 +45,7 @@ const categories = [
   {
     title: "Online Brochures",
     description: "Showcase your services with trackable, modern brochure templates. Create engaging digital brochures that capture attention and drive action.",
-    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
+    image: "/lovable-uploads/b54ef0cd-d28b-437b-8524-f20c78c67173.png",
     color: "text-indigo-500",
     bgColor: "bg-indigo-50",
     cta: "Create a brochure",
@@ -99,11 +99,11 @@ export default function Templates() {
               >
                 {/* Image Section */}
                 <div className="w-full md:w-1/2">
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-xl shadow-lg">
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-xl transition-all duration-300 hover:scale-105">
                     <img
                       src={category.image}
                       alt={category.title}
-                      className="object-cover w-full h-full"
+                      className="object-cover w-full h-full shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
                     />
                   </div>
                 </div>
