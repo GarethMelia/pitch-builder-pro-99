@@ -10,19 +10,18 @@ interface GeneratedProposalViewProps {
 
 export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }: GeneratedProposalViewProps) => {
   const navigate = useNavigate();
+  const defaultCoverImage = "https://images.unsplash.com/photo-1485833077593-4278bba3f11f?auto=format&fit=crop&w=2000&q=80";
 
   return (
     <div className="space-y-4">
       {/* Cover Image */}
-      {formData.cover_image && (
-        <div className="w-full h-48 rounded-lg overflow-hidden">
-          <img 
-            src={formData.cover_image} 
-            alt="Cover" 
-            className="w-full h-full object-cover"
-          />
-        </div>
-      )}
+      <div className="w-full h-48 rounded-lg overflow-hidden">
+        <img 
+          src={formData.cover_image || defaultCoverImage} 
+          alt="Cover" 
+          className="w-full h-full object-cover"
+        />
+      </div>
 
       {/* Logo and Title Section */}
       <div className="flex items-center gap-4 mb-6">
