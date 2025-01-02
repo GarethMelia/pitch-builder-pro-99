@@ -11,11 +11,11 @@ interface ImageUploadProps {
   label: string;
 }
 
-// Define the type for the RPC function parameters
-interface CreateBucketParams {
-  bucket_name: string;
-  public_access: boolean;
-}
+// Define the type for the RPC function response
+type CreateBucketResponse = {
+  message: string;
+  success: boolean;
+};
 
 export const ImageUpload = ({ type, value, onChange, label }: ImageUploadProps) => {
   const [uploading, setUploading] = useState(false);
@@ -43,7 +43,30 @@ export const ImageUpload = ({ type, value, onChange, label }: ImageUploadProps) 
       const fileName = `${Math.random()}.${fileExt}`;
       const filePath = `${fileName}`;
 
-      // Upload file directly without checking bucket
+      // Check if bucket exists
+      const { data: buckets } = await supabase
+        .storage
+        .listBuckets();
+
+      const bucketExists = buckets?.some(bucket => bucket.name === 'proposal-images');
+
+      if (!bucketExists) {
+        console.log('Bucket does not exist, creating...');
+        const { data, error: rpcError } = await supabase
+          .rpc<CreateBucketResponse>('create_storage_bucket', {
+            bucket_name: 'proposal-images',
+            public_access: true
+          });
+
+        if (rpcError) {
+          console.error('Error creating bucket:', rpcError);
+          throw new Error('Failed to create storage bucket');
+        }
+
+        console.log('Bucket creation response:', data);
+      }
+
+      // Upload file
       const { error: uploadError, data } = await supabase.storage
         .from('proposal-images')
         .upload(filePath, file, {
@@ -52,13 +75,7 @@ export const ImageUpload = ({ type, value, onChange, label }: ImageUploadProps) 
         });
 
       if (uploadError) {
-        // If bucket doesn't exist, try to create it
-        if (uploadError.message.includes('Bucket not found')) {
-          const { data: { publicUrl } } = await handleBucketCreation(file, filePath);
-          onChange(publicUrl);
-          toast.success(`${type === 'logo' ? 'Logo' : 'Cover image'} uploaded successfully`);
-          return;
-        }
+        console.error('Upload error:', uploadError);
         throw uploadError;
       }
 
@@ -74,34 +91,6 @@ export const ImageUpload = ({ type, value, onChange, label }: ImageUploadProps) 
       toast.error(error.message || `Error uploading ${type === 'logo' ? 'logo' : 'cover image'}`);
     } finally {
       setUploading(false);
-    }
-  };
-
-  const handleBucketCreation = async (file: File, filePath: string) => {
-    try {
-      // Create bucket with public access using typed parameters
-      await supabase.rpc<void, CreateBucketParams>('create_storage_bucket', {
-        bucket_name: 'proposal-images',
-        public_access: true
-      });
-
-      // Try upload again after bucket creation
-      const { error: uploadError } = await supabase.storage
-        .from('proposal-images')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: false
-        });
-
-      if (uploadError) throw uploadError;
-
-      return supabase.storage
-        .from('proposal-images')
-        .getPublicUrl(filePath);
-
-    } catch (error: any) {
-      console.error('Error creating bucket:', error);
-      throw new Error('Failed to create storage bucket. Please try again.');
     }
   };
 
