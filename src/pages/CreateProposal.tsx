@@ -8,19 +8,13 @@ import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 import { NavigationBar } from "@/components/layout/NavigationBar";
 import { FooterSection } from "@/components/landing/FooterSection";
-import { CompanyInfoStep } from "@/components/ProposalSteps/CompanyInfoStep";
-import { ProjectScopeStep } from "@/components/ProposalSteps/ProjectScopeStep";
-import { MetricsStep } from "@/components/ProposalSteps/MetricsStep";
-import { ChallengesStrengthsStep } from "@/components/ProposalSteps/ChallengesStrengthsStep";
-import { StrategiesStep } from "@/components/ProposalSteps/StrategiesStep";
-import { ProposalToneStep } from "@/components/ProposalSteps/ProposalToneStep";
-import { CompanyCredentialsStep } from "@/components/ProposalSteps/CompanyCredentialsStep";
 import { StepNavigation } from "@/components/ProposalSteps/StepNavigation";
 import { CrawlForm } from "@/components/CrawlForm";
 import { GeneratedProposalView } from "@/components/GeneratedProposalView";
 import { ProposalFormData } from "@/types/proposal";
+import { ProposalStepRenderer } from "@/components/ProposalSteps/ProposalStepRenderer";
 
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 8; // Updated to include ClientInfoStep
 
 const CreateProposal = () => {
   const navigate = useNavigate();
@@ -47,6 +41,11 @@ const CreateProposal = () => {
       relevant_experience: [],
       guarantees: [],
       testimonials: [],
+      // New fields
+      client_name: "",
+      author_name: "",
+      author_position: "",
+      proposal_date: new Date().toISOString().split('T')[0],
     }
   });
 
@@ -68,39 +67,8 @@ const CreateProposal = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const transformedMetrics = data.success_metrics.map(metric => ({
-        id: metric.id,
-        value: metric.value
-      }));
-
-      const transformedTestimonials = data.testimonials?.map(testimonial => ({
-        text: testimonial.text,
-        client: testimonial.client
-      }));
-
       const { error } = await supabase.from("proposals").insert({
-        title: data.title,
-        company_name: data.company_name,
-        website_url: data.website_url,
-        primary_goal: data.primary_goal,
-        services: data.services,
-        target_audience: data.target_audience,
-        timeframe: data.timeframe,
-        success_metrics: transformedMetrics,
-        budget_range: data.budget_range,
-        internal_resources: data.internal_resources,
-        challenges: data.challenges,
-        strengths: data.strengths,
-        recommended_strategies: data.recommended_strategies,
-        proposal_tone: data.proposal_tone,
-        custom_message: data.custom_message,
-        persuasion_level: data.persuasion_level,
-        content: { text: data.content },
-        reasons_to_work_with: data.reasons_to_work_with,
-        awards_recognitions: data.awards_recognitions,
-        relevant_experience: data.relevant_experience,
-        guarantees: data.guarantees,
-        testimonials: transformedTestimonials,
+        ...data,
         user_id: user.id,
         status: 'draft'
       });
@@ -120,27 +88,6 @@ const CreateProposal = () => {
   const handleProposalGenerated = (proposal: string) => {
     setGeneratedProposal(proposal);
     setIsGenerating(false);
-  };
-
-  const renderStep = () => {
-    switch (currentStep) {
-      case 1:
-        return <CompanyInfoStep form={form} />;
-      case 2:
-        return <ProjectScopeStep form={form} />;
-      case 3:
-        return <MetricsStep form={form} />;
-      case 4:
-        return <ChallengesStrengthsStep form={form} />;
-      case 5:
-        return <StrategiesStep form={form} />;
-      case 6:
-        return <ProposalToneStep form={form} />;
-      case 7:
-        return <CompanyCredentialsStep form={form} />;
-      default:
-        return null;
-    }
   };
 
   if (isGenerating || generatedProposal) {
@@ -200,7 +147,7 @@ const CreateProposal = () => {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {renderStep()}
+            <ProposalStepRenderer currentStep={currentStep} form={form} />
             
             <StepNavigation
               currentStep={currentStep}

@@ -37,9 +37,10 @@ serve(async (req) => {
       
       ## Executive Summary
       
-      Prepared for: [Client Name]
-      Prepared by: ${formData.company_name}
-      Date: ${new Date().toLocaleDateString()}
+      Prepared for: ${formData.client_name || '[Client Name]'}
+      Prepared by: ${formData.author_name || '[Your Name]'}
+      Position: ${formData.author_position || '[Your Position]'}
+      Date: ${formData.proposal_date || new Date().toLocaleDateString()}
       Website: ${formData.website_url}
       
       ## Introduction

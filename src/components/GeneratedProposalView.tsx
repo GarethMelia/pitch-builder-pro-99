@@ -11,24 +11,25 @@ interface GeneratedProposalViewProps {
 export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }: GeneratedProposalViewProps) => {
   const navigate = useNavigate();
   const defaultCoverImage = "https://images.unsplash.com/photo-1485833077593-4278bba3f11f?auto=format&fit=crop&w=2000&q=80";
+  
+  const formatDate = (dateString: string) => {
+    if (!dateString) return new Date().toLocaleDateString();
+    return new Date(dateString).toLocaleDateString();
+  };
 
   return (
     <div className="space-y-6">
       {/* Header Section with Cover Image Overlay */}
       <div className="relative h-64 rounded-lg overflow-hidden">
-        {/* Cover Image */}
         <img 
           src={formData.cover_image || defaultCoverImage} 
           alt="Cover" 
           className="w-full h-full object-cover"
         />
         
-        {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/60" />
 
-        {/* Content Overlay */}
         <div className="absolute inset-0 p-6 flex flex-col justify-between">
-          {/* Logo Section */}
           <div className="flex justify-end">
             {formData.company_logo && (
               <div className="bg-white/90 p-3 rounded-lg">
@@ -41,14 +42,16 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
             )}
           </div>
 
-          {/* Title Section */}
           <div className="text-white">
             <h1 className="text-3xl font-bold mb-2">
               {formData.title || 'Untitled Proposal'}
             </h1>
-            <p className="text-lg opacity-90">
-              {formData.company_name}
-            </p>
+            <div className="flex flex-col gap-1 text-sm opacity-90">
+              <p>Prepared for: {formData.client_name || 'Client Name'}</p>
+              <p>Prepared by: {formData.author_name || 'Author Name'}</p>
+              <p>Position: {formData.author_position || 'Position'}</p>
+              <p>Date: {formatDate(formData.proposal_date)}</p>
+            </div>
           </div>
         </div>
       </div>
