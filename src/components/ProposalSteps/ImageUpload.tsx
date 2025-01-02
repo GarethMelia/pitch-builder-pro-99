@@ -35,38 +35,31 @@ export const ImageUpload = ({ type, value, onChange, label }: ImageUploadProps) 
 
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
 
-      // Create bucket if it doesn't exist
-      const { data: bucketExists } = await supabase
-        .storage
-        .getBucket('proposal-images');
-
-      if (!bucketExists) {
-        const { error: createBucketError } = await supabase
-          .storage
-          .createBucket('proposal-images', {
-            public: true,
-            fileSizeLimit: MAX_SIZE,
-            allowedMimeTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
-          });
-
-        if (createBucketError) throw createBucketError;
-      }
-
-      // Upload file
+      // Upload file directly without checking bucket
       const { error: uploadError, data } = await supabase.storage
         .from('proposal-images')
-        .upload(fileName, file, {
+        .upload(filePath, file, {
           cacheControl: '3600',
           upsert: false
         });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        // If bucket doesn't exist, try to create it
+        if (uploadError.message.includes('Bucket not found')) {
+          const { data: { publicUrl } } = await handleBucketCreation(file, filePath);
+          onChange(publicUrl);
+          toast.success(`${type === 'logo' ? 'Logo' : 'Cover image'} uploaded successfully`);
+          return;
+        }
+        throw uploadError;
+      }
 
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('proposal-images')
-        .getPublicUrl(fileName);
+        .getPublicUrl(filePath);
 
       onChange(publicUrl);
       toast.success(`${type === 'logo' ? 'Logo' : 'Cover image'} uploaded successfully`);
@@ -75,6 +68,34 @@ export const ImageUpload = ({ type, value, onChange, label }: ImageUploadProps) 
       toast.error(error.message || `Error uploading ${type === 'logo' ? 'logo' : 'cover image'}`);
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleBucketCreation = async (file: File, filePath: string) => {
+    try {
+      // Create bucket with public access
+      await supabase.rpc('create_storage_bucket', {
+        bucket_name: 'proposal-images',
+        public_access: true
+      });
+
+      // Try upload again after bucket creation
+      const { error: uploadError } = await supabase.storage
+        .from('proposal-images')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (uploadError) throw uploadError;
+
+      return supabase.storage
+        .from('proposal-images')
+        .getPublicUrl(filePath);
+
+    } catch (error: any) {
+      console.error('Error creating bucket:', error);
+      throw new Error('Failed to create storage bucket. Please try again.');
     }
   };
 
