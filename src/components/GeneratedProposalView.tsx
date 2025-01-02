@@ -12,11 +12,6 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
   const navigate = useNavigate();
   const defaultCoverImage = "https://images.unsplash.com/photo-1485833077593-4278bba3f11f?auto=format&fit=crop&w=2000&q=80";
   
-  const formatDate = (dateString: string) => {
-    if (!dateString) return new Date().toLocaleDateString();
-    return new Date(dateString).toLocaleDateString();
-  };
-
   return (
     <div className="space-y-6">
       {/* Header Section with Cover Image Overlay */}
@@ -47,10 +42,10 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
               {formData.title || 'Untitled Proposal'}
             </h1>
             <div className="flex flex-col gap-1 text-sm opacity-90">
-              <p>Prepared for: {formData.client_name || 'Client Name'}</p>
-              <p>Prepared by: {formData.author_name || 'Author Name'}</p>
-              <p>Position: {formData.author_position || 'Position'}</p>
-              <p>Date: {formatDate(formData.proposal_date)}</p>
+              <p>Prepared for: [Client Name]</p>
+              <p>Prepared by: [Your Name]</p>
+              <p>Position: [Your Position]</p>
+              <p>Date: [Insert Date]</p>
             </div>
           </div>
         </div>

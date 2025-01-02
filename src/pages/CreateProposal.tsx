@@ -14,7 +14,7 @@ import { GeneratedProposalView } from "@/components/GeneratedProposalView";
 import { ProposalFormData } from "@/types/proposal";
 import { ProposalStepRenderer } from "@/components/ProposalSteps/ProposalStepRenderer";
 
-const TOTAL_STEPS = 8; // Updated to include ClientInfoStep
+const TOTAL_STEPS = 7;
 
 const CreateProposal = () => {
   const navigate = useNavigate();
@@ -41,11 +41,6 @@ const CreateProposal = () => {
       relevant_experience: [],
       guarantees: [],
       testimonials: [],
-      // New fields
-      client_name: "",
-      author_name: "",
-      author_position: "",
-      proposal_date: new Date().toISOString().split('T')[0],
     }
   });
 

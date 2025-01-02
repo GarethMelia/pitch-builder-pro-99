@@ -36,9 +36,4 @@ export interface ProposalFormData {
   relevant_experience?: string[];
   guarantees?: string[];
   testimonials?: TestimonialItem[];
-  // New fields for client information
-  client_name: string;
-  author_name: string;
-  author_position: string;
-  proposal_date: string;
 }
