@@ -11,7 +11,12 @@ interface ImageUploadProps {
   label: string;
 }
 
-// Define the type for the RPC function response
+// Define types for the RPC function
+type CreateBucketParams = {
+  bucket_name: string;
+  public_access: boolean;
+};
+
 type CreateBucketResponse = {
   message: string;
   success: boolean;
@@ -53,7 +58,7 @@ export const ImageUpload = ({ type, value, onChange, label }: ImageUploadProps) 
       if (!bucketExists) {
         console.log('Bucket does not exist, creating...');
         const { data, error: rpcError } = await supabase
-          .rpc<CreateBucketResponse>('create_storage_bucket', {
+          .rpc<CreateBucketResponse, CreateBucketParams>('create_storage_bucket', {
             bucket_name: 'proposal-images',
             public_access: true
           });
