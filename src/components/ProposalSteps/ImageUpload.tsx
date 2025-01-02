@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2, Image as ImageIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { initializeStorageBucket } from "@/utils/storage";
 
 interface ImageUploadProps {
   type: 'logo' | 'cover';
@@ -10,17 +11,6 @@ interface ImageUploadProps {
   onChange: (url: string) => void;
   label: string;
 }
-
-// Define types for the RPC function
-type CreateBucketParams = {
-  bucket_name: string;
-  public_access: boolean;
-};
-
-type CreateBucketResponse = {
-  message: string;
-  success: boolean;
-};
 
 export const ImageUpload = ({ type, value, onChange, label }: ImageUploadProps) => {
   const [uploading, setUploading] = useState(false);
@@ -44,32 +34,15 @@ export const ImageUpload = ({ type, value, onChange, label }: ImageUploadProps) 
         throw new Error('File size should be less than 5MB');
       }
 
+      // Initialize bucket if needed
+      const bucketReady = await initializeStorageBucket();
+      if (!bucketReady) {
+        throw new Error('Storage system is not available');
+      }
+
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
       const filePath = `${fileName}`;
-
-      // Check if bucket exists
-      const { data: buckets } = await supabase
-        .storage
-        .listBuckets();
-
-      const bucketExists = buckets?.some(bucket => bucket.name === 'proposal-images');
-
-      if (!bucketExists) {
-        console.log('Bucket does not exist, creating...');
-        const { data, error: rpcError } = await supabase
-          .rpc<CreateBucketResponse, CreateBucketParams>('create_storage_bucket', {
-            bucket_name: 'proposal-images',
-            public_access: true
-          });
-
-        if (rpcError) {
-          console.error('Error creating bucket:', rpcError);
-          throw new Error('Failed to create storage bucket');
-        }
-
-        console.log('Bucket creation response:', data);
-      }
 
       // Upload file
       const { error: uploadError, data } = await supabase.storage
