@@ -11,6 +11,12 @@ interface ImageUploadProps {
   label: string;
 }
 
+// Define the type for the RPC function parameters
+interface CreateBucketParams {
+  bucket_name: string;
+  public_access: boolean;
+}
+
 export const ImageUpload = ({ type, value, onChange, label }: ImageUploadProps) => {
   const [uploading, setUploading] = useState(false);
 
@@ -73,8 +79,8 @@ export const ImageUpload = ({ type, value, onChange, label }: ImageUploadProps) 
 
   const handleBucketCreation = async (file: File, filePath: string) => {
     try {
-      // Create bucket with public access
-      await supabase.rpc('create_storage_bucket', {
+      // Create bucket with public access using typed parameters
+      await supabase.rpc<void, CreateBucketParams>('create_storage_bucket', {
         bucket_name: 'proposal-images',
         public_access: true
       });
