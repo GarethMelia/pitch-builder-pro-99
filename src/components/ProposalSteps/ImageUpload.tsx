@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { initializeStorageBucket } from "@/utils/storage";
 
 interface ImageUploadProps {
-  type: 'logo' | 'cover';
+  type: 'logo' | 'cover' | 'landing';
   value?: string;
   onChange: (url: string) => void;
   label: string;
@@ -63,10 +63,10 @@ export const ImageUpload = ({ type, value, onChange, label }: ImageUploadProps) 
         .getPublicUrl(filePath);
 
       onChange(publicUrl);
-      toast.success(`${type === 'logo' ? 'Logo' : 'Cover image'} uploaded successfully`);
+      toast.success(`${type === 'logo' ? 'Logo' : type === 'cover' ? 'Cover image' : 'Landing image'} uploaded successfully`);
     } catch (error: any) {
       console.error('Error uploading image:', error);
-      toast.error(error.message || `Error uploading ${type === 'logo' ? 'logo' : 'cover image'}`);
+      toast.error(error.message || `Error uploading ${type === 'logo' ? 'logo' : type === 'cover' ? 'cover image' : 'landing image'}`);
     } finally {
       setUploading(false);
     }
@@ -87,7 +87,7 @@ export const ImageUpload = ({ type, value, onChange, label }: ImageUploadProps) 
         {uploading && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Loader2 className="w-4 h-4 animate-spin" />
-            Uploading {type === 'logo' ? 'logo' : 'cover image'}...
+            Uploading {type === 'logo' ? 'logo' : type === 'cover' ? 'cover image' : 'landing image'}...
           </div>
         )}
       </div>
@@ -103,8 +103,8 @@ export const ImageUpload = ({ type, value, onChange, label }: ImageUploadProps) 
         <div className="flex items-center justify-center w-full h-48 border-2 border-dashed rounded-lg bg-muted/50">
           <div className="text-center text-muted-foreground">
             <ImageIcon className="w-8 h-8 mx-auto mb-2" />
-            <p>No {type === 'logo' ? 'logo' : 'cover image'} uploaded</p>
-            {type === 'cover' && <p className="text-sm">Recommended size: 1920x1080px</p>}
+            <p>No {type === 'logo' ? 'logo' : type === 'cover' ? 'cover image' : 'landing image'} uploaded</p>
+            {type !== 'logo' && <p className="text-sm">Recommended size: 1920x1080px</p>}
           </div>
         </div>
       )}

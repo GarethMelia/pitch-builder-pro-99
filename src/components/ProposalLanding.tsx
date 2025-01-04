@@ -9,14 +9,14 @@ interface ProposalLandingProps {
 }
 
 export const ProposalLanding = ({ formData, onContinue }: ProposalLandingProps) => {
-  const defaultCoverImage = "https://images.unsplash.com/photo-1485833077593-4278bba3f11f?auto=format&fit=crop&w=2000&q=80";
+  const defaultLandingImage = "https://images.unsplash.com/photo-1485833077593-4278bba3f11f?auto=format&fit=crop&w=2000&q=80";
 
   return (
     <div className="h-screen w-full bg-white overflow-hidden">
       <div className="relative h-full w-full">
         <img 
-          src={formData.cover_image || defaultCoverImage}
-          alt="Business Cover"
+          src={formData.landing_image || defaultLandingImage}
+          alt="Business Landing"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/80" />
