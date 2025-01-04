@@ -31,46 +31,28 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
   };
   
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
-        w-64 bg-white shadow-lg transition-transform duration-300 ease-in-out z-20`}>
-        <div className="flex flex-col h-full">
-          {/* Logo Section */}
-          <div className="p-6 border-b">
-            {formData.company_logo ? (
-              <img 
-                src={formData.company_logo} 
-                alt="Company Logo" 
-                className="h-12 w-auto object-contain"
-              />
-            ) : (
-              <div className="h-12 bg-gray-100 rounded-md flex items-center justify-center text-gray-400">
-                Logo
-              </div>
-            )}
-          </div>
-
-          {/* Navigation Links */}
-          <nav className="flex-1 px-4 py-6">
-            <ul className="space-y-2">
-              {sections.map((section) => (
-                <li key={section.id}>
-                  <button
-                    onClick={() => scrollToSection(section.id)}
-                    className="w-full px-4 py-2 text-left text-sm font-medium text-gray-600 rounded-md hover:bg-gray-100 hover:text-gray-900 transition-colors"
-                  >
-                    {section.title}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
+    <div className="min-h-screen bg-gray-50">
+      {/* Fixed Sidebar */}
+      <div className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-20 
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <nav className="h-full flex flex-col p-6">
+          <ul className="space-y-2">
+            {sections.map((section) => (
+              <li key={section.id}>
+                <button
+                  onClick={() => scrollToSection(section.id)}
+                  className="w-full px-4 py-2 text-left text-sm font-medium text-gray-600 rounded-md hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                >
+                  {section.title}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
 
       {/* Main Content */}
-      <div className={`flex-1 ${isSidebarOpen ? 'ml-64' : 'ml-0'} transition-margin duration-300 ease-in-out`}>
+      <div className="min-h-screen">
         {/* Toggle Button */}
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -79,7 +61,7 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
           {isSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
 
-        {/* Header Section with Cover Image */}
+        {/* Header Section with Cover Image and Logo */}
         <div className="relative h-64">
           <img 
             src={formData.cover_image || defaultCoverImage} 
@@ -87,6 +69,18 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/60" />
+          
+          {/* Logo in Header */}
+          {formData.company_logo && (
+            <div className="absolute top-6 left-6 z-10">
+              <img 
+                src={formData.company_logo} 
+                alt="Company Logo" 
+                className="h-12 w-auto object-contain bg-white/90 p-2 rounded-md shadow-sm"
+              />
+            </div>
+          )}
+          
           <div className="absolute inset-0 p-6 flex flex-col justify-end">
             <h1 className="text-3xl font-bold text-white mb-2">
               {formData.title || 'Untitled Proposal'}
