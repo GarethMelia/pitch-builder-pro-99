@@ -52,7 +52,7 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
       </div>
 
       {/* Main Content */}
-      <div className="min-h-screen">
+      <div className="min-h-screen flex flex-col">
         {/* Toggle Button */}
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -62,11 +62,11 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
         </button>
 
         {/* Header Section with Cover Image and Logo */}
-        <div className="relative">
+        <div className="relative h-[50vh]">
           <img 
             src={formData.cover_image || defaultCoverImage} 
             alt="Cover" 
-            className="w-full object-cover"
+            className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/60" />
           
@@ -81,81 +81,83 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
             </div>
           )}
           
-          <div className="absolute inset-0 p-6 flex flex-col justify-end">
-            <h1 className="text-3xl font-bold text-white mb-2">
+          <div className="absolute inset-0 flex flex-col justify-end p-6">
+            <h1 className="text-4xl font-bold text-white mb-2">
               {formData.title || 'Untitled Proposal'}
             </h1>
-            <div className="text-white/90 space-y-1 text-sm">
-              <p>Prepared for: {formData.company_name || '[Client Name]'}</p>
+            <div className="text-white/90 space-y-1">
+              <p className="text-lg">Prepared for: {formData.company_name || '[Client Name]'}</p>
               <p>Date: {new Date().toLocaleDateString()}</p>
             </div>
           </div>
         </div>
 
         {/* Content Sections */}
-        <div className="max-w-4xl mx-auto px-8 py-12 bg-white shadow-sm">
-          <div className="prose prose-slate max-w-none">
-            {/* Introduction Section */}
-            <section id="introduction" className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Introduction</h2>
-              <div className="text-gray-600">
-                {formData.primary_goal}
-              </div>
-            </section>
+        <div className="flex-1 bg-white">
+          <div className="max-w-4xl mx-auto px-8 py-12">
+            <div className="prose prose-slate max-w-none">
+              {/* Introduction Section */}
+              <section id="introduction" className="mb-12">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">Introduction</h2>
+                <div className="text-gray-600">
+                  {formData.primary_goal}
+                </div>
+              </section>
 
-            {/* What We Will Do Section */}
-            <section id="what-we-will-do" className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">What We Will Do</h2>
-              <div className="space-y-4">
-                {formData.services?.map((service, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2" />
-                    <p className="text-gray-600">{service}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
+              {/* What We Will Do Section */}
+              <section id="what-we-will-do" className="mb-12">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">What We Will Do</h2>
+                <div className="space-y-4">
+                  {formData.services?.map((service, index) => (
+                    <div key={index} className="flex items-start gap-3">
+                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2" />
+                      <p className="text-gray-600">{service}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
 
-            {/* Process and Timescales Section */}
-            <section id="process-timescales" className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Process and Timescales</h2>
-              <div className="space-y-4">
-                {formData.recommended_strategies?.map((strategy, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <span className="font-medium text-gray-900">{index + 1}.</span>
-                    <p className="text-gray-600">{strategy}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
+              {/* Process and Timescales Section */}
+              <section id="process-timescales" className="mb-12">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">Process and Timescales</h2>
+                <div className="space-y-4">
+                  {formData.recommended_strategies?.map((strategy, index) => (
+                    <div key={index} className="flex items-start gap-3">
+                      <span className="font-medium text-gray-900">{index + 1}.</span>
+                      <p className="text-gray-600">{strategy}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
 
-            {/* Cost Section */}
-            <section id="cost" className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Cost</h2>
-              <div className="bg-gray-50 p-6 rounded-lg">
-                <p className="text-gray-600">
-                  Budget Range: {formData.budget_range || 'To be discussed'}
-                </p>
-              </div>
-            </section>
+              {/* Cost Section */}
+              <section id="cost" className="mb-12">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">Cost</h2>
+                <div className="bg-gray-50 p-6 rounded-lg">
+                  <p className="text-gray-600">
+                    Budget Range: {formData.budget_range || 'To be discussed'}
+                  </p>
+                </div>
+              </section>
 
-            {/* Terms and Conditions Section */}
-            <section id="terms-conditions" className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Terms and Conditions</h2>
-              <div className="text-gray-600">
-                <div dangerouslySetInnerHTML={{ __html: proposal }} />
-              </div>
-            </section>
-          </div>
+              {/* Terms and Conditions Section */}
+              <section id="terms-conditions" className="mb-12">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">Terms and Conditions</h2>
+                <div className="text-gray-600">
+                  <div dangerouslySetInnerHTML={{ __html: proposal }} />
+                </div>
+              </section>
+            </div>
 
-          {/* Action Buttons */}
-          <div className="flex justify-end space-x-4 mt-8">
-            <Button variant="outline" onClick={() => navigate("/dashboard")}>
-              Back to Dashboard
-            </Button>
-            <Button onClick={onRegenerateClick}>
-              Generate Again
-            </Button>
+            {/* Action Buttons */}
+            <div className="flex justify-end space-x-4 mt-8">
+              <Button variant="outline" onClick={() => navigate("/dashboard")}>
+                Back to Dashboard
+              </Button>
+              <Button onClick={onRegenerateClick}>
+                Generate Again
+              </Button>
+            </div>
           </div>
         </div>
       </div>
