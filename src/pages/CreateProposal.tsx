@@ -62,11 +62,25 @@ const CreateProposal = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { error } = await supabase.from("proposals").insert({
+      // Transform the data to match the database schema
+      const proposalData = {
         ...data,
         user_id: user.id,
-        status: 'draft'
-      });
+        status: 'draft',
+        content: {},
+        success_metrics: JSON.stringify(data.success_metrics),
+        target_audience: JSON.stringify(data.target_audience),
+        challenges: JSON.stringify(data.challenges),
+        strengths: JSON.stringify(data.strengths),
+        internal_resources: JSON.stringify(data.internal_resources),
+        recommended_strategies: JSON.stringify(data.recommended_strategies),
+        testimonials: JSON.stringify(data.testimonials),
+        services: JSON.stringify(data.services)
+      };
+
+      const { error } = await supabase
+        .from("proposals")
+        .insert(proposalData);
 
       if (error) throw error;
 

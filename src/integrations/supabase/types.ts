@@ -35,8 +35,10 @@ export type Database = {
           awards_recognitions: string[] | null
           budget_range: string | null
           challenges: Json | null
+          company_logo: string | null
           company_name: string | null
           content: Json
+          cover_image: string | null
           created_at: string
           custom_message: string | null
           guarantees: string[] | null
@@ -64,8 +66,10 @@ export type Database = {
           awards_recognitions?: string[] | null
           budget_range?: string | null
           challenges?: Json | null
+          company_logo?: string | null
           company_name?: string | null
           content?: Json
+          cover_image?: string | null
           created_at?: string
           custom_message?: string | null
           guarantees?: string[] | null
@@ -93,8 +97,10 @@ export type Database = {
           awards_recognitions?: string[] | null
           budget_range?: string | null
           challenges?: Json | null
+          company_logo?: string | null
           company_name?: string | null
           content?: Json
+          cover_image?: string | null
           created_at?: string
           custom_message?: string | null
           guarantees?: string[] | null
