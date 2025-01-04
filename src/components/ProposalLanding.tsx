@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { ProposalFormData } from "@/types/proposal";
-import { ImageUpload } from "./ProposalSteps/ImageUpload";
 
 interface ProposalLandingProps {
   formData: ProposalFormData;
@@ -15,7 +14,7 @@ export const ProposalLanding = ({ formData, onContinue }: ProposalLandingProps) 
   return (
     <div className="min-h-screen bg-white">
       {/* Header Section */}
-      <div className="h-screen relative">
+      <div className="relative h-screen">
         <div className="absolute inset-0">
           <img 
             src={formData.cover_image || defaultCoverImage}

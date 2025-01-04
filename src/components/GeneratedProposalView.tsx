@@ -52,7 +52,7 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
       </div>
 
       {/* Main Content */}
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen">
         {/* Toggle Button */}
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -62,11 +62,11 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
         </button>
 
         {/* Header Section with Cover Image and Logo */}
-        <div className="relative h-[50vh]">
+        <div className="relative">
           <img 
             src={formData.cover_image || defaultCoverImage} 
             alt="Cover" 
-            className="w-full h-full object-cover"
+            className="w-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/60" />
           
@@ -93,7 +93,7 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
         </div>
 
         {/* Content Sections */}
-        <div className="flex-1 max-w-4xl mx-auto px-8 py-12 bg-white shadow-sm">
+        <div className="max-w-4xl mx-auto px-8 py-12 bg-white shadow-sm">
           <div className="prose prose-slate max-w-none">
             {/* Introduction Section */}
             <section id="introduction" className="mb-12">
