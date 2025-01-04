@@ -13,7 +13,6 @@ export interface ProposalFormData {
   company_name: string;
   company_logo?: string;
   cover_image?: string;
-  landing_image?: string;
   website_url: string;
   primary_goal: string;
   services: string[];
