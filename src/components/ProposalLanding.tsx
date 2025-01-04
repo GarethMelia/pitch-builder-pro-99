@@ -1,8 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Upload } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { ProposalFormData } from "@/types/proposal";
-import { ImageUpload } from "./ProposalSteps/ImageUpload";
 
 interface ProposalLandingProps {
   formData: ProposalFormData;
@@ -58,21 +57,6 @@ export const ProposalLanding = ({ formData, onContinue }: ProposalLandingProps) 
                   {formData.website_url}
                 </p>
               )}
-            </div>
-
-            {/* Cover Image Upload */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-8 animate-fade-in" style={{ animationDelay: "0.5s" }}>
-              <h3 className="text-lg text-white/80 mb-4">Cover Image</h3>
-              <ImageUpload
-                type="cover"
-                value={formData.cover_image}
-                onChange={(url) => {
-                  if (formData.cover_image !== url) {
-                    formData.cover_image = url;
-                  }
-                }}
-                label="Cover Image"
-              />
             </div>
 
             {/* CTA Button */}
