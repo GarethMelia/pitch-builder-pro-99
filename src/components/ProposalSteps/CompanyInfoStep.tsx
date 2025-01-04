@@ -76,6 +76,27 @@ export const CompanyInfoStep = ({ form }: CompanyInfoStepProps) => {
               />
             </FormControl>
             <FormMessage className="text-xs text-muted-foreground">
+              This image will be used as the cover page background
+            </FormMessage>
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="landing_image"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Landing Image</FormLabel>
+            <FormControl>
+              <ImageUpload
+                type="landing"
+                value={field.value}
+                onChange={field.onChange}
+                label="Landing Image"
+              />
+            </FormControl>
+            <FormMessage className="text-xs text-muted-foreground">
               This image will be used as the landing page background
             </FormMessage>
           </FormItem>
