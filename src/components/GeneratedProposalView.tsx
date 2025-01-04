@@ -31,7 +31,7 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
   };
   
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex">
       {/* Fixed Sidebar */}
       <div className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-20 
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
@@ -52,7 +52,7 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
       </div>
 
       {/* Main Content */}
-      <div className="min-h-screen">
+      <div className="flex-1 min-h-screen">
         {/* Toggle Button */}
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -62,11 +62,11 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
         </button>
 
         {/* Header Section with Cover Image and Logo */}
-        <div className="relative">
+        <div className="relative min-h-[50vh]">
           <img 
             src={formData.cover_image || defaultCoverImage} 
             alt="Cover" 
-            className="w-full object-cover"
+            className="w-full h-[50vh] object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/60" />
           
