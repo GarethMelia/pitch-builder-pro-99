@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { marked } from 'marked';
 import { Share2 } from 'lucide-react';
 import { ProposalLanding } from './ProposalLanding';
+import { ImageUpload } from './ProposalSteps/ImageUpload';
 
 marked.setOptions({
   breaks: true,
@@ -63,7 +64,7 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
         const htmlContent = await Promise.resolve(marked.parse(markdownString));
         setEditableContent(markdownString);
         setGeneratedHtmlContent(htmlContent);
-        setShowLanding(true); // Show landing page first
+        setShowLanding(true);
         
         toast({
           title: "Success",
@@ -111,6 +112,20 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
 
   return (
     <div className="space-y-4">
+      <div className="mb-6">
+        <h3 className="text-lg font-medium mb-2">Cover Image</h3>
+        <ImageUpload
+          type="cover"
+          value={formData.cover_image}
+          onChange={(url) => {
+            if (formData.onChange) {
+              formData.onChange('cover_image', url);
+            }
+          }}
+          label="Cover Image"
+        />
+      </div>
+
       {isLoading && (
         <Progress value={progress} className="w-full" />
       )}
