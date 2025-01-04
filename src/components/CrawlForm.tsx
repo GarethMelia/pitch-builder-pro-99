@@ -21,6 +21,7 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
   const [progress, setProgress] = useState(0);
   const [editableContent, setEditableContent] = useState('');
   const [showLanding, setShowLanding] = useState(false);
+  const [generatedHtmlContent, setGeneratedHtmlContent] = useState('');
 
   const handleGenerateProposal = async () => {
     setIsLoading(true);
@@ -61,8 +62,8 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
         const markdownString = String(proposalData.formattedProposal);
         const htmlContent = await Promise.resolve(marked.parse(markdownString));
         setEditableContent(markdownString);
+        setGeneratedHtmlContent(htmlContent);
         setShowLanding(true); // Show landing page first
-        onProposalGenerated(htmlContent);
         
         toast({
           title: "Success",
@@ -91,52 +92,19 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
     const newContent = event.target.value;
     setEditableContent(newContent);
     const htmlContent = await Promise.resolve(marked.parse(String(newContent)));
-    onProposalGenerated(htmlContent);
+    setGeneratedHtmlContent(htmlContent);
   };
 
-  const handleShare = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
-
-      const { data, error } = await supabase
-        .from('proposals')
-        .insert({
-          content: { text: editableContent },
-          title: formData.title || 'Untitled Proposal',
-          user_id: user.id,
-          status: 'shared',
-          tone: 'formal'
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      const shareableLink = `${window.location.origin}/view/${data.id}`;
-      await navigator.clipboard.writeText(shareableLink);
-      
-      toast({
-        title: "Link Copied!",
-        description: "Shareable link has been copied to your clipboard",
-        duration: 3000,
-      });
-    } catch (error) {
-      console.error('Error sharing proposal:', error);
-      toast({
-        title: "Error",
-        description: "Failed to generate shareable link",
-        variant: "destructive",
-        duration: 5000,
-      });
-    }
+  const handleContinueToProposal = () => {
+    setShowLanding(false);
+    onProposalGenerated(generatedHtmlContent);
   };
 
   if (showLanding) {
     return (
       <ProposalLanding 
         formData={formData} 
-        onContinue={() => setShowLanding(false)} 
+        onContinue={handleContinueToProposal}
       />
     );
   }
@@ -145,25 +113,6 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
     <div className="space-y-4">
       {isLoading && (
         <Progress value={progress} className="w-full" />
-      )}
-      
-      {editableContent && (
-        <div className="space-y-4">
-          <textarea
-            value={editableContent}
-            onChange={handleContentChange}
-            className="w-full min-h-[400px] p-4 border rounded-lg font-mono"
-            placeholder="Edit your proposal here..."
-          />
-          <Button
-            onClick={handleShare}
-            variant="outline"
-            className="w-full"
-          >
-            <Share2 className="w-4 h-4 mr-2" />
-            Share Proposal
-          </Button>
-        </div>
       )}
       
       <Button

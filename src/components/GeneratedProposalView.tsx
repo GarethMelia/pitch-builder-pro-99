@@ -62,11 +62,11 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
         </button>
 
         {/* Header Section with Cover Image and Logo */}
-        <div className="relative h-64">
+        <div className="relative">
           <img 
             src={formData.cover_image || defaultCoverImage} 
             alt="Cover" 
-            className="w-full h-full object-cover"
+            className="w-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/60" />
           
