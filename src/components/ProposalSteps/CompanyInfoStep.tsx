@@ -75,7 +75,9 @@ export const CompanyInfoStep = ({ form }: CompanyInfoStepProps) => {
                 label="Cover Image"
               />
             </FormControl>
-            <FormMessage />
+            <FormMessage className="text-xs text-muted-foreground">
+              This image will be used as the landing page background
+            </FormMessage>
           </FormItem>
         )}
       />
