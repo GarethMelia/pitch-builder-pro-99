@@ -7,7 +7,6 @@ import { ChallengesStrengthsStep } from "./ChallengesStrengthsStep";
 import { StrategiesStep } from "./StrategiesStep";
 import { ProposalToneStep } from "./ProposalToneStep";
 import { CompanyCredentialsStep } from "./CompanyCredentialsStep";
-import { ClientInfoStep } from "./ClientInfoStep";
 
 interface ProposalStepRendererProps {
   currentStep: number;
@@ -19,18 +18,16 @@ export const ProposalStepRenderer = ({ currentStep, form }: ProposalStepRenderer
     case 1:
       return <CompanyInfoStep form={form} />;
     case 2:
-      return <ClientInfoStep form={form} />;
-    case 3:
       return <ProjectScopeStep form={form} />;
-    case 4:
+    case 3:
       return <MetricsStep form={form} />;
-    case 5:
+    case 4:
       return <ChallengesStrengthsStep form={form} />;
-    case 6:
+    case 5:
       return <StrategiesStep form={form} />;
-    case 7:
+    case 6:
       return <ProposalToneStep form={form} />;
-    case 8:
+    case 7:
       return <CompanyCredentialsStep form={form} />;
     default:
       return null;
