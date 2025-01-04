@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { marked } from 'marked';
 import { Share2 } from 'lucide-react';
+import { ProposalLanding } from './ProposalLanding';
 
 marked.setOptions({
   breaks: true,
@@ -19,6 +20,7 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [editableContent, setEditableContent] = useState('');
+  const [showLanding, setShowLanding] = useState(false);
 
   const handleGenerateProposal = async () => {
     setIsLoading(true);
@@ -59,6 +61,7 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
         const markdownString = String(proposalData.formattedProposal);
         const htmlContent = await Promise.resolve(marked.parse(markdownString));
         setEditableContent(markdownString);
+        setShowLanding(true); // Show landing page first
         onProposalGenerated(htmlContent);
         
         toast({
@@ -128,6 +131,15 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
       });
     }
   };
+
+  if (showLanding) {
+    return (
+      <ProposalLanding 
+        formData={formData} 
+        onContinue={() => setShowLanding(false)} 
+      />
+    );
+  }
 
   return (
     <div className="space-y-4">

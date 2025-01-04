@@ -5,10 +5,10 @@ import { ProposalFormData } from "@/types/proposal";
 
 interface ProposalLandingProps {
   formData: ProposalFormData;
+  onContinue: () => void;
 }
 
-export const ProposalLanding = ({ formData }: ProposalLandingProps) => {
-  const navigate = useNavigate();
+export const ProposalLanding = ({ formData, onContinue }: ProposalLandingProps) => {
   const defaultCoverImage = "https://images.unsplash.com/photo-1485833077593-4278bba3f11f?auto=format&fit=crop&w=2000&q=80";
 
   return (
@@ -61,7 +61,7 @@ export const ProposalLanding = ({ formData }: ProposalLandingProps) => {
 
             {/* CTA Button */}
             <Button
-              onClick={() => navigate("/proposal-details")}
+              onClick={onContinue}
               size="lg"
               className="w-fit text-lg px-8 py-6 bg-white text-primary hover:bg-white/90 animate-fade-in shadow-lg"
               style={{ animationDelay: "0.6s" }}
