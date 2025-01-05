@@ -1,8 +1,7 @@
 import { ProposalFormData } from "@/types/proposal";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { FileDown, FileEdit, ArrowLeft } from "lucide-react";
 
 interface GeneratedProposalViewProps {
   proposal: string;
@@ -13,7 +12,6 @@ interface GeneratedProposalViewProps {
 export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }: GeneratedProposalViewProps) => {
   const navigate = useNavigate();
   const defaultCoverImage = "https://images.unsplash.com/photo-1485833077593-4278bba3f11f?auto=format&fit=crop&w=2000&q=80";
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
   const sections = [
     { id: "introduction", title: "Introduction" },
@@ -31,10 +29,9 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
   };
   
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Fixed Sidebar */}
-      <div className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-20 
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+    <div className="min-h-screen flex bg-gray-50">
+      {/* Fixed Sidebar - 20% width */}
+      <div className="w-[20%] fixed top-0 left-0 h-full bg-white shadow-lg">
         <nav className="h-full flex flex-col p-6">
           <ul className="space-y-2">
             {sections.map((section) => (
@@ -51,18 +48,10 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
         </nav>
       </div>
 
-      {/* Main Content */}
-      <div className="min-h-screen flex flex-col">
-        {/* Toggle Button */}
-        <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="fixed top-4 left-4 z-30 p-2 rounded-md bg-white shadow-md hover:bg-gray-50 transition-colors"
-        >
-          {isSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
-
+      {/* Main Content - 80% width with offset */}
+      <div className="w-[80%] ml-[20%] min-h-screen flex flex-col">
         {/* Header Section with Cover Image and Logo */}
-        <div className="relative h-[50vh]">
+        <div className="relative h-[50vh] w-full">
           <img 
             src={formData.cover_image || defaultCoverImage} 
             alt="Cover" 
@@ -152,10 +141,16 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
             {/* Action Buttons */}
             <div className="flex justify-end space-x-4 mt-8">
               <Button variant="outline" onClick={() => navigate("/dashboard")}>
+                <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Dashboard
               </Button>
               <Button onClick={onRegenerateClick}>
+                <FileEdit className="w-4 h-4 mr-2" />
                 Generate Again
+              </Button>
+              <Button>
+                <FileDown className="w-4 h-4 mr-2" />
+                Download PDF
               </Button>
             </div>
           </div>

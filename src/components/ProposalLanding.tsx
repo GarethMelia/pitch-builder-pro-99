@@ -12,7 +12,7 @@ export const ProposalLanding = ({ formData, onContinue }: ProposalLandingProps) 
   const defaultLandingImage = "https://images.unsplash.com/photo-1485833077593-4278bba3f11f?auto=format&fit=crop&w=2000&q=80";
 
   return (
-    <div className="h-screen w-full bg-white overflow-hidden">
+    <div className="fixed inset-0 w-full h-full bg-white">
       <div className="relative h-full w-full">
         <img 
           src={formData.landing_image || defaultLandingImage}
@@ -22,7 +22,7 @@ export const ProposalLanding = ({ formData, onContinue }: ProposalLandingProps) 
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/80" />
 
         {/* Content Container */}
-        <div className="relative h-full z-10 container mx-auto px-6 flex flex-col">
+        <div className="relative h-full z-10 max-w-7xl mx-auto px-6 flex flex-col">
           {/* Logo */}
           {formData.company_logo && (
             <div className="pt-8">
