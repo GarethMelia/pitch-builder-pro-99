@@ -13,6 +13,7 @@ import { CrawlForm } from "@/components/CrawlForm";
 import { GeneratedProposalView } from "@/components/GeneratedProposalView";
 import { ProposalFormData } from "@/types/proposal";
 import { ProposalStepRenderer } from "@/components/ProposalSteps/ProposalStepRenderer";
+import { Loader2 } from "lucide-react";
 
 const TOTAL_STEPS = 7;
 
@@ -20,6 +21,7 @@ const CreateProposal = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [generatedProposal, setGeneratedProposal] = useState<string | null>(null);
   
   const form = useForm<ProposalFormData>({
@@ -59,8 +61,13 @@ const CreateProposal = () => {
 
   const onSubmit = async (data: ProposalFormData) => {
     try {
+      setIsSubmitting(true);
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        toast.error("Please sign in to create a proposal");
+        navigate("/auth");
+        return;
+      }
 
       // Transform the data to match the database schema
       const proposalData = {
@@ -90,7 +97,9 @@ const CreateProposal = () => {
 
     } catch (error) {
       console.error("Error creating proposal:", error);
-      toast.error("Failed to create proposal");
+      toast.error("Failed to create proposal. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -165,6 +174,7 @@ const CreateProposal = () => {
               onNext={nextStep}
               onSubmit={form.handleSubmit(onSubmit)}
               formData={form.getValues()}
+              isSubmitting={isSubmitting}
             />
           </form>
         </Form>

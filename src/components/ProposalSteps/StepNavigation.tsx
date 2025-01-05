@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ProposalFormData } from "@/types/proposal";
 import { validateStep } from "@/utils/proposalValidation";
+import { Loader2 } from "lucide-react";
 
 interface StepNavigationProps {
   currentStep: number;
@@ -9,6 +10,7 @@ interface StepNavigationProps {
   onNext: () => void;
   onSubmit: () => void;
   formData: ProposalFormData;
+  isSubmitting?: boolean;
 }
 
 export const StepNavigation = ({
@@ -17,7 +19,8 @@ export const StepNavigation = ({
   onPrevious,
   onNext,
   onSubmit,
-  formData
+  formData,
+  isSubmitting = false
 }: StepNavigationProps) => {
   const isLastStep = currentStep === totalSteps;
   const isCurrentStepValid = validateStep(currentStep, formData);
@@ -28,7 +31,7 @@ export const StepNavigation = ({
         type="button"
         variant="outline"
         onClick={onPrevious}
-        disabled={currentStep === 1}
+        disabled={currentStep === 1 || isSubmitting}
       >
         Previous
       </Button>
@@ -37,15 +40,22 @@ export const StepNavigation = ({
         <Button 
           type="submit"
           onClick={onSubmit}
-          disabled={!isCurrentStepValid}
+          disabled={!isCurrentStepValid || isSubmitting}
         >
-          Create Proposal
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Creating Proposal...
+            </>
+          ) : (
+            'Create Proposal'
+          )}
         </Button>
       ) : (
         <Button 
           type="button" 
           onClick={onNext}
-          disabled={!isCurrentStepValid}
+          disabled={!isCurrentStepValid || isSubmitting}
         >
           Next
         </Button>

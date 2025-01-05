@@ -17,7 +17,7 @@ export const ProposalLanding = ({ formData, onContinue }: ProposalLandingProps) 
         <img 
           src={formData.landing_image || defaultLandingImage}
           alt="Business Landing"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/80" />
 
