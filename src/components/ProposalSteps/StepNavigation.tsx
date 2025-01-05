@@ -25,6 +25,11 @@ export const StepNavigation = ({
   const isLastStep = currentStep === totalSteps;
   const isCurrentStepValid = validateStep(currentStep, formData);
 
+  const handleSubmit = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onSubmit();
+  };
+
   return (
     <div className="flex justify-between pt-6">
       <Button
@@ -39,7 +44,7 @@ export const StepNavigation = ({
       {isLastStep ? (
         <Button 
           type="submit"
-          onClick={onSubmit}
+          onClick={handleSubmit}
           disabled={!isCurrentStepValid || isSubmitting}
         >
           {isSubmitting ? (
