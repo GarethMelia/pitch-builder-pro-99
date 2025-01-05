@@ -44,6 +44,7 @@ export type Database = {
           guarantees: string[] | null
           id: string
           internal_resources: Json | null
+          landing_image: string | null
           persuasion_level: string | null
           primary_goal: string | null
           proposal_tone: string | null
@@ -75,6 +76,7 @@ export type Database = {
           guarantees?: string[] | null
           id?: string
           internal_resources?: Json | null
+          landing_image?: string | null
           persuasion_level?: string | null
           primary_goal?: string | null
           proposal_tone?: string | null
@@ -106,6 +108,7 @@ export type Database = {
           guarantees?: string[] | null
           id?: string
           internal_resources?: Json | null
+          landing_image?: string | null
           persuasion_level?: string | null
           primary_goal?: string | null
           proposal_tone?: string | null

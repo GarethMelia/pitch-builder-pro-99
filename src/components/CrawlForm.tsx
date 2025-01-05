@@ -54,16 +54,19 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
         body: { formData: formalFormData }
       });
 
-      console.log('Response from generate-proposal:', proposalData);
+      if (error) {
+        console.error('Error from generate-proposal:', error);
+        throw error;
+      }
 
-      if (error) throw error;
+      console.log('Response from generate-proposal:', proposalData);
 
       if (proposalData?.formattedProposal) {
         const markdownString = String(proposalData.formattedProposal);
         const htmlContent = await Promise.resolve(marked.parse(markdownString));
         setEditableContent(markdownString);
         setGeneratedHtmlContent(htmlContent);
-        setShowLanding(true); // Show landing page first
+        setShowLanding(true);
         
         toast({
           title: "Success",
@@ -74,11 +77,11 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
         throw new Error('No proposal content received');
       }
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error in handleGenerateProposal:', error);
       toast({
         title: "Error",
-        description: "Failed to generate proposal. Please try again.",
+        description: error.message || "Failed to generate proposal. Please try again.",
         variant: "destructive",
         duration: 5000,
       });
