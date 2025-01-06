@@ -22,7 +22,7 @@ export const ExecutiveSummary = ({ formData }: ExecutiveSummaryProps) => {
   return (
     <section id="executive-summary" className="w-full">
       {/* Cover Image Section */}
-      <div className="relative h-[50vh] w-full">
+      <div className="relative h-[60vh] w-full">
         <img 
           src={formData.cover_image || defaultCoverImage} 
           alt="Cover" 
@@ -32,7 +32,7 @@ export const ExecutiveSummary = ({ formData }: ExecutiveSummaryProps) => {
         
         {/* Logo */}
         {formData.company_logo && (
-          <div className="absolute top-6 left-6 z-10">
+          <div className="absolute top-8 left-12 z-10">
             <img 
               src={formData.company_logo} 
               alt="Company Logo" 
@@ -41,63 +41,63 @@ export const ExecutiveSummary = ({ formData }: ExecutiveSummaryProps) => {
           </div>
         )}
         
-        <div className="absolute inset-0 flex flex-col justify-end p-8">
-          <h1 className="text-5xl font-bold text-white mb-4">
+        <div className="absolute inset-0 flex flex-col justify-end p-12">
+          <h1 className="text-6xl font-bold text-white mb-4">
             {formData.title || 'Untitled Proposal'}
           </h1>
           <div className="text-white/90 space-y-2">
-            <p className="text-xl">Prepared for: {formData.company_name || '[Client Name]'}</p>
-            <p className="text-lg">Date: {new Date().toLocaleDateString()}</p>
+            <p className="text-2xl">Prepared for: {formData.company_name || '[Client Name]'}</p>
+            <p className="text-xl">Date: {new Date().toLocaleDateString()}</p>
           </div>
         </div>
       </div>
 
       {/* Content Sections */}
-      <div className="py-12">
+      <div className="px-12 py-16 max-w-[1600px]">
         {/* A Brief Look About Us */}
-        <h2 className="text-3xl font-bold text-gray-900 mb-6">A Brief Look About Us</h2>
-        <p className="text-lg text-gray-600 leading-relaxed mb-12">
+        <h2 className="text-4xl font-bold text-gray-900 mb-8">A Brief Look About Us</h2>
+        <p className="text-xl text-gray-600 leading-relaxed mb-16 max-w-4xl">
           {formData.primary_goal}
         </p>
 
         {/* Previous Clients */}
-        <div className="mb-16">
-          <h3 className="text-2xl font-semibold text-gray-900 mb-8">Some of the clients we've worked with</h3>
-          <div className="flex items-center justify-between gap-8 overflow-x-auto pb-4">
+        <div className="mb-20">
+          <h3 className="text-3xl font-semibold text-gray-900 mb-10">Some of the clients we've worked with</h3>
+          <div className="flex items-center justify-between gap-12 overflow-x-auto pb-6">
             {clientLogos.map((logo, index) => (
               <img 
                 key={index}
                 src={logo}
                 alt={`Client ${index + 1}`}
-                className="h-12 w-auto object-contain grayscale hover:grayscale-0 transition-all"
+                className="h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all"
               />
             ))}
           </div>
         </div>
 
         {/* Achievements */}
-        <div className="grid grid-cols-4 gap-8 mb-16">
+        <div className="grid grid-cols-4 gap-8 mb-20">
           {achievements.map((achievement, index) => (
             <div 
               key={index}
-              className="bg-white p-6 rounded-lg shadow-sm text-center hover:shadow-md transition-shadow"
+              className="bg-white p-8 rounded-xl shadow-sm text-center hover:shadow-md transition-shadow"
             >
-              <h4 className="text-3xl font-bold text-blue-600 mb-2">{achievement.value}</h4>
-              <p className="text-gray-600">{achievement.title}</p>
+              <h4 className="text-4xl font-bold text-blue-600 mb-3">{achievement.value}</h4>
+              <p className="text-gray-600 text-lg">{achievement.title}</p>
             </div>
           ))}
         </div>
 
         {/* Strategies and Practices */}
-        <div className="bg-gray-50 rounded-xl">
-          <h3 className="text-2xl font-semibold text-gray-900 mb-6">Our Strategies & Practices</h3>
-          <div className="grid grid-cols-2 gap-8">
+        <div className="bg-gray-50 p-12 rounded-xl">
+          <h3 className="text-3xl font-semibold text-gray-900 mb-10">Our Strategies & Practices</h3>
+          <div className="grid grid-cols-2 gap-12">
             {formData.recommended_strategies?.map((strategy, index) => (
-              <div key={index} className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  <span className="text-blue-600 font-semibold">{index + 1}</span>
+              <div key={index} className="flex items-start gap-6">
+                <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <span className="text-blue-600 font-semibold text-xl">{index + 1}</span>
                 </div>
-                <p className="text-gray-700">{strategy}</p>
+                <p className="text-lg text-gray-700">{strategy}</p>
               </div>
             ))}
           </div>

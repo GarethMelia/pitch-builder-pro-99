@@ -16,17 +16,17 @@ interface ProposalSidebarProps {
 
 export const ProposalSidebar = ({ onSectionClick }: ProposalSidebarProps) => {
   return (
-    <div className="w-[20%] fixed top-0 left-0 h-full bg-white shadow-lg">
+    <div className="fixed top-0 left-0 h-full w-[280px] bg-white shadow-lg">
       <nav className="h-full flex flex-col p-6">
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-gray-900">Content</h2>
         </div>
-        <ul className="space-y-6">
+        <ul className="space-y-4">
           {sections.map((section) => (
             <li key={section.id}>
               <button
                 onClick={() => onSectionClick(section.id)}
-                className="w-full flex items-center gap-3 px-4 py-2 text-left text-sm font-medium text-gray-600 rounded-md hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                className="w-full flex items-center gap-3 px-4 py-3 text-left text-sm font-medium text-gray-600 rounded-md hover:bg-gray-100 hover:text-gray-900 transition-colors"
               >
                 <section.icon className="w-5 h-5 text-blue-500" />
                 <span>{section.title}</span>
