@@ -14,15 +14,10 @@ export const ExecutiveSummary = ({ formData }: ExecutiveSummaryProps) => {
     { title: "Team Members", value: "50+" }
   ];
 
-  // Dummy client logos for demonstration
-  const clientLogos = [
-    "/lovable-uploads/c328bc78-1c3d-468f-aefb-76357044d4fb.png"
-  ];
-
   return (
     <section id="executive-summary" className="w-full">
-      {/* Cover Image Section */}
-      <div className="relative h-[60vh] w-full">
+      {/* Cover Image Section - Now fills entire viewport height */}
+      <div className="h-screen w-full relative">
         <img 
           src={formData.cover_image || defaultCoverImage} 
           alt="Cover" 
@@ -41,7 +36,8 @@ export const ExecutiveSummary = ({ formData }: ExecutiveSummaryProps) => {
           </div>
         )}
         
-        <div className="absolute inset-0 flex flex-col justify-end p-12">
+        {/* Content positioned at the bottom */}
+        <div className="absolute inset-x-0 bottom-0 p-12">
           <h1 className="text-6xl font-bold text-white mb-4">
             {formData.title || 'Untitled Proposal'}
           </h1>
@@ -64,14 +60,7 @@ export const ExecutiveSummary = ({ formData }: ExecutiveSummaryProps) => {
         <div className="mb-20">
           <h3 className="text-3xl font-semibold text-gray-900 mb-10">Some of the clients we've worked with</h3>
           <div className="flex items-center justify-between gap-12 overflow-x-auto pb-6">
-            {clientLogos.map((logo, index) => (
-              <img 
-                key={index}
-                src={logo}
-                alt={`Client ${index + 1}`}
-                className="h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all"
-              />
-            ))}
+            {/* Client logos section */}
           </div>
         </div>
 
