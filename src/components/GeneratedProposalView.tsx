@@ -22,15 +22,15 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
   };
   
   return (
-    <div className="min-h-screen flex">
+    <div className="flex min-h-screen">
       <ProposalSidebar onSectionClick={scrollToSection} />
 
       {/* Main Content - 80% width with offset */}
-      <div className="w-[80%] ml-[20%] min-h-screen">
+      <div className="w-[80%] ml-[20%]">
         <ExecutiveSummary formData={formData} />
 
         {/* Other sections */}
-        <div className="px-8 py-12">
+        <div className="py-12">
           {/* Problem Statement Section */}
           <section id="problem-statement" className="mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-6">Problem Statement</h2>
@@ -74,8 +74,8 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
           {/* Pricing and Payment Terms Section */}
           <section id="pricing-payment" className="mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-6">Pricing and Payment Terms</h2>
-            <div className="bg-white p-8 rounded-xl shadow-sm">
-              <p className="text-xl text-gray-700 mb-4">Budget Range: {formData.budget_range}</p>
+            <div className="bg-white rounded-xl shadow-sm">
+              <p className="text-xl text-gray-700">{formData.budget_range}</p>
             </div>
           </section>
 

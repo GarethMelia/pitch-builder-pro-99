@@ -20,7 +20,7 @@ export const ExecutiveSummary = ({ formData }: ExecutiveSummaryProps) => {
   ];
 
   return (
-    <section id="executive-summary" className="min-h-screen w-full">
+    <section id="executive-summary" className="w-full">
       {/* Cover Image Section */}
       <div className="relative h-[50vh] w-full">
         <img 
@@ -53,7 +53,7 @@ export const ExecutiveSummary = ({ formData }: ExecutiveSummaryProps) => {
       </div>
 
       {/* Content Sections */}
-      <div className="max-w-6xl mx-auto px-8 py-12">
+      <div className="py-12">
         {/* A Brief Look About Us */}
         <h2 className="text-3xl font-bold text-gray-900 mb-6">A Brief Look About Us</h2>
         <p className="text-lg text-gray-600 leading-relaxed mb-12">
@@ -89,7 +89,7 @@ export const ExecutiveSummary = ({ formData }: ExecutiveSummaryProps) => {
         </div>
 
         {/* Strategies and Practices */}
-        <div className="bg-gray-50 p-8 rounded-xl">
+        <div className="bg-gray-50 rounded-xl">
           <h3 className="text-2xl font-semibold text-gray-900 mb-6">Our Strategies & Practices</h3>
           <div className="grid grid-cols-2 gap-8">
             {formData.recommended_strategies?.map((strategy, index) => (
