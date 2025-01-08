@@ -48,6 +48,7 @@ export type Database = {
           persuasion_level: string | null
           primary_goal: string | null
           proposal_tone: string | null
+          prospect_details: string | null
           reasons_to_work_with: string | null
           recommended_strategies: Json | null
           relevant_experience: string[] | null
@@ -80,6 +81,7 @@ export type Database = {
           persuasion_level?: string | null
           primary_goal?: string | null
           proposal_tone?: string | null
+          prospect_details?: string | null
           reasons_to_work_with?: string | null
           recommended_strategies?: Json | null
           relevant_experience?: string[] | null
@@ -112,6 +114,7 @@ export type Database = {
           persuasion_level?: string | null
           primary_goal?: string | null
           proposal_tone?: string | null
+          prospect_details?: string | null
           reasons_to_work_with?: string | null
           recommended_strategies?: Json | null
           relevant_experience?: string[] | null
