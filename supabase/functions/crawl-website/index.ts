@@ -56,7 +56,12 @@ serve(async (req) => {
     const extractedData = extractContent(htmlContent);
     console.log('Extracted website data:', extractedData);
 
+    if (!openAIApiKey) {
+      throw new Error('OpenAI API key is not configured');
+    }
+
     // Generate overview using OpenAI
+    console.log('Making request to OpenAI API...');
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -81,23 +86,23 @@ serve(async (req) => {
         ],
         temperature: 0.7,
         max_tokens: 500
-      }),
+      })
     });
 
     if (!openAIResponse.ok) {
       const errorData = await openAIResponse.json();
       console.error('OpenAI API Error:', errorData);
-      throw new Error('Failed to generate overview with OpenAI');
+      throw new Error(`OpenAI API Error: ${JSON.stringify(errorData)}`);
     }
 
     const completion = await openAIResponse.json();
-    const overview = completion.choices[0].message.content;
+    console.log('OpenAI API Response:', completion);
 
-    if (!overview) {
-      throw new Error('Failed to generate overview');
+    if (!completion.choices?.[0]?.message?.content) {
+      throw new Error('Invalid response format from OpenAI');
     }
 
-    console.log('Generated overview:', overview);
+    const overview = completion.choices[0].message.content;
 
     return new Response(
       JSON.stringify({ success: true, overview }),
