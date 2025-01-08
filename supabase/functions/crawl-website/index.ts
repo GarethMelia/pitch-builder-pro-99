@@ -1,6 +1,7 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { Configuration, OpenAIApi } from 'https://esm.sh/openai@3.3.0';
+import { FirecrawlApp } from 'https://esm.sh/@mendable/firecrawl-js';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -15,20 +16,34 @@ serve(async (req) => {
   try {
     const { url } = await req.json();
     
+    // Initialize Firecrawl
+    const firecrawlApiKey = Deno.env.get('FIRECRAWL_API_KEY');
+    if (!firecrawlApiKey) {
+      throw new Error('Firecrawl API key not configured');
+    }
+    
+    const firecrawl = new FirecrawlApp({ apiKey: firecrawlApiKey });
+    
+    // Crawl website
+    console.log('Crawling website:', url);
+    const crawlResponse = await firecrawl.crawlUrl(url, {
+      limit: 10,
+      scrapeOptions: {
+        formats: ['markdown'],
+      }
+    });
+
+    if (!crawlResponse.success) {
+      throw new Error('Failed to crawl website');
+    }
+
     // Initialize OpenAI
     const configuration = new Configuration({
       apiKey: Deno.env.get('OPENAI_API_KEY'),
     });
     const openai = new OpenAIApi(configuration);
 
-    // Simulate website crawling (replace with actual crawling logic)
-    const websiteData = {
-      about: "Sample about section",
-      contact: "Sample contact information",
-      mission: "Sample mission statement",
-    };
-
-    // Generate overview using OpenAI
+    // Process crawled data with OpenAI
     const completion = await openai.createChatCompletion({
       model: "gpt-4o-mini",
       messages: [
@@ -40,7 +55,7 @@ serve(async (req) => {
           role: "user",
           content: `Using the following website information, generate an overview for the proposal. The overview should summarize the company's purpose, key highlights, and values in a professional and engaging tone, tailored for the proposal:
           
-          ${JSON.stringify(websiteData, null, 2)}`
+          ${JSON.stringify(crawlResponse.data, null, 2)}`
         }
       ],
       temperature: 0.7,
