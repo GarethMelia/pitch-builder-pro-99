@@ -38,23 +38,29 @@ serve(async (req) => {
       throw new Error('Failed to parse HTML content');
     }
 
-    // Extract relevant information
+    // Extract relevant information with proper type handling
+    const titleElement = doc.querySelector('title');
+    const descriptionMeta = doc.querySelector('meta[name="description"]');
+    const headings = Array.from(doc.querySelectorAll('h1, h2'));
+    const paragraphs = Array.from(doc.querySelectorAll('p'));
+    const navLinks = Array.from(doc.querySelectorAll('nav a'));
+
     const websiteData = {
-      title: doc.querySelector('title')?.textContent || '',
-      description: doc.querySelector('meta[name="description"]')?.getAttribute('content') || '',
-      headings: Array.from(doc.querySelectorAll('h1, h2'))
-        .map((el: Element) => el.textContent?.trim())
-        .filter(Boolean)
+      title: titleElement?.textContent || '',
+      description: descriptionMeta?.getAttribute('content') || '',
+      headings: headings
+        .map((el) => (el as Element).textContent?.trim())
+        .filter((text): text is string => text !== undefined && text !== null)
         .slice(0, 5),
-      content: Array.from(doc.querySelectorAll('p'))
-        .map((el: Element) => el.textContent?.trim())
-        .filter(Boolean)
+      content: paragraphs
+        .map((el) => (el as Element).textContent?.trim())
+        .filter((text): text is string => text !== undefined && text !== null)
         .slice(0, 5)
         .join('\n'),
-      navigation: Array.from(doc.querySelectorAll('nav a'))
-        .map((el: Element) => ({
-          text: el.textContent?.trim(),
-          href: el.getAttribute('href')
+      navigation: navLinks
+        .map((el) => ({
+          text: (el as Element).textContent?.trim() || '',
+          href: (el as Element).getAttribute('href') || ''
         }))
         .filter(link => link.text)
         .slice(0, 5)
