@@ -45,7 +45,9 @@ serve(async (req) => {
       
       ## Introduction
       
-      ${formData.primary_goal}
+      ${formData.prospect_details ? 
+        `Based on our discussions and understanding of your needs: ${formData.prospect_details}` : 
+        formData.primary_goal}
       
       ## Services Offered
       
@@ -86,17 +88,17 @@ serve(async (req) => {
       ### Guarantees
       ${formData.guarantees?.join('\n- ') || 'Not specified'}
       
-      Please format this as a clean, professional business proposal without showing any markdown syntax in the final output.
+      Please format this as a clean, professional business proposal without showing any markdown syntax in the final output. Make the introduction warm, engaging, and personalized based on the prospect details provided.
     `;
 
     console.log('Sending prompt to OpenAI:', prompt);
 
     const completion = await openai.createChatCompletion({
-      model: "gpt-4",
+      model: "gpt-4o",
       messages: [
         {
           role: "system",
-          content: "You are an expert business proposal writer. Create a professional, well-formatted proposal without showing any markdown syntax in the output. Use proper formatting for headings, lists, and emphasis."
+          content: "You are an expert business proposal writer who creates warm, engaging, and professional proposals. Focus on creating personalized introductions that show understanding of the client's needs and enthusiasm for the project."
         },
         {
           role: "user",
