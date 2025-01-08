@@ -13,6 +13,7 @@ interface GeneratedProposalViewProps {
 
 export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }: GeneratedProposalViewProps) => {
   const navigate = useNavigate();
+  const defaultOfficeImage = "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80";
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -34,6 +35,16 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
             <p className="text-gray-700">{formData.prospect_details}</p>
           </div>
         </section>
+
+        {/* Full Width Image Break */}
+        <div className="w-full h-[400px] relative mb-16">
+          <img 
+            src={defaultOfficeImage} 
+            alt="Modern Office Space" 
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/30" />
+        </div>
 
         <ExecutiveSummary formData={formData} />
 
