@@ -40,20 +40,21 @@ serve(async (req) => {
     const extractContent = (element: Element): string => {
       if (!element) return '';
       
-      // Get all text nodes within this element and its children
-      const walker = doc.createTreeWalker(
-        element,
-        NodeFilter.SHOW_TEXT,
-        null
-      );
-
       let text = '';
-      let node;
-      while (node = walker.nextNode()) {
-        text += node.textContent.trim() + ' ';
+      
+      // Get text from this element
+      if (element.textContent) {
+        text += element.textContent.trim() + ' ';
       }
       
-      console.log('Extracted content length:', text.length);
+      // Get text from child elements
+      const children = element.children;
+      if (children) {
+        for (let i = 0; i < children.length; i++) {
+          text += extractContent(children[i]) + ' ';
+        }
+      }
+      
       return text.trim();
     }
 
@@ -63,9 +64,9 @@ serve(async (req) => {
 
       // Try finding by headings and surrounding content
       const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
-      for (const heading of headings) {
+      headings.forEach((heading) => {
         const headingText = heading.textContent?.toLowerCase() || '';
-        for (const keyword of keywords) {
+        keywords.forEach((keyword) => {
           if (headingText.includes(keyword.toLowerCase())) {
             let content = extractContent(heading);
             
@@ -90,36 +91,38 @@ serve(async (req) => {
               bestContent = content;
             }
           }
-        }
-      }
+        });
+      });
 
-      // Try finding by common class/id names if no content found by headings
+      // Try finding by common class/id names
       if (!bestContent) {
-        const possibleSelectors = keywords.flatMap(keyword => [
-          `[class*="${keyword}"]`,
-          `[id*="${keyword}"]`,
-          `[class*="${keyword.replace(/\s+/g, '-')}"]`,
-          `[id*="${keyword.replace(/\s+/g, '-')}"]`,
-          `[class*="${keyword.replace(/\s+/g, '_')}"]`,
-          `[id*="${keyword.replace(/\s+/g, '_')}"]`,
-          `section[class*="${keyword}"]`,
-          `div[class*="${keyword}"]`,
-          `article[class*="${keyword}"]`
-        ]);
+        keywords.forEach(keyword => {
+          const selectors = [
+            `[class*="${keyword}"]`,
+            `[id*="${keyword}"]`,
+            `[class*="${keyword.replace(/\s+/g, '-')}"]`,
+            `[id*="${keyword.replace(/\s+/g, '-')}"]`,
+            `[class*="${keyword.replace(/\s+/g, '_')}"]`,
+            `[id*="${keyword.replace(/\s+/g, '_')}"]`,
+            `section[class*="${keyword}"]`,
+            `div[class*="${keyword}"]`,
+            `article[class*="${keyword}"]`
+          ];
 
-        for (const selector of possibleSelectors) {
-          try {
-            const elements = doc.querySelectorAll(selector);
-            elements.forEach(element => {
-              const content = extractContent(element);
-              if (content.length > bestContent.length && content.length > 50) {
-                bestContent = content;
-              }
-            });
-          } catch (e) {
-            console.log(`Error with selector ${selector}:`, e);
-          }
-        }
+          selectors.forEach(selector => {
+            try {
+              const elements = doc.querySelectorAll(selector);
+              elements.forEach(element => {
+                const content = extractContent(element);
+                if (content.length > bestContent.length && content.length > 50) {
+                  bestContent = content;
+                }
+              });
+            } catch (e) {
+              console.log(`Error with selector ${selector}:`, e);
+            }
+          });
+        });
       }
 
       // Try finding in meta tags if still no content
@@ -135,10 +138,11 @@ serve(async (req) => {
         });
       }
 
+      console.log(`Content length for keywords [${keywords.join(', ')}]:`, bestContent.length);
       return bestContent;
     }
 
-    // Extract content for each section with multiple keyword variations
+    // Extract content for each section
     const aboutUs = findSectionContent([
       'about', 'about us', 'about-us', 'who we are', 'our story', 
       'company', 'background', 'history'
