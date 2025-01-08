@@ -27,6 +27,14 @@ export const GeneratedProposalView = ({ proposal, formData, onRegenerateClick }:
 
       {/* Main Content */}
       <div className="flex-1 ml-[280px]">
+        {/* Introduction Section */}
+        <section id="introduction" className="px-12 py-12 max-w-[1600px]">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">Introduction</h2>
+          <div className="prose prose-lg max-w-none">
+            <p className="text-gray-700">{formData.prospect_details}</p>
+          </div>
+        </section>
+
         <ExecutiveSummary formData={formData} />
 
         {/* Other sections */}

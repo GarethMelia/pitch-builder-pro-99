@@ -1,6 +1,7 @@
-import { Bird, Briefcase, LightbulbIcon, ClipboardList, Clock, DollarSign, FileText } from "lucide-react";
+import { Bird, Briefcase, LightbulbIcon, ClipboardList, Clock, DollarSign, FileText, MessageSquare } from "lucide-react";
 
 const sections = [
+  { id: "introduction", title: "Introduction", icon: MessageSquare },
   { id: "executive-summary", title: "Executive Summary", icon: Bird },
   { id: "problem-statement", title: "Problem Statement", icon: Briefcase },
   { id: "proposed-solution", title: "Proposed Solution", icon: LightbulbIcon },
