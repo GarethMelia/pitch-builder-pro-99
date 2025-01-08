@@ -4,22 +4,61 @@ import { Textarea } from "@/components/ui/textarea";
 import { UseFormReturn } from "react-hook-form";
 import { ProposalFormData } from "@/types/proposal";
 import { ImageUpload } from "./ImageUpload";
-import { WebsiteCrawler } from "../WebsiteCrawler";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
 
 interface CompanyInfoStepProps {
   form: UseFormReturn<ProposalFormData>;
 }
 
 export const CompanyInfoStep = ({ form }: CompanyInfoStepProps) => {
-  const handleOverviewGenerated = (overview: string) => {
-    form.setValue('prospect_details', overview);
+  const { toast } = useToast();
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleGenerateOverview = async () => {
+    const websiteUrl = form.getValues('website_url');
+    if (!websiteUrl) {
+      toast({
+        title: "Error",
+        description: "Please enter a website URL first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('crawl-website', {
+        body: { url: websiteUrl }
+      });
+
+      if (error) throw error;
+
+      if (data?.overview) {
+        form.setValue('prospect_details', data.overview);
+        toast({
+          title: "Success",
+          description: "Overview generated successfully!",
+        });
+      }
+    } catch (error) {
+      console.error('Error generating overview:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate overview. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
     <div className="space-y-6 animate-fadeIn">
       <h2 className="text-2xl font-semibold">General Company Information</h2>
-      
-      <WebsiteCrawler onOverviewGenerated={handleOverviewGenerated} />
       
       <FormField
         control={form.control}
@@ -44,6 +83,41 @@ export const CompanyInfoStep = ({ form }: CompanyInfoStepProps) => {
             <FormControl>
               <Input placeholder="Enter company name" {...field} />
             </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name="website_url"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Website URL</FormLabel>
+            <div className="flex gap-2">
+              <FormControl>
+                <Input 
+                  type="url" 
+                  placeholder="https://example.com" 
+                  {...field} 
+                />
+              </FormControl>
+              <Button 
+                type="button"
+                onClick={handleGenerateOverview}
+                disabled={isGenerating}
+                variant="secondary"
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  'Generate Overview'
+                )}
+              </Button>
+            </div>
             <FormMessage />
           </FormItem>
         )}
