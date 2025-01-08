@@ -205,24 +205,6 @@ export const CompanyInfoStep = ({ form }: CompanyInfoStepProps) => {
 
       <FormField
         control={form.control}
-        name="website_url"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Website URL</FormLabel>
-            <FormControl>
-              <Input 
-                type="url" 
-                placeholder="https://example.com" 
-                {...field} 
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      <FormField
-        control={form.control}
         name="primary_goal"
         render={({ field }) => (
           <FormItem>
