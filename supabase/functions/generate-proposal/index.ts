@@ -18,6 +18,8 @@ serve(async (req) => {
     console.log('Received form data:', formData);
 
     const openAiKey = Deno.env.get('OPENAI_API_KEY');
+    console.log('OpenAI API Key exists:', !!openAiKey); // Log if key exists without exposing it
+
     if (!openAiKey) {
       throw new Error('OpenAI API key not configured');
     }
@@ -92,7 +94,7 @@ serve(async (req) => {
       Please format this as a clean, professional business proposal without showing any markdown syntax in the final output. Make the introduction warm, engaging, and personalized based on the prospect details provided.
     `;
 
-    console.log('Sending prompt to OpenAI:', prompt);
+    console.log('Sending prompt to OpenAI');
 
     const completion = await openai.createChatCompletion({
       model: "gpt-4o",
@@ -109,6 +111,8 @@ serve(async (req) => {
       temperature: 0.7,
       max_tokens: 2000
     });
+
+    console.log('Received response from OpenAI');
 
     if (!completion.data?.choices?.[0]?.message?.content) {
       throw new Error('No proposal content generated');
