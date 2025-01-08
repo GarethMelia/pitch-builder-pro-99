@@ -16,6 +16,7 @@ export interface ProposalFormData {
   landing_image?: string;
   website_url: string;
   primary_goal: string;
+  prospect_details?: string;
   services: string[];
   target_audience: {
     demographics?: string;

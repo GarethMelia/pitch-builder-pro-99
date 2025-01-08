@@ -45,14 +45,15 @@ export const CompanyInfoStep = ({ form }: CompanyInfoStepProps) => {
       <FormField
         control={form.control}
         name="prospect_details"
-        render={({ field }) => (
+        render={({ field: { value, ...fieldProps } }) => (
           <FormItem>
             <FormLabel>Provide key details or insights about the prospect</FormLabel>
             <FormControl>
               <Textarea 
                 placeholder="Write a friendly message that references past discussions, shows understanding, and conveys excitement for the project."
                 className="min-h-[100px]"
-                {...field} 
+                value={value || ''}
+                {...fieldProps}
               />
             </FormControl>
             <FormMessage />
