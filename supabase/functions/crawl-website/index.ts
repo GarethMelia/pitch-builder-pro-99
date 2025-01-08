@@ -7,6 +7,7 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -14,6 +15,12 @@ serve(async (req) => {
   try {
     const { url } = await req.json();
     
+    if (!url) {
+      throw new Error('URL is required');
+    }
+
+    console.log('Crawling website:', url);
+
     // Initialize OpenAI
     const configuration = new Configuration({
       apiKey: Deno.env.get('OPENAI_API_KEY'),
@@ -22,22 +29,31 @@ serve(async (req) => {
 
     // Make a direct fetch request to the URL
     const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch URL: ${response.statusText}`);
+    }
+
     const htmlContent = await response.text();
 
-    // Basic extraction of relevant content using regex
+    // Extract content using regex
     const extractContent = (html: string) => {
+      // Remove HTML tags and clean up text
       const removeHtmlTags = (str: string) => str.replace(/<[^>]*>/g, ' ');
       const removeExtraSpaces = (str: string) => str.replace(/\s+/g, ' ').trim();
 
-      // Extract content between specific tags or from meta descriptions
+      // Extract meta description
       const metaDescription = html.match(/<meta[^>]*name="description"[^>]*content="([^"]*)"[^>]*>/i);
+      
+      // Extract title
       const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+      
+      // Extract body content
       const bodyContent = html.match(/<body[^>]*>([\s\S]*)<\/body>/i);
 
       return {
         title: titleMatch ? removeExtraSpaces(titleMatch[1]) : '',
         description: metaDescription ? removeExtraSpaces(metaDescription[1]) : '',
-        content: bodyContent ? removeExtraSpaces(removeHtmlTags(bodyContent[1])).substring(0, 1000) : ''
+        content: bodyContent ? removeExtraSpaces(removeHtmlTags(bodyContent[1])).substring(0, 1500) : ''
       };
     };
 
@@ -50,20 +66,28 @@ serve(async (req) => {
       messages: [
         {
           role: "system",
-          content: "You are a professional business writer who creates engaging proposal overviews."
+          content: "You are a professional business writer who creates engaging proposal overviews. Keep the overview concise, professional, and focused on key business aspects."
         },
         {
           role: "user",
-          content: `Using the following website information, generate an overview for the proposal. The overview should summarize the company's purpose, key highlights, and values in a professional and engaging tone, tailored for the proposal:
-          
-          ${JSON.stringify(extractedData, null, 2)}`
+          content: `Based on this website content, create a brief, professional overview that highlights the company's main business focus, value proposition, and any standout features. Use this information:
+
+          Title: ${extractedData.title}
+          Description: ${extractedData.description}
+          Content: ${extractedData.content}`
         }
       ],
       temperature: 0.7,
       max_tokens: 500
     });
 
-    const overview = completion.data.choices[0].message?.content || '';
+    const overview = completion.data.choices[0].message?.content;
+
+    if (!overview) {
+      throw new Error('Failed to generate overview');
+    }
+
+    console.log('Generated overview:', overview);
 
     return new Response(
       JSON.stringify({ success: true, overview }),
@@ -76,8 +100,12 @@ serve(async (req) => {
     );
   } catch (error) {
     console.error('Error in crawl-website function:', error);
+    
     return new Response(
-      JSON.stringify({ success: false, error: error.message }),
+      JSON.stringify({ 
+        success: false, 
+        error: error.message || 'An error occurred while processing the request' 
+      }),
       {
         headers: {
           ...corsHeaders,
