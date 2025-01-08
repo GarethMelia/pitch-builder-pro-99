@@ -17,12 +17,13 @@ serve(async (req) => {
     const { formData } = await req.json();
     console.log('Received form data:', formData);
 
-    if (!Deno.env.get('OPENAI_API_KEY')) {
+    const openAiKey = Deno.env.get('OPENAI_API_KEY');
+    if (!openAiKey) {
       throw new Error('OpenAI API key not configured');
     }
 
     const configuration = new Configuration({
-      apiKey: Deno.env.get('OPENAI_API_KEY'),
+      apiKey: openAiKey,
     });
     const openai = new OpenAIApi(configuration);
 
@@ -114,10 +115,7 @@ serve(async (req) => {
     }
 
     const markdownContent = completion.data.choices[0].message.content;
-    const htmlContent = marked(markdownContent, {
-      headerIds: false,
-      mangle: false
-    });
+    const htmlContent = marked(markdownContent);
 
     return new Response(
       JSON.stringify({ formattedProposal: htmlContent }),
