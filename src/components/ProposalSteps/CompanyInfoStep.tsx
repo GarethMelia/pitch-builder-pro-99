@@ -4,22 +4,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { UseFormReturn } from "react-hook-form";
 import { ProposalFormData } from "@/types/proposal";
 import { ImageUpload } from "./ImageUpload";
-import { WebsiteCrawler } from "../WebsiteCrawler";
 
 interface CompanyInfoStepProps {
   form: UseFormReturn<ProposalFormData>;
 }
 
 export const CompanyInfoStep = ({ form }: CompanyInfoStepProps) => {
-  const handleOverviewGenerated = (overview: string) => {
-    form.setValue('prospect_details', overview);
-  };
-
   return (
     <div className="space-y-6 animate-fadeIn">
       <h2 className="text-2xl font-semibold">General Company Information</h2>
-      
-      <WebsiteCrawler onOverviewGenerated={handleOverviewGenerated} />
       
       <FormField
         control={form.control}
