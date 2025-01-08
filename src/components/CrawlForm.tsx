@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useToast } from "@/components/ui/use-toast"; 
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,6 +24,16 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
   const [generatedHtmlContent, setGeneratedHtmlContent] = useState('');
 
   const handleGenerateProposal = async () => {
+    if (!formData.title || !formData.company_name) {
+      toast({
+        title: "Missing Information",
+        description: "Please ensure you've filled in at least the title and company name.",
+        variant: "destructive",
+        duration: 3000,
+      });
+      return;
+    }
+
     setIsLoading(true);
     setProgress(0);
     

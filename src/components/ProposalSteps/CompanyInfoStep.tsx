@@ -6,9 +6,10 @@ import { ProposalFormData } from "@/types/proposal";
 import { ImageUpload } from "./ImageUpload";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface CompanyInfoStepProps {
   form: UseFormReturn<ProposalFormData>;
@@ -17,6 +18,7 @@ interface CompanyInfoStepProps {
 export const CompanyInfoStep = ({ form }: CompanyInfoStepProps) => {
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [overviewStatus, setOverviewStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   const handleGenerateOverview = async () => {
     const websiteUrl = form.getValues('website_url');
@@ -30,6 +32,8 @@ export const CompanyInfoStep = ({ form }: CompanyInfoStepProps) => {
     }
 
     setIsGenerating(true);
+    setOverviewStatus('idle');
+    
     try {
       const { data, error } = await supabase.functions.invoke('crawl-website', {
         body: { url: websiteUrl }
@@ -39,6 +43,7 @@ export const CompanyInfoStep = ({ form }: CompanyInfoStepProps) => {
 
       if (data?.overview) {
         form.setValue('prospect_details', data.overview);
+        setOverviewStatus('success');
         toast({
           title: "Success",
           description: "Overview generated successfully!",
@@ -46,6 +51,7 @@ export const CompanyInfoStep = ({ form }: CompanyInfoStepProps) => {
       }
     } catch (error) {
       console.error('Error generating overview:', error);
+      setOverviewStatus('error');
       toast({
         title: "Error",
         description: "Failed to generate overview. Please try again.",
@@ -107,6 +113,11 @@ export const CompanyInfoStep = ({ form }: CompanyInfoStepProps) => {
                 onClick={handleGenerateOverview}
                 disabled={isGenerating}
                 variant="secondary"
+                className={cn(
+                  "min-w-[140px]",
+                  overviewStatus === 'success' && "bg-green-500 hover:bg-green-600 text-white",
+                  overviewStatus === 'error' && "bg-red-500 hover:bg-red-600 text-white"
+                )}
               >
                 {isGenerating ? (
                   <>
@@ -114,6 +125,8 @@ export const CompanyInfoStep = ({ form }: CompanyInfoStepProps) => {
                     Generating...
                   </>
                 ) : (
+                  overviewStatus === 'success' ? 'Generated!' :
+                  overviewStatus === 'error' ? 'Error!' :
                   'Generate Overview'
                 )}
               </Button>
