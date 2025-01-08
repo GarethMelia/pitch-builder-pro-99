@@ -29,11 +29,22 @@ export const WebsiteCrawler = ({ onOverviewGenerated }: WebsiteCrawlerProps) => 
         duration: 3000,
       });
 
+      // Simulate progress while waiting for response
+      const progressInterval = setInterval(() => {
+        setProgress((prev) => Math.min(prev + 10, 90));
+      }, 500);
+
       const { data: crawlData, error: crawlError } = await supabase.functions.invoke('crawl-website', {
         body: { url }
       });
 
-      if (crawlError) throw crawlError;
+      clearInterval(progressInterval);
+      setProgress(100);
+
+      if (crawlError) {
+        console.error('Crawl error:', crawlError);
+        throw crawlError;
+      }
 
       if (crawlData?.overview) {
         onOverviewGenerated(crawlData.overview);
@@ -42,6 +53,8 @@ export const WebsiteCrawler = ({ onOverviewGenerated }: WebsiteCrawlerProps) => 
           description: "Website information extracted successfully!",
           duration: 3000,
         });
+      } else {
+        throw new Error('No overview data received');
       }
 
     } catch (error) {
@@ -55,6 +68,7 @@ export const WebsiteCrawler = ({ onOverviewGenerated }: WebsiteCrawlerProps) => 
     } finally {
       setIsLoading(false);
       setProgress(0);
+      setUrl('');
     }
   };
 
@@ -65,7 +79,7 @@ export const WebsiteCrawler = ({ onOverviewGenerated }: WebsiteCrawlerProps) => 
         <h3 className="text-lg font-semibold">Enter Website URL for Auto-Generated Overview</h3>
       </div>
       
-      <form onSubmit={handleCrawl} className="space-y-4">
+      <div className="space-y-4">
         <Input
           type="url"
           value={url}
@@ -80,13 +94,13 @@ export const WebsiteCrawler = ({ onOverviewGenerated }: WebsiteCrawlerProps) => 
         )}
         
         <Button
-          type="submit"
-          disabled={isLoading}
+          onClick={handleCrawl}
+          disabled={isLoading || !url}
           className="w-full"
         >
           {isLoading ? "Analyzing Website..." : "Generate Overview"}
         </Button>
-      </form>
+      </div>
     </Card>
   );
 };
