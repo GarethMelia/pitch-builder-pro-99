@@ -1,5 +1,7 @@
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { Configuration, OpenAIApi } from 'https://esm.sh/openai@3.2.1';
+
+const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -20,12 +22,6 @@ serve(async (req) => {
     }
 
     console.log('Crawling website:', url);
-
-    // Initialize OpenAI
-    const configuration = new Configuration({
-      apiKey: Deno.env.get('OPENAI_API_KEY'),
-    });
-    const openai = new OpenAIApi(configuration);
 
     // Make a direct fetch request to the URL
     const response = await fetch(url);
@@ -61,27 +57,41 @@ serve(async (req) => {
     console.log('Extracted website data:', extractedData);
 
     // Generate overview using OpenAI
-    const completion = await openai.createChatCompletion({
-      model: "gpt-4",
-      messages: [
-        {
-          role: "system",
-          content: "You are a professional business writer who creates engaging proposal overviews. Keep the overview concise, professional, and focused on key business aspects."
-        },
-        {
-          role: "user",
-          content: `Based on this website content, create a brief, professional overview that highlights the company's main business focus, value proposition, and any standout features. Use this information:
+    const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${openAIApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: "system",
+            content: "You are a professional business writer who creates engaging proposal overviews. Keep the overview concise, professional, and focused on key business aspects."
+          },
+          {
+            role: "user",
+            content: `Based on this website content, create a brief, professional overview that highlights the company's main business focus, value proposition, and any standout features. Use this information:
 
-          Title: ${extractedData.title}
-          Description: ${extractedData.description}
-          Content: ${extractedData.content}`
-        }
-      ],
-      temperature: 0.7,
-      max_tokens: 500
+            Title: ${extractedData.title}
+            Description: ${extractedData.description}
+            Content: ${extractedData.content}`
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 500
+      }),
     });
 
-    const overview = completion.data.choices[0].message?.content;
+    if (!openAIResponse.ok) {
+      const errorData = await openAIResponse.json();
+      console.error('OpenAI API Error:', errorData);
+      throw new Error('Failed to generate overview with OpenAI');
+    }
+
+    const completion = await openAIResponse.json();
+    const overview = completion.choices[0].message.content;
 
     if (!overview) {
       throw new Error('Failed to generate overview');
