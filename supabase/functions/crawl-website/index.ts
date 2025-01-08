@@ -36,71 +36,134 @@ serve(async (req) => {
       throw new Error('Failed to parse HTML')
     }
 
-    // Function to extract text content from elements
+    // Function to extract text content from elements and their children
     const extractContent = (element: Element): string => {
       if (!element) return '';
-      const text = element.textContent?.trim() || '';
-      console.log('Extracted content:', text.substring(0, 100) + '...'); // Log first 100 chars
-      return text;
+      
+      // Get all text nodes within this element and its children
+      const walker = doc.createTreeWalker(
+        element,
+        NodeFilter.SHOW_TEXT,
+        null
+      );
+
+      let text = '';
+      let node;
+      while (node = walker.nextNode()) {
+        text += node.textContent.trim() + ' ';
+      }
+      
+      console.log('Extracted content length:', text.length);
+      return text.trim();
     }
 
     // Function to find section by heading or class/id containing keywords
     const findSectionContent = (keywords: string[]): string => {
-      // Try finding by headings first
-      const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6, p');
+      let bestContent = '';
+
+      // Try finding by headings and surrounding content
+      const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
       for (const heading of headings) {
-        const text = heading.textContent?.toLowerCase() || '';
+        const headingText = heading.textContent?.toLowerCase() || '';
         for (const keyword of keywords) {
-          if (text.includes(keyword.toLowerCase())) {
+          if (headingText.includes(keyword.toLowerCase())) {
             let content = extractContent(heading);
-            let nextElement = heading.nextElementSibling;
-            while (nextElement && !nextElement.tagName.match(/^H[1-6]$/)) {
-              content += ' ' + extractContent(nextElement);
-              nextElement = nextElement.nextElementSibling;
+            
+            // Get parent section or div if it exists
+            let parent = heading.parentElement;
+            while (parent && !['section', 'div', 'article'].includes(parent.tagName.toLowerCase())) {
+              parent = parent.parentElement;
             }
-            return content.trim();
+            
+            if (parent) {
+              content = extractContent(parent);
+            } else {
+              // If no suitable parent, get next siblings until next heading
+              let nextElement = heading.nextElementSibling;
+              while (nextElement && !nextElement.tagName.match(/^H[1-6]$/)) {
+                content += ' ' + extractContent(nextElement);
+                nextElement = nextElement.nextElementSibling;
+              }
+            }
+            
+            if (content.length > bestContent.length) {
+              bestContent = content;
+            }
           }
         }
       }
 
-      // Try finding by common class/id names
-      const possibleSelectors = keywords.flatMap(keyword => [
-        `[class*="${keyword}"]`,
-        `[id*="${keyword}"]`,
-        `[class*="${keyword.replace(/\s+/g, '-')}"]`,
-        `[id*="${keyword.replace(/\s+/g, '-')}"]`,
-        `[class*="${keyword.replace(/\s+/g, '_')}"]`,
-        `[id*="${keyword.replace(/\s+/g, '_')}"]`
-      ]);
+      // Try finding by common class/id names if no content found by headings
+      if (!bestContent) {
+        const possibleSelectors = keywords.flatMap(keyword => [
+          `[class*="${keyword}"]`,
+          `[id*="${keyword}"]`,
+          `[class*="${keyword.replace(/\s+/g, '-')}"]`,
+          `[id*="${keyword.replace(/\s+/g, '-')}"]`,
+          `[class*="${keyword.replace(/\s+/g, '_')}"]`,
+          `[id*="${keyword.replace(/\s+/g, '_')}"]`,
+          `section[class*="${keyword}"]`,
+          `div[class*="${keyword}"]`,
+          `article[class*="${keyword}"]`
+        ]);
 
-      for (const selector of possibleSelectors) {
-        try {
-          const element = doc.querySelector(selector);
-          if (element) {
-            const content = extractContent(element);
-            if (content.length > 20) { // Minimum content length threshold
-              return content;
-            }
+        for (const selector of possibleSelectors) {
+          try {
+            const elements = doc.querySelectorAll(selector);
+            elements.forEach(element => {
+              const content = extractContent(element);
+              if (content.length > bestContent.length && content.length > 50) {
+                bestContent = content;
+              }
+            });
+          } catch (e) {
+            console.log(`Error with selector ${selector}:`, e);
           }
-        } catch (e) {
-          console.log(`Error with selector ${selector}:`, e);
         }
       }
 
-      return '';
+      // Try finding in meta tags if still no content
+      if (!bestContent) {
+        keywords.forEach(keyword => {
+          const metaTag = doc.querySelector(`meta[name*="${keyword}"], meta[property*="${keyword}"]`);
+          if (metaTag) {
+            const content = metaTag.getAttribute('content');
+            if (content && content.length > bestContent.length) {
+              bestContent = content;
+            }
+          }
+        });
+      }
+
+      return bestContent;
     }
 
     // Extract content for each section with multiple keyword variations
-    const aboutUs = findSectionContent(['about', 'about us', 'about-us', 'who we are', 'our story']);
-    const overview = findSectionContent(['overview', 'introduction', 'summary']);
-    const mission = findSectionContent(['mission', 'our mission', 'mission statement']);
-    const vision = findSectionContent(['vision', 'our vision', 'vision statement']);
+    const aboutUs = findSectionContent([
+      'about', 'about us', 'about-us', 'who we are', 'our story', 
+      'company', 'background', 'history'
+    ]);
+    
+    const overview = findSectionContent([
+      'overview', 'introduction', 'summary', 'what we do',
+      'services', 'solutions', 'offerings'
+    ]);
+    
+    const mission = findSectionContent([
+      'mission', 'our mission', 'mission statement',
+      'purpose', 'why we exist', 'what drives us'
+    ]);
+    
+    const vision = findSectionContent([
+      'vision', 'our vision', 'vision statement',
+      'future', 'where we\'re going', 'goals'
+    ]);
 
     console.log('Extraction results:', {
-      aboutUs: aboutUs ? 'Found' : 'Not found',
-      overview: overview ? 'Found' : 'Not found',
-      mission: mission ? 'Found' : 'Not found',
-      vision: vision ? 'Found' : 'Not found'
+      aboutUs: `Found (${aboutUs.length} chars)`,
+      overview: `Found (${overview.length} chars)`,
+      mission: `Found (${mission.length} chars)`,
+      vision: `Found (${vision.length} chars)`
     });
 
     const result = {
