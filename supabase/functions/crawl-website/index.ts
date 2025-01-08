@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { DOMParser, Element } from "https://deno.land/x/deno_dom@v0.1.38/deno-dom-wasm.ts";
 import { Configuration, OpenAIApi } from 'https://esm.sh/openai@3.3.0';
 
 const corsHeaders = {
@@ -29,25 +30,29 @@ serve(async (req) => {
 
     const html = await response.text();
     
-    // Parse the HTML content
+    // Parse the HTML content using deno_dom
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
+    
+    if (!doc) {
+      throw new Error('Failed to parse HTML content');
+    }
 
     // Extract relevant information
     const websiteData = {
-      title: doc.title,
+      title: doc.querySelector('title')?.textContent || '',
       description: doc.querySelector('meta[name="description"]')?.getAttribute('content') || '',
       headings: Array.from(doc.querySelectorAll('h1, h2'))
-        .map(el => el.textContent?.trim())
+        .map((el: Element) => el.textContent?.trim())
         .filter(Boolean)
         .slice(0, 5),
       content: Array.from(doc.querySelectorAll('p'))
-        .map(el => el.textContent?.trim())
+        .map((el: Element) => el.textContent?.trim())
         .filter(Boolean)
         .slice(0, 5)
         .join('\n'),
       navigation: Array.from(doc.querySelectorAll('nav a'))
-        .map(el => ({
+        .map((el: Element) => ({
           text: el.textContent?.trim(),
           href: el.getAttribute('href')
         }))
