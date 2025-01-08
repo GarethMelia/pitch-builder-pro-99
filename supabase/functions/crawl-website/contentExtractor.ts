@@ -20,15 +20,15 @@ export class ContentExtractor {
       const regex = new RegExp(keyword, 'gi');
       const matches = normalizedContent.match(regex);
       if (matches) {
-        score += matches.length * 0.2; // 0.2 points per keyword match
+        score += matches.length * 0.2;
       }
     });
 
-    // Length scoring (ideal length between 100-500 characters)
+    // Length scoring
     const lengthScore = Math.min(content.length / 500, 1) * 0.3;
     score += lengthScore;
 
-    // Sentence structure scoring (complete sentences)
+    // Sentence structure scoring
     const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
     const avgWordsPerSentence = sentences.reduce((acc, s) => 
       acc + s.trim().split(/\s+/).length, 0) / sentences.length;
@@ -36,14 +36,27 @@ export class ContentExtractor {
       score += 0.3;
     }
 
-    return Math.min(score, 1); // Normalize to 0-1
+    return Math.min(score, 1);
+  }
+
+  private findParentSection(element: Element): Element | null {
+    let current = element;
+    while (current.parentElement) {
+      if (current.parentElement.tagName.toLowerCase() === 'section' ||
+          current.parentElement.tagName.toLowerCase() === 'article' ||
+          current.parentElement.tagName.toLowerCase() === 'div') {
+        return current.parentElement;
+      }
+      current = current.parentElement;
+    }
+    return null;
   }
 
   private extractContentFromElement(element: Element): string {
     let content = '';
+    
+    // First try to get content from next siblings until next heading
     let currentElement: Element | null = element;
-
-    // Get content from the current element and its siblings until next heading
     while (currentElement && !currentElement.tagName.match(/^H[1-6]$/)) {
       if (currentElement.textContent) {
         content += currentElement.textContent.trim() + ' ';
@@ -53,9 +66,10 @@ export class ContentExtractor {
 
     // If content is too short, try getting content from parent container
     if (content.length < 100) {
-      const parent = element.closest('section, div, article');
-      if (parent) {
-        content = Array.from(parent.children)
+      const parentSection = this.findParentSection(element);
+      if (parentSection) {
+        const children = Array.from(parentSection.children);
+        content = children
           .filter(child => !child.tagName.match(/^(H[1-6]|SCRIPT|STYLE|NAV|HEADER|FOOTER)$/))
           .map(child => child.textContent?.trim())
           .filter(Boolean)
@@ -66,6 +80,11 @@ export class ContentExtractor {
     return content.trim();
   }
 
+  private extractMetaContent(name: string): string | null {
+    const metaTag = this.doc.querySelector(`meta[name="${name}"], meta[property="${name}"]`);
+    return metaTag?.getAttribute('content') || null;
+  }
+
   public findSection(config: SectionConfig): SectionData | null {
     let bestMatch: SectionData | null = null;
     let maxConfidence = 0;
@@ -74,7 +93,6 @@ export class ContentExtractor {
     this.headings.forEach((heading, index) => {
       const headingText = heading.textContent?.toLowerCase() || '';
       
-      // Check if heading matches any variation
       if (config.variations.some(v => headingText.includes(v.toLowerCase()))) {
         const content = this.extractContentFromElement(heading);
         const confidence = this.calculateConfidence(content, config);
@@ -91,26 +109,23 @@ export class ContentExtractor {
       }
     });
 
-    // If no match found through headings, try meta tags
-    if (!bestMatch) {
-      const metaTags = this.doc.querySelectorAll('meta[name], meta[property]');
-      metaTags.forEach((meta: Element) => {
-        const name = (meta.getAttribute('name') || meta.getAttribute('property'))?.toLowerCase();
-        const content = meta.getAttribute('content');
-        
-        if (name && content && config.variations.some(v => name.includes(v.toLowerCase()))) {
-          const confidence = this.calculateConfidence(content, config);
+    // Try meta tags if no good match found
+    if (!bestMatch || maxConfidence < 0.3) {
+      for (const variation of config.variations) {
+        const metaContent = this.extractMetaContent(variation.toLowerCase().replace(/\s+/g, '-'));
+        if (metaContent) {
+          const confidence = this.calculateConfidence(metaContent, config);
           if (confidence > maxConfidence) {
             maxConfidence = confidence;
             bestMatch = {
-              content,
+              content: metaContent,
               confidence,
-              source: `meta:${name}`,
+              source: `meta:${variation}`,
               position: -1
             };
           }
         }
-      });
+      }
     }
 
     return bestMatch;

@@ -42,9 +42,10 @@ serve(async (req) => {
       console.log(`Searching for ${config.name} section...`);
       const sectionData = extractor.findSection(config);
       
-      if (sectionData && sectionData.confidence > 0.3) { // Minimum confidence threshold
+      if (sectionData && sectionData.confidence > 0.3) {
         result.data[config.name] = sectionData;
         console.log(`Found ${config.name} section with confidence ${sectionData.confidence}`);
+        console.log(`Content length: ${sectionData.content.length} characters`);
       } else {
         console.log(`No ${config.name} section found or confidence too low`);
       }
