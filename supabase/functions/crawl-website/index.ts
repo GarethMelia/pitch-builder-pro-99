@@ -22,8 +22,13 @@ serve(async (req) => {
       throw new Error('URL is required');
     }
 
-    // Fetch the webpage content
-    const response = await fetch(url);
+    // Fetch the webpage content with a proper user agent
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+    });
+
     if (!response.ok) {
       throw new Error(`Failed to fetch URL: ${response.statusText}`);
     }

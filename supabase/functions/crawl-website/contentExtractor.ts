@@ -4,18 +4,30 @@ import { SectionConfig, SectionData } from './types.ts';
 export class ContentExtractor {
   private doc: any;
   private headings: Element[];
+  private allText: string;
   
   constructor(html: string) {
     const parser = new DOMParser();
     this.doc = parser.parseFromString(html, 'text/html');
     this.headings = Array.from(this.doc.querySelectorAll('h1, h2, h3, h4, h5, h6'));
+    this.allText = this.extractAllText();
+  }
+
+  private extractAllText(): string {
+    // Remove script and style elements
+    const scripts = this.doc.querySelectorAll('script, style, nav, footer, header');
+    scripts.forEach((script: Element) => script.remove());
+    
+    // Get text content from body
+    const bodyText = this.doc.body?.textContent || '';
+    return bodyText.replace(/\s+/g, ' ').trim();
   }
 
   private calculateConfidence(content: string, config: SectionConfig): number {
     let score = 0;
     const normalizedContent = content.toLowerCase();
     
-    // Check for keywords presence
+    // Check for keywords presence with weighted scoring
     config.keywords.forEach(keyword => {
       const regex = new RegExp(keyword, 'gi');
       const matches = normalizedContent.match(regex);
@@ -24,8 +36,11 @@ export class ContentExtractor {
       }
     });
 
-    // Length scoring
-    const lengthScore = Math.min(content.length / 500, 1) * 0.3;
+    // Length scoring - prefer content between 50 and 1000 characters
+    const lengthScore = Math.min(
+      Math.max(content.length - 50, 0) / 950,
+      1
+    ) * 0.3;
     score += lengthScore;
 
     // Sentence structure scoring
@@ -36,30 +51,47 @@ export class ContentExtractor {
       score += 0.3;
     }
 
+    // Context relevance scoring
+    const contextScore = config.variations.some(v => 
+      content.toLowerCase().includes(v.toLowerCase())
+    ) ? 0.2 : 0;
+    score += contextScore;
+
     return Math.min(score, 1);
   }
 
   private findParentSection(element: Element): Element | null {
     let current = element;
-    while (current.parentElement) {
+    const maxDepth = 5; // Prevent infinite loops
+    let depth = 0;
+    
+    while (current.parentElement && depth < maxDepth) {
       if (current.parentElement.tagName.toLowerCase() === 'section' ||
           current.parentElement.tagName.toLowerCase() === 'article' ||
           current.parentElement.tagName.toLowerCase() === 'div') {
         return current.parentElement;
       }
       current = current.parentElement;
+      depth++;
     }
     return null;
   }
 
-  private extractContentFromElement(element: Element): string {
+  private extractContentFromElement(element: Element, config: SectionConfig): string {
     let content = '';
     
     // First try to get content from next siblings until next heading
     let currentElement: Element | null = element;
-    while (currentElement && !currentElement.tagName.match(/^H[1-6]$/)) {
-      if (currentElement.textContent) {
-        content += currentElement.textContent.trim() + ' ';
+    let paragraphCount = 0;
+    const maxParagraphs = 3;
+    
+    while (currentElement && !currentElement.tagName.match(/^H[1-6]$/) && paragraphCount < maxParagraphs) {
+      if (currentElement.tagName === 'P') {
+        const text = currentElement.textContent?.trim();
+        if (text && text.length > 20) { // Minimum length threshold
+          content += text + ' ';
+          paragraphCount++;
+        }
       }
       currentElement = currentElement.nextElementSibling;
     }
@@ -77,24 +109,47 @@ export class ContentExtractor {
       }
     }
 
-    return content.trim();
+    // Clean up the content
+    content = content
+      .replace(/\s+/g, ' ')
+      .replace(/\n+/g, ' ')
+      .trim();
+
+    return content;
   }
 
-  private extractMetaContent(name: string): string | null {
-    const metaTag = this.doc.querySelector(`meta[name="${name}"], meta[property="${name}"]`);
-    return metaTag?.getAttribute('content') || null;
+  private findInMetaTags(config: SectionConfig): SectionData | null {
+    for (const variation of config.variations) {
+      // Check standard meta tags
+      const metaContent = this.doc.querySelector(
+        `meta[name="${variation}"], meta[property="${variation}"], meta[name="og:${variation}"], meta[property="og:${variation}"]`
+      )?.getAttribute('content');
+
+      if (metaContent) {
+        const confidence = this.calculateConfidence(metaContent, config);
+        if (confidence > 0.3) {
+          return {
+            content: metaContent,
+            confidence,
+            source: `meta:${variation}`,
+            position: -1
+          };
+        }
+      }
+    }
+    return null;
   }
 
   public findSection(config: SectionConfig): SectionData | null {
     let bestMatch: SectionData | null = null;
     let maxConfidence = 0;
 
-    // Search through headings
+    // First try to find content through headings
     this.headings.forEach((heading, index) => {
       const headingText = heading.textContent?.toLowerCase() || '';
       
       if (config.variations.some(v => headingText.includes(v.toLowerCase()))) {
-        const content = this.extractContentFromElement(heading);
+        const content = this.extractContentFromElement(heading, config);
         const confidence = this.calculateConfidence(content, config);
         
         if (confidence > maxConfidence) {
@@ -109,20 +164,31 @@ export class ContentExtractor {
       }
     });
 
-    // Try meta tags if no good match found
+    // If no good match found through headings, try meta tags
+    if (!bestMatch || maxConfidence < 0.3) {
+      const metaMatch = this.findInMetaTags(config);
+      if (metaMatch && metaMatch.confidence > maxConfidence) {
+        bestMatch = metaMatch;
+        maxConfidence = metaMatch.confidence;
+      }
+    }
+
+    // If still no good match, try searching in all text
     if (!bestMatch || maxConfidence < 0.3) {
       for (const variation of config.variations) {
-        const metaContent = this.extractMetaContent(variation.toLowerCase().replace(/\s+/g, '-'));
-        if (metaContent) {
-          const confidence = this.calculateConfidence(metaContent, config);
+        const regex = new RegExp(`(${variation}[:\\s-]+([^.!?]+[.!?]))`, 'i');
+        const match = this.allText.match(regex);
+        if (match) {
+          const content = match[2].trim();
+          const confidence = this.calculateConfidence(content, config);
           if (confidence > maxConfidence) {
-            maxConfidence = confidence;
             bestMatch = {
-              content: metaContent,
+              content,
               confidence,
-              source: `meta:${variation}`,
+              source: 'full-text',
               position: -1
             };
+            maxConfidence = confidence;
           }
         }
       }
