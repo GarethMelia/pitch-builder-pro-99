@@ -50,6 +50,40 @@ export const CrawlForm = ({ formData, onProposalGenerated }: {
         }
       }, 500);
 
+      // First, try to crawl the website if URL is provided
+      if (formData.website_url) {
+        try {
+          const { data: crawlData, error: crawlError } = await supabase.functions.invoke('crawl-website', {
+            body: { url: formData.website_url }
+          });
+
+          if (crawlError) {
+            console.error('Error crawling website:', crawlError);
+          } else if (crawlData?.data) {
+            // Extract the text content from each section
+            const aboutUs = crawlData.data.about_us?.content || '';
+            const overview = crawlData.data.overview?.content || '';
+            const mission = crawlData.data.mission?.content || '';
+            const vision = crawlData.data.vision?.content || '';
+
+            // Combine the content into the prospect details
+            const websiteContent = [
+              aboutUs && `About Us:\n${aboutUs}`,
+              overview && `Overview:\n${overview}`,
+              mission && `Mission:\n${mission}`,
+              vision && `Vision:\n${vision}`
+            ].filter(Boolean).join('\n\n');
+
+            if (websiteContent) {
+              formalFormData.prospect_details = websiteContent;
+            }
+          }
+        } catch (crawlError) {
+          console.error('Error during website crawl:', crawlError);
+        }
+      }
+
+      // Generate the proposal
       const { data: proposalData, error } = await supabase.functions.invoke('generate-proposal', {
         body: { formData: formalFormData }
       });
