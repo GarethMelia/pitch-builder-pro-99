@@ -82,6 +82,11 @@ export const WebsiteCrawlerButton = ({ websiteUrl, onSuccess }: WebsiteCrawlerBu
 
   const buttonProps = getButtonProps();
 
+  const renderSectionContent = (section: any) => {
+    if (!section) return null;
+    return section.content || '';
+  };
+
   return (
     <>
       <Button
@@ -105,25 +110,33 @@ export const WebsiteCrawlerButton = ({ websiteUrl, onSuccess }: WebsiteCrawlerBu
               {crawledData.about_us && (
                 <div>
                   <h3 className="font-semibold text-lg">About Us</h3>
-                  <p className="text-sm text-muted-foreground">{crawledData.about_us}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {renderSectionContent(crawledData.about_us)}
+                  </p>
                 </div>
               )}
               {crawledData.overview && (
                 <div>
                   <h3 className="font-semibold text-lg">Overview</h3>
-                  <p className="text-sm text-muted-foreground">{crawledData.overview}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {renderSectionContent(crawledData.overview)}
+                  </p>
                 </div>
               )}
               {crawledData.mission && (
                 <div>
                   <h3 className="font-semibold text-lg">Mission</h3>
-                  <p className="text-sm text-muted-foreground">{crawledData.mission}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {renderSectionContent(crawledData.mission)}
+                  </p>
                 </div>
               )}
               {crawledData.vision && (
                 <div>
                   <h3 className="font-semibold text-lg">Vision</h3>
-                  <p className="text-sm text-muted-foreground">{crawledData.vision}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {renderSectionContent(crawledData.vision)}
+                  </p>
                 </div>
               )}
             </div>
