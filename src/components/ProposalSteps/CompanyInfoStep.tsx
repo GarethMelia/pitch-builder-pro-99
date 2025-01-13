@@ -12,13 +12,21 @@ interface CompanyInfoStepProps {
 
 export const CompanyInfoStep = ({ form }: CompanyInfoStepProps) => {
   const handleCrawlSuccess = (data: any) => {
-    const { about_us, overview, mission, vision } = data;
+    // Create a formatted string with the raw data
     let details = '';
     
-    if (about_us) details += `About Us:\n${about_us}\n\n`;
-    if (overview) details += `Overview:\n${overview}\n\n`;
-    if (mission) details += `Mission:\n${mission}\n\n`;
-    if (vision) details += `Vision:\n${vision}`;
+    if (data.about_us) {
+      details += `About Us:\n${JSON.stringify(data.about_us, null, 2)}\n\n`;
+    }
+    if (data.overview) {
+      details += `Overview:\n${JSON.stringify(data.overview, null, 2)}\n\n`;
+    }
+    if (data.mission) {
+      details += `Mission:\n${JSON.stringify(data.mission, null, 2)}\n\n`;
+    }
+    if (data.vision) {
+      details += `Vision:\n${JSON.stringify(data.vision, null, 2)}`;
+    }
 
     form.setValue("prospect_details", details.trim());
   };
@@ -84,11 +92,11 @@ export const CompanyInfoStep = ({ form }: CompanyInfoStepProps) => {
         name="prospect_details"
         render={({ field: { value, ...fieldProps } }) => (
           <FormItem>
-            <FormLabel>Provide key details or insights about the prospect</FormLabel>
+            <FormLabel>Raw Crawled Data</FormLabel>
             <FormControl>
               <Textarea 
-                placeholder="Write a friendly message that references past discussions, shows understanding, and conveys excitement for the project."
-                className="min-h-[100px]"
+                placeholder="The raw crawled data will appear here after clicking the globe button above."
+                className="min-h-[300px] font-mono"
                 value={value || ''}
                 {...fieldProps}
               />

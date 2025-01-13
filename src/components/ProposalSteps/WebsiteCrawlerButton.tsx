@@ -28,11 +28,14 @@ export const WebsiteCrawlerButton = ({ websiteUrl, onSuccess }: WebsiteCrawlerBu
 
     setStatus('loading');
     try {
+      console.log('Crawling website:', websiteUrl);
       const { data, error } = await supabase.functions.invoke('crawl-website', {
         body: { url: websiteUrl }
       });
 
       if (error) throw error;
+
+      console.log('Raw crawled data:', data);
 
       if (data.success && data.data) {
         setStatus('success');
@@ -82,11 +85,6 @@ export const WebsiteCrawlerButton = ({ websiteUrl, onSuccess }: WebsiteCrawlerBu
 
   const buttonProps = getButtonProps();
 
-  const renderSectionContent = (section: any) => {
-    if (!section) return null;
-    return section.content || '';
-  };
-
   return (
     <>
       <Button
@@ -103,40 +101,40 @@ export const WebsiteCrawlerButton = ({ websiteUrl, onSuccess }: WebsiteCrawlerBu
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Crawled Website Content</DialogTitle>
+            <DialogTitle>Raw Crawled Website Content</DialogTitle>
           </DialogHeader>
           {crawledData && (
             <div className="space-y-4">
               {crawledData.about_us && (
                 <div>
                   <h3 className="font-semibold text-lg">About Us</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {renderSectionContent(crawledData.about_us)}
-                  </p>
+                  <pre className="whitespace-pre-wrap text-sm text-muted-foreground bg-muted p-4 rounded-md">
+                    {JSON.stringify(crawledData.about_us, null, 2)}
+                  </pre>
                 </div>
               )}
               {crawledData.overview && (
                 <div>
                   <h3 className="font-semibold text-lg">Overview</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {renderSectionContent(crawledData.overview)}
-                  </p>
+                  <pre className="whitespace-pre-wrap text-sm text-muted-foreground bg-muted p-4 rounded-md">
+                    {JSON.stringify(crawledData.overview, null, 2)}
+                  </pre>
                 </div>
               )}
               {crawledData.mission && (
                 <div>
                   <h3 className="font-semibold text-lg">Mission</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {renderSectionContent(crawledData.mission)}
-                  </p>
+                  <pre className="whitespace-pre-wrap text-sm text-muted-foreground bg-muted p-4 rounded-md">
+                    {JSON.stringify(crawledData.mission, null, 2)}
+                  </pre>
                 </div>
               )}
               {crawledData.vision && (
                 <div>
                   <h3 className="font-semibold text-lg">Vision</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {renderSectionContent(crawledData.vision)}
-                  </p>
+                  <pre className="whitespace-pre-wrap text-sm text-muted-foreground bg-muted p-4 rounded-md">
+                    {JSON.stringify(crawledData.vision, null, 2)}
+                  </pre>
                 </div>
               )}
             </div>
