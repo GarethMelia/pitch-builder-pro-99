@@ -44,22 +44,29 @@ serve(async (req) => {
 
     // Extract content for each section
     for (const config of SECTION_CONFIGS) {
-      console.log(`Searching for ${config.name} section...`);
+      console.log(`Processing ${config.name} section...`);
       const sectionData = extractor.findSection(config);
       
-      if (sectionData && sectionData.confidence > 0.3) {
+      if (sectionData) {
+        console.log(`Found ${config.name} section:`, {
+          confidence: sectionData.confidence,
+          source: sectionData.source,
+          contentLength: sectionData.content.length
+        });
+        
         result.data[config.name] = sectionData;
-        console.log(`Found ${config.name} section with confidence ${sectionData.confidence}`);
-        console.log(`Content length: ${sectionData.content.length} characters`);
       } else {
-        console.log(`No ${config.name} section found or confidence too low`);
+        console.log(`No ${config.name} section found`);
       }
     }
 
     // Check if any sections were found
     if (Object.keys(result.data).length === 0) {
+      console.log('No sections found in the webpage');
       result.success = false;
       result.error = "No relevant sections found on the page";
+    } else {
+      console.log(`Successfully extracted ${Object.keys(result.data).length} sections`);
     }
 
     return new Response(JSON.stringify(result), {

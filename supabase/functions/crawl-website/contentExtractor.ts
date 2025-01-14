@@ -5,52 +5,66 @@ export class ContentExtractor {
   private doc: any;
   private headings: Element[];
   private allText: string;
+  private mainContent: Element | null;
   
   constructor(html: string) {
     const parser = new DOMParser();
     this.doc = parser.parseFromString(html, 'text/html');
     this.headings = Array.from(this.doc.querySelectorAll('h1, h2, h3, h4, h5, h6'));
+    this.mainContent = this.findMainContent();
     this.allText = this.extractAllText();
+    this.removeNoiseElements();
+  }
+
+  private removeNoiseElements(): void {
+    // Remove script, style, and other noise elements
+    const noiseSelectors = 'script, style, noscript, iframe, img, svg, video, audio';
+    const noiseElements = this.doc.querySelectorAll(noiseSelectors);
+    noiseElements.forEach((el: Element) => el.remove());
+  }
+
+  private findMainContent(): Element | null {
+    // Try to find the main content area using various selectors
+    const mainSelectors = [
+      'main',
+      'article',
+      '[role="main"]',
+      '#main-content',
+      '.main-content',
+      '.content',
+      '#content'
+    ];
+
+    for (const selector of mainSelectors) {
+      const element = this.doc.querySelector(selector);
+      if (element) {
+        return element;
+      }
+    }
+
+    // Fallback to body if no main content area found
+    return this.doc.body;
   }
 
   private extractAllText(): string {
-    // Remove script and style elements
-    const scripts = this.doc.querySelectorAll('script, style');
-    scripts.forEach((script: Element) => script.remove());
-    
-    // Get text content from main content areas
-    const mainContent = this.doc.querySelector('main, article, [role="main"]');
-    if (mainContent) {
-      return mainContent.textContent.replace(/\s+/g, ' ').trim();
-    }
-    
-    // Fallback to body if no main content area found
-    return this.doc.body?.textContent.replace(/\s+/g, ' ').trim() || '';
+    if (!this.mainContent) return '';
+    return this.mainContent.textContent.replace(/\s+/g, ' ').trim();
   }
 
   private findSectionByHeading(config: SectionConfig): SectionData | null {
     for (const heading of this.headings) {
-      const headingText = heading.textContent?.toLowerCase() || '';
+      const headingText = heading.textContent?.toLowerCase().trim() || '';
       
+      // Check if heading matches any variation
       if (config.variations.some(v => headingText.includes(v.toLowerCase()))) {
-        // Get the parent section or div
-        let container = heading.parentElement;
-        while (container && !['section', 'div', 'article'].includes(container.tagName.toLowerCase())) {
-          container = container.parentElement;
-        }
+        // Get the parent section or container
+        let container = this.findRelevantContainer(heading);
         
         if (container) {
-          // Get all text content after the heading but within the container
-          const content = Array.from(container.childNodes)
-            .filter(node => node !== heading)
-            .map(node => node.textContent?.trim())
-            .filter(Boolean)
-            .join(' ')
-            .trim();
-            
+          const content = this.extractContentFromContainer(container, heading);
           if (content) {
             return {
-              content,
+              content: this.cleanContent(content),
               confidence: 1,
               source: `heading:${headingText}`,
               position: Array.from(this.headings).indexOf(heading)
@@ -62,26 +76,115 @@ export class ContentExtractor {
     return null;
   }
 
-  private findSectionInMainContent(config: SectionConfig): SectionData | null {
-    const mainContent = this.doc.querySelector('main, article, [role="main"]');
-    if (!mainContent) return null;
+  private findRelevantContainer(element: Element): Element | null {
+    let container = element.parentElement;
+    const relevantTags = ['section', 'div', 'article', 'main'];
+    
+    while (container) {
+      if (relevantTags.includes(container.tagName.toLowerCase())) {
+        // Check if container has enough content
+        const text = container.textContent?.trim() || '';
+        if (text.length > 50) {
+          return container;
+        }
+      }
+      container = container.parentElement;
+    }
+    return element.parentElement;
+  }
 
-    const sections = mainContent.querySelectorAll('section, div[class*="section"], div[class*="about"], div[class*="hero"]');
+  private extractContentFromContainer(container: Element, heading: Element): string {
+    // Get all text nodes after the heading
+    const walker = this.doc.createTreeWalker(
+      container,
+      NodeFilter.SHOW_TEXT,
+      null,
+      false
+    );
+
+    let content = '';
+    let node = walker.nextNode();
+    let foundHeading = false;
+
+    while (node) {
+      if (heading.contains(node)) {
+        foundHeading = true;
+      } else if (foundHeading) {
+        const text = node.textContent.trim();
+        if (text) {
+          content += text + ' ';
+        }
+      }
+      node = walker.nextNode();
+    }
+
+    return content.trim();
+  }
+
+  private findSectionInMainContent(config: SectionConfig): SectionData | null {
+    if (!this.mainContent) return null;
+
+    const sections = this.mainContent.querySelectorAll('section, div[class*="section"], div[class*="content"]');
     
     for (const section of sections) {
       const sectionText = section.textContent?.toLowerCase() || '';
       
+      // Check for section variations in text
       for (const variation of config.variations) {
         if (sectionText.includes(variation.toLowerCase())) {
-          const content = section.textContent?.trim();
+          const content = this.cleanContent(section.textContent || '');
           if (content) {
             return {
               content,
-              confidence: 1,
+              confidence: 0.8,
               source: 'main-content',
               position: -1
             };
           }
+        }
+      }
+
+      // Check for keywords
+      const keywordMatches = config.keywords.filter(keyword => 
+        sectionText.includes(keyword.toLowerCase())
+      );
+
+      if (keywordMatches.length >= 2) {
+        const content = this.cleanContent(section.textContent || '');
+        if (content) {
+          return {
+            content,
+            confidence: 0.6,
+            source: `keywords:${keywordMatches.join(',')}`,
+            position: -1
+          };
+        }
+      }
+    }
+    return null;
+  }
+
+  private cleanContent(text: string): string {
+    return text
+      .replace(/\s+/g, ' ')
+      .replace(/\n+/g, ' ')
+      .trim();
+  }
+
+  private findInMetaTags(config: SectionConfig): SectionData | null {
+    const metaTags = this.doc.querySelectorAll('meta[name], meta[property]');
+    
+    for (const meta of metaTags) {
+      const name = (meta.getAttribute('name') || meta.getAttribute('property'))?.toLowerCase();
+      if (name && config.variations.some(v => name.includes(v.toLowerCase()))) {
+        const content = meta.getAttribute('content')?.trim();
+        if (content) {
+          return {
+            content,
+            confidence: 0.7,
+            source: `meta:${name}`,
+            position: -1
+          };
         }
       }
     }
@@ -91,36 +194,23 @@ export class ContentExtractor {
   public findSection(config: SectionConfig): SectionData | null {
     console.log(`Searching for section: ${config.name}`);
     
-    // First try to find by heading
+    // Try different methods in order of confidence
     const headingMatch = this.findSectionByHeading(config);
     if (headingMatch) {
-      console.log(`Found ${config.name} by heading:`, headingMatch.content);
+      console.log(`Found ${config.name} by heading:`, headingMatch);
       return headingMatch;
     }
     
-    // Then try to find in main content areas
     const mainContentMatch = this.findSectionInMainContent(config);
     if (mainContentMatch) {
-      console.log(`Found ${config.name} in main content:`, mainContentMatch.content);
+      console.log(`Found ${config.name} in main content:`, mainContentMatch);
       return mainContentMatch;
     }
     
-    // Finally, try to find in meta tags
-    const metaTags = this.doc.querySelectorAll('meta[name], meta[property]');
-    for (const meta of metaTags) {
-      const name = (meta.getAttribute('name') || meta.getAttribute('property'))?.toLowerCase();
-      if (name && config.variations.some(v => name.includes(v.toLowerCase()))) {
-        const content = meta.getAttribute('content')?.trim();
-        if (content) {
-          console.log(`Found ${config.name} in meta tag:`, content);
-          return {
-            content,
-            confidence: 0.8,
-            source: `meta:${name}`,
-            position: -1
-          };
-        }
-      }
+    const metaMatch = this.findInMetaTags(config);
+    if (metaMatch) {
+      console.log(`Found ${config.name} in meta tags:`, metaMatch);
+      return metaMatch;
     }
     
     console.log(`No content found for ${config.name}`);

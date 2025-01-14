@@ -5,6 +5,9 @@ export interface CrawlResult {
     overview?: SectionData;
     mission?: SectionData;
     vision?: SectionData;
+    services?: SectionData;
+    products?: SectionData;
+    contact?: SectionData;
   };
   error?: string;
   details?: string;
