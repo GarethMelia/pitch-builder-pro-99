@@ -17,14 +17,12 @@ export class ContentExtractor {
   }
 
   private removeNoiseElements(): void {
-    // Remove script, style, and other noise elements
     const noiseSelectors = 'script, style, noscript, iframe, img, svg, video, audio';
     const noiseElements = this.doc.querySelectorAll(noiseSelectors);
     noiseElements.forEach((el: Element) => el.remove());
   }
 
   private findMainContent(): Element | null {
-    // Try to find the main content area using various selectors
     const mainSelectors = [
       'main',
       'article',
@@ -32,7 +30,10 @@ export class ContentExtractor {
       '#main-content',
       '.main-content',
       '.content',
-      '#content'
+      '#content',
+      '.hero-section',
+      '.about-section',
+      '.company-info'
     ];
 
     for (const selector of mainSelectors) {
@@ -42,7 +43,6 @@ export class ContentExtractor {
       }
     }
 
-    // Fallback to body if no main content area found
     return this.doc.body;
   }
 
@@ -55,13 +55,11 @@ export class ContentExtractor {
     for (const heading of this.headings) {
       const headingText = heading.textContent?.toLowerCase().trim() || '';
       
-      // Check if heading matches any variation
       if (config.variations.some(v => headingText.includes(v.toLowerCase()))) {
-        // Get the parent section or container
         let container = this.findRelevantContainer(heading);
         
         if (container) {
-          const content = this.extractContentFromContainer(container, heading);
+          const content = this.extractContentFromContainer(container);
           if (content) {
             return {
               content: this.cleanContent(content),
@@ -82,7 +80,6 @@ export class ContentExtractor {
     
     while (container) {
       if (relevantTags.includes(container.tagName.toLowerCase())) {
-        // Check if container has enough content
         const text = container.textContent?.trim() || '';
         if (text.length > 50) {
           return container;
@@ -93,32 +90,28 @@ export class ContentExtractor {
     return element.parentElement;
   }
 
-  private extractContentFromContainer(container: Element, heading: Element): string {
-    // Get all text nodes after the heading
-    const walker = this.doc.createTreeWalker(
-      container,
-      NodeFilter.SHOW_TEXT,
-      null,
-      false
-    );
-
-    let content = '';
-    let node = walker.nextNode();
-    let foundHeading = false;
-
-    while (node) {
-      if (heading.contains(node)) {
-        foundHeading = true;
-      } else if (foundHeading) {
-        const text = node.textContent.trim();
+  private extractContentFromContainer(container: Element): string {
+    // Get all text content after removing noise elements
+    const textNodes: string[] = [];
+    const childNodes = Array.from(container.childNodes);
+    
+    for (const node of childNodes) {
+      if (node.nodeType === 3) { // Text node
+        const text = (node as any).textContent?.trim();
         if (text) {
-          content += text + ' ';
+          textNodes.push(text);
         }
       }
-      node = walker.nextNode();
     }
+    
+    return textNodes.join(' ');
+  }
 
-    return content.trim();
+  private cleanContent(text: string): string {
+    return text
+      .replace(/\s+/g, ' ')
+      .replace(/\n+/g, ' ')
+      .trim();
   }
 
   private findSectionInMainContent(config: SectionConfig): SectionData | null {
@@ -129,7 +122,6 @@ export class ContentExtractor {
     for (const section of sections) {
       const sectionText = section.textContent?.toLowerCase() || '';
       
-      // Check for section variations in text
       for (const variation of config.variations) {
         if (sectionText.includes(variation.toLowerCase())) {
           const content = this.cleanContent(section.textContent || '');
@@ -144,7 +136,6 @@ export class ContentExtractor {
         }
       }
 
-      // Check for keywords
       const keywordMatches = config.keywords.filter(keyword => 
         sectionText.includes(keyword.toLowerCase())
       );
@@ -162,13 +153,6 @@ export class ContentExtractor {
       }
     }
     return null;
-  }
-
-  private cleanContent(text: string): string {
-    return text
-      .replace(/\s+/g, ' ')
-      .replace(/\n+/g, ' ')
-      .trim();
   }
 
   private findInMetaTags(config: SectionConfig): SectionData | null {
@@ -194,7 +178,6 @@ export class ContentExtractor {
   public findSection(config: SectionConfig): SectionData | null {
     console.log(`Searching for section: ${config.name}`);
     
-    // Try different methods in order of confidence
     const headingMatch = this.findSectionByHeading(config);
     if (headingMatch) {
       console.log(`Found ${config.name} by heading:`, headingMatch);
