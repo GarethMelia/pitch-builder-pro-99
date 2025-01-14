@@ -17,8 +17,23 @@ export class ContentExtractor {
   }
 
   private removeNoiseElements(): void {
-    const noiseSelectors = 'script, style, noscript, iframe, img, svg, video, audio';
-    const noiseElements = this.doc.querySelectorAll(noiseSelectors);
+    const noiseSelectors = [
+      'script',
+      'style',
+      'noscript',
+      'iframe',
+      'img',
+      'svg',
+      'video',
+      'audio',
+      '.cookie-notice',
+      '.advertisement',
+      '.social-share',
+      'nav',
+      'header',
+      'footer'
+    ];
+    const noiseElements = this.doc.querySelectorAll(noiseSelectors.join(','));
     noiseElements.forEach((el: Element) => el.remove());
   }
 
@@ -31,9 +46,12 @@ export class ContentExtractor {
       '.main-content',
       '.content',
       '#content',
-      '.hero-section',
-      '.about-section',
-      '.company-info'
+      '.page-content',
+      '.site-content',
+      '.entry-content',
+      '.post-content',
+      '.container',
+      '.wrapper'
     ];
 
     for (const selector of mainSelectors) {
@@ -91,26 +109,23 @@ export class ContentExtractor {
   }
 
   private extractContentFromContainer(container: Element): string {
-    // Get all text content after removing noise elements
     const textNodes: string[] = [];
-    const childNodes = Array.from(container.childNodes);
+    const elements = container.querySelectorAll('p, li, h1, h2, h3, h4, h5, h6');
     
-    for (const node of childNodes) {
-      if (node.nodeType === 3) { // Text node
-        const text = (node as any).textContent?.trim();
-        if (text) {
-          textNodes.push(text);
-        }
+    elements.forEach((element) => {
+      const text = element.textContent?.trim();
+      if (text) {
+        textNodes.push(text);
       }
-    }
+    });
     
-    return textNodes.join(' ');
+    return textNodes.join('\n');
   }
 
   private cleanContent(text: string): string {
     return text
       .replace(/\s+/g, ' ')
-      .replace(/\n+/g, ' ')
+      .replace(/\n+/g, '\n')
       .trim();
   }
 

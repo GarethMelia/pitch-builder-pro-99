@@ -2,12 +2,14 @@ export interface CrawlResult {
   success: boolean;
   data?: {
     about_us?: SectionData;
-    overview?: SectionData;
     mission?: SectionData;
     vision?: SectionData;
     services?: SectionData;
     products?: SectionData;
+    testimonials?: SectionData;
     contact?: SectionData;
+    values?: SectionData;
+    leadership?: SectionData;
   };
   error?: string;
   details?: string;
