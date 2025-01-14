@@ -30,8 +30,12 @@ export class ContentExtractor {
       '.advertisement',
       '.social-share',
       'nav',
-      'header',
-      'footer'
+      'header:not(.main-header)',
+      'footer:not(.main-footer)',
+      '#cookie-banner',
+      '.popup',
+      '.modal',
+      '.chat-widget'
     ];
     const noiseElements = this.doc.querySelectorAll(noiseSelectors.join(','));
     noiseElements.forEach((el: Element) => el.remove());
@@ -51,7 +55,13 @@ export class ContentExtractor {
       '.entry-content',
       '.post-content',
       '.container',
-      '.wrapper'
+      '.wrapper',
+      'section[class*="about"]',
+      'div[class*="about"]',
+      'section[class*="mission"]',
+      'div[class*="mission"]',
+      'section[class*="vision"]',
+      'div[class*="vision"]'
     ];
 
     for (const selector of mainSelectors) {
@@ -114,7 +124,7 @@ export class ContentExtractor {
     
     elements.forEach((element) => {
       const text = element.textContent?.trim();
-      if (text) {
+      if (text && text.length > 10) { // Filter out very short text
         textNodes.push(text);
       }
     });
@@ -126,7 +136,36 @@ export class ContentExtractor {
     return text
       .replace(/\s+/g, ' ')
       .replace(/\n+/g, '\n')
+      .replace(/[^\S\n]+/g, ' ')
       .trim();
+  }
+
+  public findSection(config: SectionConfig): SectionData | null {
+    console.log(`Searching for section: ${config.name}`);
+    
+    // Try finding by heading first
+    const headingMatch = this.findSectionByHeading(config);
+    if (headingMatch) {
+      console.log(`Found ${config.name} by heading with confidence ${headingMatch.confidence}`);
+      return headingMatch;
+    }
+    
+    // Try finding in main content
+    const mainContentMatch = this.findSectionInMainContent(config);
+    if (mainContentMatch) {
+      console.log(`Found ${config.name} in main content with confidence ${mainContentMatch.confidence}`);
+      return mainContentMatch;
+    }
+    
+    // Try finding in meta tags
+    const metaMatch = this.findInMetaTags(config);
+    if (metaMatch) {
+      console.log(`Found ${config.name} in meta tags with confidence ${metaMatch.confidence}`);
+      return metaMatch;
+    }
+    
+    console.log(`No content found for ${config.name}`);
+    return null;
   }
 
   private findSectionInMainContent(config: SectionConfig): SectionData | null {
@@ -137,6 +176,7 @@ export class ContentExtractor {
     for (const section of sections) {
       const sectionText = section.textContent?.toLowerCase() || '';
       
+      // Check for exact matches in variations
       for (const variation of config.variations) {
         if (sectionText.includes(variation.toLowerCase())) {
           const content = this.cleanContent(section.textContent || '');
@@ -151,6 +191,7 @@ export class ContentExtractor {
         }
       }
 
+      // Check for keyword matches
       const keywordMatches = config.keywords.filter(keyword => 
         sectionText.includes(keyword.toLowerCase())
       );
@@ -187,31 +228,6 @@ export class ContentExtractor {
         }
       }
     }
-    return null;
-  }
-
-  public findSection(config: SectionConfig): SectionData | null {
-    console.log(`Searching for section: ${config.name}`);
-    
-    const headingMatch = this.findSectionByHeading(config);
-    if (headingMatch) {
-      console.log(`Found ${config.name} by heading:`, headingMatch);
-      return headingMatch;
-    }
-    
-    const mainContentMatch = this.findSectionInMainContent(config);
-    if (mainContentMatch) {
-      console.log(`Found ${config.name} in main content:`, mainContentMatch);
-      return mainContentMatch;
-    }
-    
-    const metaMatch = this.findInMetaTags(config);
-    if (metaMatch) {
-      console.log(`Found ${config.name} in meta tags:`, metaMatch);
-      return metaMatch;
-    }
-    
-    console.log(`No content found for ${config.name}`);
     return null;
   }
 }

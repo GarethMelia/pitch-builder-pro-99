@@ -10,7 +10,10 @@ export const SECTION_CONFIGS: SectionConfig[] = [
       'our story',
       'about company',
       'company profile',
-      'our company'
+      'our company',
+      'company overview',
+      'overview',
+      'about the company'
     ],
     keywords: [
       'company',
@@ -19,7 +22,9 @@ export const SECTION_CONFIGS: SectionConfig[] = [
       'history',
       'profile',
       'background',
-      'journey'
+      'journey',
+      'overview',
+      'introduction'
     ]
   },
   {
@@ -30,7 +35,8 @@ export const SECTION_CONFIGS: SectionConfig[] = [
       'mission statement',
       'what drives us',
       'purpose',
-      'what we do'
+      'what we do',
+      'what we stand for'
     ],
     keywords: [
       'mission',
@@ -38,7 +44,8 @@ export const SECTION_CONFIGS: SectionConfig[] = [
       'goal',
       'aim',
       'objective',
-      'drive'
+      'drive',
+      'commitment'
     ]
   },
   {
@@ -48,116 +55,35 @@ export const SECTION_CONFIGS: SectionConfig[] = [
       'our vision',
       'vision statement',
       'where we\'re going',
-      'future'
+      'future',
+      'future goals'
     ],
     keywords: [
       'vision',
       'future',
       'aspiration',
       'direction',
-      'outlook'
+      'outlook',
+      'goals'
     ]
   },
   {
-    name: 'services',
+    name: 'homepage_intro',
     variations: [
-      'services',
-      'our services',
-      'what we offer',
-      'solutions',
-      'capabilities'
+      'welcome',
+      'hero',
+      'intro',
+      'introduction',
+      'main',
+      'banner'
     ],
     keywords: [
-      'service',
-      'offering',
-      'solution',
-      'capability',
-      'expertise'
-    ]
-  },
-  {
-    name: 'products',
-    variations: [
-      'products',
-      'our products',
-      'product line',
-      'solutions',
-      'offerings'
-    ],
-    keywords: [
-      'product',
-      'solution',
-      'offering',
-      'catalog',
-      'portfolio'
-    ]
-  },
-  {
-    name: 'testimonials',
-    variations: [
-      'testimonials',
-      'client stories',
-      'what clients say',
-      'reviews',
-      'success stories'
-    ],
-    keywords: [
-      'testimonial',
-      'review',
-      'client',
-      'feedback',
-      'success story'
-    ]
-  },
-  {
-    name: 'contact',
-    variations: [
-      'contact',
-      'contact us',
-      'get in touch',
-      'reach out',
-      'connect'
-    ],
-    keywords: [
-      'contact',
-      'email',
-      'phone',
-      'address',
-      'location'
-    ]
-  },
-  {
-    name: 'values',
-    variations: [
-      'values',
-      'our values',
-      'key values',
-      'core values',
-      'principles'
-    ],
-    keywords: [
-      'value',
-      'principle',
-      'belief',
-      'culture',
-      'philosophy'
-    ]
-  },
-  {
-    name: 'leadership',
-    variations: [
-      'leadership',
-      'our team',
-      'management',
-      'executives',
-      'board'
-    ],
-    keywords: [
-      'leader',
-      'executive',
-      'management',
-      'director',
-      'team'
+      'welcome',
+      'introduction',
+      'hero',
+      'banner',
+      'tagline',
+      'headline'
     ]
   }
 ];
